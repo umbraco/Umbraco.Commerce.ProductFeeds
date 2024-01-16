@@ -1,0 +1,40 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "AuthorDetails": {
+    "Name": "Umbraco HQ",
+    "Description": "Umbraco HQ",
+    "Url": "https://umbraco.com",
+    "ImageUrl": "https://avatars.githubusercontent.com/u/1419552?s=200&v=4"
+  },
+  "Category": "Commerce",
+  "LicenseTypes": [
+    "Free"
+  ],
+  "DocumentationUrl": "https://docs.umbraco.com/umbraco-commerce-payment-providers/stripe",
+  "IssueTrackerUrl": "https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/issues",
+  "PackageType": "Package",
+  "PackagesByAuthor": [
+    "Umbraco.Forms",
+    "Umbraco.Workflow",
+    "Umbraco.Deploy.OnPrem"
+  ],
+  "RelatedPackages": [
+    {
+      "PackageId": "Umbraco.Commerce",
+      "Description": "The ecommerce solution by Umbraco HQ"
+    },
+    {
+      "PackageId": "Umbraco.Commerce.Checkout",
+      "Description": "A drop in checkout solution for Umbraco Commerce."
+    },
+    {
+      "PackageId": "Umbraco.Commerce.Deploy",
+      "Description": "An Umbraco Deploy provider to help with deploying Umbraco Commerce."
+    }
+  ],
+  "Tags": [
+    "umbraco",
+    "ecommerce",
+    "paymentprovider"
+  ]
+}
