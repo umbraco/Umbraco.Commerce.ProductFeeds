@@ -1,0 +1,26 @@
+.umbraco-commerce-product-feeds {
+    $red: red;
+
+    .umb-property.required label>span::after {
+        content: '*';
+        color: $red;
+    }
+
+    .prop-mapping-row {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 0.5em;
+        box-sizing: border-box;
+        padding: 0.5rem;
+
+        .prop-mapping-col {
+            flex: 1 1;
+        }
+    }
+
+    .ucpf-button-group {
+        margin-left: -5px;
+        margin-top: 0.5em;
+    }
+}

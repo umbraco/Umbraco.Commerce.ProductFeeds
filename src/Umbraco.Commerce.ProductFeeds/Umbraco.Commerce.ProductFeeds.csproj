@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds</Title>
+    <Description>Product feed generator for Umbraco nodes</Description>
+    <Nullable>enable</Nullable>
+    <NoWarn>IDE0007</NoWarn>
+    <StaticWebAssetBasePath>App_Plugins/umbracocommerceproductfeeds</StaticWebAssetBasePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Umbraco.Cms" />
+    <PackageReference Include="Umbraco.Commerce" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Core\Umbraco.Commerce.ProductFeeds.Core.csproj" />
+    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Infrastructure\Umbraco.Commerce.ProductFeeds.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
