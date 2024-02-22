@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>IDE0007</NoWarn>
@@ -9,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms" />
-    <PackageReference Include="Umbraco.Commerce.Core" />
+    <PackageReference Include="Umbraco.Commerce" />
   </ItemGroup>
 
 </Project>

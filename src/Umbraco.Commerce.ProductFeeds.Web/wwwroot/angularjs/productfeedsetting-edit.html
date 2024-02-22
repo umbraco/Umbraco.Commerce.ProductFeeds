@@ -1,0 +1,110 @@
+<div ng-controller="umbraco.commerce.productfeeds.settingEditController as vm"
+    class="umbraco-commerce-product-feeds">
+
+    <umb-load-indicator ng-if="vm.page.loading"></umb-load-indicator>
+
+    <form name="contentForm"
+        ng-submit="vm.saveAsync()"
+        novalidate
+        val-form-manager>
+
+        <umb-editor-view ng-if="!vm.page.loading">
+            <umb-editor-header
+                name="vm.content.name"
+                hide-icon="true"
+                hide-description="true"
+                hide-alias="true"
+                show-back-button="true"
+                on-back="vm.back()">
+            </umb-editor-header>
+
+            <umb-editor-container class="form-horizontal">
+                <div class="uc-layout uc-layout--layout1">
+
+                    <div class="uc-layout__left">
+
+                        <umb-box>
+                            <!--<umb-box-header title="Settings"></umb-box-header>-->
+                            <umb-box-content>
+
+                                <umb-control-group
+                                    label="Feed Description"
+                                    description="Used for <description />">
+                                    <input type="text"
+                                        class="umb-property-editor umb-textstring textstring uc-input--short"
+                                        ng-model="vm.content.code"
+                                        required />
+                                </umb-control-group>
+                                <umb-control-group label="Feed Type" class="wtf">
+                                    <select
+                                        class="umb-property-editor umb-dropdown"
+                                        ng-model="vm.content.feedType"
+                                        ng-options="item.id as item.name for item in vm.options.feedTypes"
+                                        required>
+                                        <option value="" selected>-- Select a feed type --</option>
+                                    </select>
+                                </umb-control-group>
+                                <umb-control-group label="Product Document Type Alias">
+                                    <select class="umb-property-editor umb-dropdown"
+                                        ng-model="vm.content.productDocumentTypeAlias"
+                                        ng-options="item.id as item.name for item in vm.options.documentTypeAliases">
+                                        <option value="" selected>-- Select a product document type alias --</option>
+                                    </select>
+                                </umb-control-group>
+                                <umb-control-group label="Image Property Alias">
+                                    <select class="umb-property-editor umb-dropdown"
+                                        ng-model="vm.content.imagePropertyAlias"
+                                        ng-options="item.id as item.name for item in vm.options.paymentMethods">
+                                        <option value="" selected>-- Select an image property alias--</option>
+                                    </select>
+                                </umb-control-group>
+
+                            </umb-box-content>
+                        </umb-box>
+                    </div>
+
+                    <div class="uc-layout__right">
+                        <umb-box>
+                            <umb-box-header title-key="general_info"></umb-box-header>
+                            <umb-box-content class="block-form">
+                                <umb-control-group label="Id">
+                                    <uc-id-label value="vm.content.id"></uc-id-label>
+                                </umb-control-group>
+                                <umb-control-group label="Store Id">
+                                    <uc-id-label value="vm.content.storeId"></uc-id-label>
+                                </umb-control-group>
+                            </umb-box-content>
+                        </umb-box>
+                    </div>
+
+                </div>
+            </umb-editor-container>
+
+            <umb-editor-footer>
+
+                <umb-editor-footer-content-left>
+                    <umb-breadcrumbs
+                        ng-if="vm.page.breadcrumb && vm.page.breadcrumb.items && vm.page.breadcrumb.items.length > 0"
+                        ancestors="vm.page.breadcrumb.items"
+                        on-open="vm.page.breadcrumb.itemClick(ancestor)">
+                    </umb-breadcrumbs>
+                </umb-editor-footer-content-left>
+
+                <umb-editor-footer-content-right>
+
+                    <umb-button
+                        type="submit"
+                        button-style="success"
+                        state="vm.page.saveButtonState"
+                        shortcut="ctrl+s"
+                        label="Save"
+                        label-key="buttons_save">
+                    </umb-button>
+
+                </umb-editor-footer-content-right>
+
+            </umb-editor-footer>
+        </umb-editor-view>
+    </form>
+
+</div>

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFee
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A0DEA483-7FB6-4C5B-B801-EF5232E895D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests", "tests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests.csproj", "{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests", "tests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests.csproj", "{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

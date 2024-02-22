@@ -1,0 +1,10 @@
+/*!********************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./css/main.scss ***!
+  \********************************************************************************************************/
+.umbraco-commerce-product-feeds {
+  background-color: red;
+}
+
+.umbraco-commerce-product-feeds__edit {
+  background-color: green;
+}

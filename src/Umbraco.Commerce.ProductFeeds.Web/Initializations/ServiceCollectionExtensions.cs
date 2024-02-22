@@ -21,6 +21,9 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
         {
             ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
+            builder.AddNotificationHandler<TreeNodesRenderingNotification, TreeNodesRenderingNotificationHandler>();
+            builder.ManifestFilters().Append<UmbracoCommerceProductFeedsManifestFilter>();
+
             builder.AddServices();
             builder.AddDbMigrations();
             builder.AddAutoMapper();

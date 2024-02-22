@@ -8,7 +8,7 @@ using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Controllers
+namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
 {
     [PluginController(RouteParams.AreaName)]
     public class ProductFeedController : UmbracoApiController
@@ -27,7 +27,12 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string path)
         {
-            ProductFeedSettingReadModel? feedSettings = await _feedConfigService.FindSettingAsync(path).ConfigureAwait(true);
+            ProductFeedSettingReadModel? feedSettings = await _feedConfigService
+                .FindSettingAsync(new FindSettingParams
+                {
+                    FeedRelativePath = path,
+                })
+                .ConfigureAwait(true);
             if (feedSettings == null)
             {
                 return NotFound("Unknown feed type.");

@@ -4,7 +4,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 {
     public interface IProductFeedSettingsService
     {
-        Task<ProductFeedSettingReadModel?> FindSettingAsync(string requestRelativePath);
+        Task<ProductFeedSettingReadModel?> FindSettingAsync(FindSettingParams findSettingParams);
+
+        Task<List<ProductFeedSettingReadModel>> GetListAsync(Guid storeId);
 
         /// <summary>
         /// Save product feed settings.
