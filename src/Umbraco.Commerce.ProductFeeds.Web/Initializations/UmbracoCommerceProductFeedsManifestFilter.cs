@@ -21,10 +21,10 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
                 BundleOptions = BundleOptions.None,
                 AllowPackageTelemetry = true,
                 Scripts = [
-                    $"/App_Plugins/{RouteParams.AreaName}/angularjs/umbraco-commerce-product-feeds.min.js",
-                    //$"/App_Plugins/{RouteParams.AreaName}/angularjs/module-registrations.js",
-                    //$"/App_Plugins/{RouteParams.AreaName}/angularjs/productfeedssettings.controller.js",
-                    //$"/App_Plugins/{RouteParams.AreaName}/angularjs/ucutils.service.js",
+                    $"/App_Plugins/{RouteParams.AreaName}/angularjs/umbraco-commerce-product-feeds.js",
+                ],
+                Stylesheets = [
+                    $"/App_Plugins/{RouteParams.AreaName}/angularjs/umbraco-commerce-product-feeds.css"
                 ],
             };
 

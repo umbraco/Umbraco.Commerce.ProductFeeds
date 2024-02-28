@@ -1,28 +1,29 @@
-
+using NPoco;
 
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
 {
-    //[TableName("umbracoCommerceProductFeedSetting")]
-    //[PrimaryKey("id", AutoIncrement = true)]
-    //[ExplicitColumns]
+    [TableName("umbracoCommerceProductFeedSetting")]
+    [PrimaryKey("id", AutoIncrement = false)]
     public class UmbracoCommerceProductFeedSetting
     {
-        //[PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]
-        //[Column("id")]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        //[Column("feedType")]
-        public required string FeedType { get; set; }
+        public string FeedType { get; set; } = string.Empty;
 
-        //[Column("feedRelativePath")]
-        public required string FeedRelativePath { get; set; }
-        public required string FeedName { get; set; }
-        public required string FeedDescription { get; set; }
-        public required string ProductDocumentTypeAlias { get; set; }
-        public required string ImagesPropertyAlias { get; set; }
-        public required int ProductRootId { get; set; }
+        public string FeedRelativePath { get; set; } = string.Empty;
 
-        public required Guid StoreId { get; set; }
-        public required string ProductPropertyNameMappings { get; set; }
+        public string FeedName { get; set; } = string.Empty;
+
+        public string FeedDescription { get; set; } = string.Empty;
+
+        public string ProductDocumentTypeAlias { get; set; } = string.Empty;
+
+        public string ImagesPropertyAlias { get; set; } = string.Empty;
+
+        public Guid ProductRootId { get; set; }
+
+        public Guid StoreId { get; set; }
+
+        public string ProductPropertyNameMappings { get; set; } = string.Empty;
     }
 }

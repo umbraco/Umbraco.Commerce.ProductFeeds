@@ -1,5 +1,6 @@
 import { getFeedSetingsAsync } from './apis';
 import { MODULE } from './constants';
+import { createRoute } from './fe-routes';
 import ucUtils from './utils';
 
 angular
@@ -8,17 +9,13 @@ angular
         '$location',
         '$routeParams',
         'appState',
-        'treeService',
         'navigationService',
-        'ucPaymentMethodResource',
 
         function (
             $location,
             $routeParams,
             appState,
-            treeService,
             navigationService,
-            ucPaymentMethodResource,
         ) {
             const compositeId = ucUtils.parseCompositeId($routeParams.id);
             const storeId = compositeId[0];
@@ -38,15 +35,21 @@ angular
             };
 
             vm.options = {
-                createActions: [],
+                createActions: [
+                    {
+                        name: 'Create Product Feed',
+                        doAction: function () {
+                            $location.path(createRoute(storeId));
+                        },
+                    }],
                 bulkActions: [],
                 items: [],
                 itemProperties: [
                     { alias: 'feedTypeName', header: 'Type' },
                     { alias: 'feedRelativePath', header: 'Path' },
                 ],
-                itemClick: function (itm) {
-                    $location.path(itm.routePath);
+                itemClick: function (item) {
+                    $location.path(item.routePath);
                 },
             };
 

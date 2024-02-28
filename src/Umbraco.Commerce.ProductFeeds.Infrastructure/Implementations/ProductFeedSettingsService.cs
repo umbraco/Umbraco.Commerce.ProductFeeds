@@ -1,4 +1,7 @@
+using System.Text.Json;
 using AutoMapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
@@ -6,17 +9,20 @@ using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Implementations
 {
-    public class ProductFeedSettingsService : IProductFeedSettingsService
+    internal class ProductFeedSettingsService : IProductFeedSettingsService
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductFeedSettingsService> _logger;
 
         public ProductFeedSettingsService(
             IScopeProvider scopeProvider,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<ProductFeedSettingsService> logger)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
@@ -32,8 +38,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Implementatio
                     @"
 select *
 from umbracoCommerceProductFeedSetting
-where @0 IS NULL OR feedRelativePath = @0
-AND @1 IS NULL OR id = @1",
+where( @0 IS NULL OR feedRelativePath = @0)
+AND (@1 IS NULL OR id = @1)",
                     findSettingParams.FeedRelativePath,
                     findSettingParams.Id)
                     .ConfigureAwait(false);
@@ -77,7 +83,7 @@ where storeId = @0", storeId)
         }
 
         /// <inheritdoc/>
-        public async Task<int?> SaveSettingAsync(ProductFeedSettingAddModel input)
+        public async Task<Guid?> SaveSettingAsync(ProductFeedSettingWriteModel input)
         {
             UmbracoCommerceProductFeedSetting dbModel = _mapper.Map<UmbracoCommerceProductFeedSetting>(input);
 
@@ -85,15 +91,54 @@ where storeId = @0", storeId)
             {
                 using (IScope scope = _scopeProvider.CreateScope())
                 {
-                    await scope.Database.SaveAsync(dbModel).ConfigureAwait(false);
+                    if (input.Id == null)
+                    {
+                        // add mode
+                        dbModel.Id = Guid.NewGuid();
+                        _ = await scope.Database.InsertAsync(dbModel).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // edit mode
+                        int affectedRowCount = await scope.Database.UpdateAsync(dbModel).ConfigureAwait(false);
+                        if (affectedRowCount != 1)
+                        {
+                            return null;
+                        }
+                    }
+
+                    scope.Complete();
+                    return dbModel.Id;
                 }
             }
-            catch (Exception)
+            catch (SqlException ex)
             {
+                _logger.LogError(ex, "Unable to add a new record. Data: {Data}", JsonSerializer.Serialize(input));
                 return null;
             }
+        }
 
-            return dbModel.Id;
+        /// <inheritdoc/>
+        public async Task<bool> DeleteSettingAsync(Guid id)
+        {
+            try
+            {
+                using (IScope scope = _scopeProvider.CreateScope())
+                {
+                    int affectedRowCount = await scope.Database.DeleteAsync(new UmbracoCommerceProductFeedSetting
+                    {
+                        Id = id,
+                    }).ConfigureAwait(false);
+                    scope.Complete();
+
+                    return affectedRowCount == 1;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Unable to delete the record with id = {Id}", id);
+                return false;
+            }
         }
     }
 }

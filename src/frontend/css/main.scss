@@ -1,7 +1,6 @@
 .umbraco-commerce-product-feeds {
-    background-color: red;
-}
-
-.umbraco-commerce-product-feeds__edit {
-    background-color: green;
+    .umb-property.required label>span::after {
+        content: '*';
+        color: red;
+    }
 }

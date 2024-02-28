@@ -3700,6 +3700,7 @@
       "umbraco.commerce.productfeeds.core": {
         "type": "Project",
         "dependencies": {
+          "FluentValidation": "[11.9.0, )",
           "Umbraco.Cms": "[13.0.3, 14.0.0)",
           "Umbraco.Commerce": "[13.0.0, 14.0.0)"
         }
@@ -3721,6 +3722,12 @@
           "AutoMapper": "[12.0.1]",
           "Microsoft.Extensions.Options": "6.0.0"
         }
+      },
+      "FluentValidation": {
+        "type": "CentralTransitive",
+        "requested": "[11.9.0, )",
+        "resolved": "11.9.0",
+        "contentHash": "VneVlTvwYDkfHV5av3QrQ0amALgrLX6LV94wlYyEsh0B/klJBW7C8y2eAtj5tOZ3jH6CAVpr4s1ZGgew/QWyig=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "CentralTransitive",

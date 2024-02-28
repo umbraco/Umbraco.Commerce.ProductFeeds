@@ -2,7 +2,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
     public class ProductFeedSettingReadModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public ProductFeedType FeedType { get; set; }
 
@@ -14,7 +14,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required Guid StoreId { get; set; }
 
-        public int ProductRootId { get; set; }
+        public Guid ProductRootId { get; set; }
 
         public required string ProductDocumentTypeAlias { get; set; }
 

@@ -27,6 +27,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
                     NodeType = "ProductFeedsList",
                     RoutePath = $"{notification.QueryString["application"]}/{RouteParams.AreaName}/productfeedsetting-list/{storeId}",
                     MenuUrl = $"/umbraco/backoffice/{RouteParams.AreaName}/productfeedstreenode/getmenu",
+                    ChildNodesUrl = null,
                 };
 
                 menuItem.AdditionalData.Add("storeId", storeId);

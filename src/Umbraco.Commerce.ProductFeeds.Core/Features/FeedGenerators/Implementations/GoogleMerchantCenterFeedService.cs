@@ -63,7 +63,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 ProductDocumentTypeAlias = feedSettings.ProductDocumentTypeAlias,
             });
 
-
             // render doc/channel/item nodes
             foreach (IPublishedContent product in products)
             {
@@ -72,11 +71,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 // add custom properties
                 foreach (PropertyValueMapping map in feedSettings.PropertyNameMappings)
                 {
-                    if (map.PropertyAlias.StartsWith("umb_", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        map.PropertyAlias = map.PropertyAlias[4..]; // trim out "umb_"
-                    }
-
                     XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
                     ISingleValuePropertyExtractor valueExtractor = _singleValuePropertyExtractorFactory.GetExtractor(map.ValueExtractorName);
                     propertyNode.InnerText = valueExtractor.Extract(product, map.PropertyAlias);

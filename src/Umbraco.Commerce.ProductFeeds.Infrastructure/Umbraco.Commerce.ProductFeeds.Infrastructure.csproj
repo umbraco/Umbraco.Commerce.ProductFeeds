@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0007</NoWarn>
+    <NoWarn>IDE0007;CA1848</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Core\Umbraco.Commerce.ProductFeeds.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(MSBuildProjectName).UnitTests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Umbraco.Commerce.ProductFeeds.Web</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

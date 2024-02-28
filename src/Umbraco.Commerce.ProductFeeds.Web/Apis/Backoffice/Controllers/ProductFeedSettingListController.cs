@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Controllers;
 using Umbraco.Commerce.ProductFeeds.Constants;
@@ -11,6 +12,7 @@ using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Controllers
 {
+    [JsonCamelCaseFormatter]
     [PluginController(RouteParams.AreaName)]
     public class ProductFeedSettingListController : UmbracoAuthorizedApiController
     {
@@ -24,7 +26,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         public async Task<IActionResult> Get(Guid storeId)
         {
             List<ProductFeedSettingReadModel> feedSettings = await _feedSettingsService.GetListAsync(storeId).ConfigureAwait(true);
-            return new JsonResult(feedSettings);
+            return Ok(feedSettings);
         }
     }
 }

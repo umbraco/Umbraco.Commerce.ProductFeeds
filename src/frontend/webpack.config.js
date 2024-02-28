@@ -8,7 +8,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '../Umbraco.Commerce.ProductFeeds.Web/wwwroot/angularjs'),
-        filename: '[name].min.js',
+        filename: '[name].js',
     },
     module: {
         rules: [

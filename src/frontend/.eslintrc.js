@@ -20,7 +20,7 @@ module.exports = {
     'semi': ['error', 'always'],
     'no-var': 'error',
     'no-undef': 'error',
-    'quotes': ['error', 'single'],
+    'quotes': ['error', 'single', { 'avoidEscape': true }],
     'no-console': 'warn',
     'no-debugger': 'warn',
     'no-use-before-define': 'error',

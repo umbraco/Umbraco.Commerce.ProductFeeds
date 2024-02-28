@@ -1,7 +1,7 @@
 import { MODULE } from './constants';
 import ucUtils from './utils';
-import { getFeedSettingAsync } from './apis';
-import { listRoute } from './fe-routes';
+import { getDocumentTypesAsync, getFeedSettingAsync, getFeedTypesAsync, getCustomPropertyAliasesAsync, saveSettingAsync, deleteAsync } from './apis';
+import { editRoute, listRoute } from './fe-routes';
 
 angular
     .module(MODULE.NAME)
@@ -14,12 +14,7 @@ angular
         'editorState',
         'notificationsService',
         'navigationService',
-        'treeService',
-        'ucCountryResource',
-        'ucCurrencyResource',
-        'ucShippingMethodResource',
-        'ucPaymentMethodResource',
-        'ucActions',
+        'overlayService',
 
         function (
             $scope,
@@ -30,23 +25,15 @@ angular
             editorState,
             notificationsService,
             navigationService,
-            treeService,
-            ucCountryResource,
-            ucCurrencyResource,
-            ucShippingMethodResource,
-            ucPaymentMethodResource,
-            ucActions) {
-            let compositeId = ucUtils.parseCompositeId($routeParams.id);
-            let storeId = compositeId[0];
-
-            let id = compositeId[1];
-            const create = id === '-1';
-
-            let vm = this;
-
+            overlayService,
+        ) {
+            const vm = this;
+            let [storeId, id] = ucUtils.parseCompositeId($routeParams.id);
+            vm.isCreateMode = !id;
             vm.page = {};
             vm.page.loading = true;
             vm.page.saveButtonState = 'init';
+            vm.page.deleteButtonState = 'init';
 
             vm.page.menu = {};
             vm.page.menu.currentSection = appState.getSectionState('currentSection');
@@ -58,11 +45,28 @@ angular
                 $location.path(ancestor.routePath);
             };
 
+            vm.overlay = {
+                title: '',
+                subtitle: '',
+                editModel: '',
+                show: false,
+                submitButtonLabel: 'SUBMIT BUTTON TEXT',
+                closeButtonLabel: 'CLOSE BUTTON TEXT',
+                submit: function (model) {
+                    vm.overlay.show = false;
+                    vm.overlay = null;
+                },
+                close: function (oldModel) {
+                    vm.overlay.show = false;
+                    vm.overlay = null;
+                },
+            };
+
             vm.options = {
-                currencies: [],
-                shippingMethods: [],
-                paymentMethods: [],
-                editorActions: [],
+                feedTypes: [],
+                documentTypeAliases: [],
+                propertyAliases: [],
+                propertyAliasesLoading: true,
             };
             vm.content = {};
 
@@ -70,36 +74,48 @@ angular
                 $location.path(listRoute(storeId)).search({});
             };
 
+            function handleApiError(message) {
+                return (err) => {
+                    vm.page.saveButtonState = 'error';
+                    vm.page.deleteButtonState = 'error';
+                    notificationsService.error(message, JSON.stringify(err.response.data));
+                };
+            }
+
             vm.initAsync = async function () {
+                const [
+                    feedTypes,
+                    documentTypeAliases,
+                    propertyAliases,
+                ] = await Promise.all([
+                    getFeedTypesAsync(),
+                    getDocumentTypesAsync(),
+                    getCustomPropertyAliasesAsync(),
+                ]);
 
-                // ucActions.getEditorActions({ storeId: storeId, entityType: 'Country' }).then(result => {
-                //     vm.options.editorActions = result;
-                // });
+                vm.options.feedTypes = feedTypes;
+                vm.options.documentTypeAliases = documentTypeAliases;
+                vm.options.propertyAliases = propertyAliases;
 
-                // ucCurrencyResource.getCurrencies(storeId).then(function (currencies) {
-                //     vm.options.currencies = currencies;
-                // });
+                if (vm.isCreateMode) {
+                    vm.ready({
+                        id: null,
+                        storeId,
+                        propertyNameMappingsString: JSON.stringify([
+                            { 'NodeName': 'g:id', 'PropertyAlias': 'Id' },
+                            { 'NodeName': 'g:title', 'PropertyAlias': 'Name' },
+                            { 'NodeName': 'g:description', 'PropertyAlias': 'longDescription' },
+                        ]),
+                    });
+                } else {
 
-                // ucShippingMethodResource.getShippingMethods(storeId).then(function (shippingMethods) {
-                //     vm.options.shippingMethods = shippingMethods;
-                // });
-
-                // ucPaymentMethodResource.getPaymentMethods(storeId).then(function (paymentMethods) {
-                //     vm.options.paymentMethods = paymentMethods;
-                // });
-
-                // if (create) {
-
-                //     ucCountryResource.createCountry(storeId).then(function (country) {
-                //         vm.ready(country);
-                //     });
-
-                // } else {
-
-                const feedSetting = await getFeedSettingAsync(id);
-                vm.ready(feedSetting);
-
-                // }
+                    const feedSetting = await getFeedSettingAsync(id);
+                    vm.ready({
+                        ...feedSetting,
+                        name: feedSetting.feedName,
+                        propertyNameMappingsString: JSON.stringify(feedSetting.propertyNameMappings),
+                    });
+                }
 
                 // $scope.$on('Umbraco.Commerce.Entity.Deleted', function (evt, args) {
                 //     if (args.entityType === 'Country' && args.storeId === storeId && args.entityId === id) {
@@ -111,62 +127,81 @@ angular
             vm.ready = function (model) {
                 vm.page.loading = false;
                 vm.content = model;
-
-                if (create && $routeParams['preset'] === 'true') {
-                    vm.content.name = $routeParams['name'];
-                    vm.content.code = $routeParams['code'];
-                    vm.content.presetIsoCode = $routeParams['code'];
-                }
+                vm.onProductDocumentTypeAliasChangeAsync();
 
                 // sync state
                 editorState.set(vm.content);
 
                 let pathToSync = ['-1', '1', storeId, '7428'];
                 navigationService.syncTree({ tree: 'commercesettings', path: pathToSync, forceReload: true }).then(function (syncArgs) {
-                    if (!create) {
-                        treeService.getChildren({ node: syncArgs.node }).then(function (children) {
-                            let node = children.find(function (itm) {
-                                return itm.id === id;
-                            });
-                            vm.page.menu.currentNode = node;
-                            vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(node);
-                        });
-                    } else {
-                        vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(syncArgs.node);
-                        vm.page.breadcrumb.items.push({ name: 'Untitled' });
-                    }
+                    // if (!vm.isCreateMode) {
+                    //     treeService.getChildren({ node: syncArgs.node }).then(function (children) {
+                    //         console.log(children);
+                    //         const node = children.find(function (item) {
+                    //             return item.id === id;
+                    //         });
+                    //         vm.page.menu.currentNode = node;
+                    //         vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(node);
+                    //     });
+                    // } else {
+                    vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(syncArgs.node);
+                    vm.page.breadcrumb.items.push({ name: vm.content?.name || 'Untitled' });
                 });
             };
 
-            vm.saveAsync = async function (suppressNotification) {
-
+            vm.saveAsync = async function () {
                 if (formHelper.submitForm({ scope: $scope, statusMessage: 'Saving...' })) {
                     vm.page.saveButtonState = 'busy';
-                    ucCountryResource.saveCountry(vm.content).then(function (saved) {
 
-                        formHelper.resetForm({ scope: $scope, notifications: saved.notifications });
-
+                    saveSettingAsync({
+                        ...vm.content,
+                        feedName: vm.content.name,
+                        propertyNameMappings: JSON.parse(vm.content.propertyNameMappingsString),
+                    }).then((savedId) => {
                         vm.page.saveButtonState = 'success';
+                        formHelper.resetForm({
+                            scope: $scope,
+                        });
 
-                        if (create) {
-                            $location.path('/settings/commercesettings/country-edit/' + ucUtils.createCompositeId([storeId, saved.id]));
+                        notificationsService.success('Feed setting saved', `Feed setting \'${vm.content.name}\' successfully saved.`);
+                        if (vm.isCreateMode) {
+                            $location.path(editRoute(storeId, savedId));
                         }
-                        else {
-                            vm.ready(saved);
-                        }
+                    }, handleApiError(`Failed to save setting '${vm.content.name}'`));
+                };
+            };
 
-                    }, function (err) {
+            vm.onProductDocumentTypeAliasChangeAsync = async () => {
+                vm.options.propertyAliasesLoading = true;
+                const data = await getCustomPropertyAliasesAsync(vm.content.productDocumentTypeAlias);
+                vm.options.propertyAliases = data;
+                vm.options.propertyAliasesLoading = false;
+            };
 
-                        if (!suppressNotification) {
-                            vm.page.saveButtonState = 'error';
-                            notificationsService.error('Failed to save country ' + vm.content.name,
-                                err.data.message || err.data.Message || err.errorMsg);
-                        }
+            vm.onDeleteButtonClickAsync = async () => {
+                let overlay = {
+                    title: 'Caution',
+                    content: `Are you sure you want to delete '${vm.content.name}'?`,
+                    disableBackdropClick: false,
+                    disableEscKey: false,
+                    submit: function () {
+                        overlayService.close();
+                        vm.page.deleteButtonState = 'busy';
+                        vm.page.saveButtonState = 'busy';
+                        deleteAsync(vm.content.id)
+                            .then(success => {
+                                if (success) {
+                                    vm.back();
+                                }
+                            }, handleApiError('Failed to delete record.'))
+                            .finally(() => {
+                                vm.page.deleteButtonState = 'init';
+                                vm.page.saveButtonState = 'init';
+                            });
+                    },
+                };
 
-                        vm.page.saveButtonState = 'error';
-                    });
-                }
-
+                overlayService.confirmDelete(overlay);
             };
 
             // initialization call

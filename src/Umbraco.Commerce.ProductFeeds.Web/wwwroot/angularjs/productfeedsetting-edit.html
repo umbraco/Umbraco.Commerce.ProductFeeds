@@ -24,41 +24,80 @@
                     <div class="uc-layout__left">
 
                         <umb-box>
-                            <!--<umb-box-header title="Settings"></umb-box-header>-->
+                            <umb-box-header title="Settings"></umb-box-header>
+
                             <umb-box-content>
+                                <umb-control-group
+                                    label="Feed Relative Path"
+                                    class="required"
+                                    description="Should be unique among the feeds">
+                                    <input type="text"
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.feedRelativePath"
+                                        required
+                                        maxlength="255" />
+                                </umb-control-group>
 
                                 <umb-control-group
-                                    label="Feed Description"
-                                    description="Used for <description />">
+                                    label="Feed Description">
                                     <input type="text"
-                                        class="umb-property-editor umb-textstring textstring uc-input--short"
-                                        ng-model="vm.content.code"
-                                        required />
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.feedDescription"
+                                        maxlength="255" />
                                 </umb-control-group>
-                                <umb-control-group label="Feed Type" class="wtf">
+                                <umb-control-group label="Feed Type" class="required">
                                     <select
                                         class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.feedType"
-                                        ng-options="item.id as item.name for item in vm.options.feedTypes"
+                                        ng-options="item for item in vm.options.feedTypes"
                                         required>
                                         <option value="" selected>-- Select a feed type --</option>
                                     </select>
                                 </umb-control-group>
-                                <umb-control-group label="Product Document Type Alias">
+                                <umb-control-group
+                                    label="Product Document Type Alias"
+                                    class="required"
+                                    description="The published content of this document type will be included in the feed">
                                     <select class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.productDocumentTypeAlias"
-                                        ng-options="item.id as item.name for item in vm.options.documentTypeAliases">
+                                        ng-options="item for item in vm.options.documentTypeAliases"
+                                        ng-change="vm.onProductDocumentTypeAliasChangeAsync()"
+                                        required>
                                         <option value="" selected>-- Select a product document type alias --</option>
                                     </select>
                                 </umb-control-group>
-                                <umb-control-group label="Image Property Alias">
+                                <umb-control-group
+                                    label="Image Property Alias"
+                                    class="required">
                                     <select class="umb-property-editor umb-dropdown"
-                                        ng-model="vm.content.imagePropertyAlias"
-                                        ng-options="item.id as item.name for item in vm.options.paymentMethods">
+                                        ng-model="vm.content.imagesPropertyAlias"
+                                        ng-options="item for item in vm.options.propertyAliases"
+                                        required
+                                        ng-disabled="!vm.content.productDocumentTypeAlias && vm.options.propertyAliasesLoading">
                                         <option value="" selected>-- Select an image property alias--</option>
                                     </select>
                                 </umb-control-group>
 
+                                <umb-control-group
+                                    label="Product Root Id"
+                                    description="Enter Guid value. Only products under this root will be included in the feed"
+                                    class="required">
+                                    <input type="text"
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.productRootId"
+                                        required
+                                        maxlength="255" />
+                                </umb-control-group>
+
+                                <umb-control-group
+                                    label="Property And Node Mapping"
+                                    description=""
+                                    class="required">
+                                    <textarea
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.propertyNameMappingsString"
+                                        required></textarea>
+                                </umb-control-group>
                             </umb-box-content>
                         </umb-box>
                     </div>
@@ -91,6 +130,16 @@
                 </umb-editor-footer-content-left>
 
                 <umb-editor-footer-content-right>
+                    <umb-button
+                        ng-if="!vm.isCreateMode"
+                        type="button"
+                        button-style="danger"
+                        state="vm.page.deleteButtonState"
+                        shortcut="delete"
+                        label="Delete"
+                        label-key="general_delete"
+                        action="vm.onDeleteButtonClickAsync()">
+                    </umb-button>
 
                     <umb-button
                         type="submit"
@@ -100,11 +149,13 @@
                         label="Save"
                         label-key="buttons_save">
                     </umb-button>
-
                 </umb-editor-footer-content-right>
 
             </umb-editor-footer>
         </umb-editor-view>
     </form>
-
+    <umb-overlay ng-if="vm.overlay.show"
+        model="vm.overlay"
+        view="vm.overlay.view"
+        position="right"></umb-overlay>
 </div>

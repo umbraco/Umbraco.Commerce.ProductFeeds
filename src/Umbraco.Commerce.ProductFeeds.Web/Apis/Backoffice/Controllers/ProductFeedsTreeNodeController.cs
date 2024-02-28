@@ -1,11 +1,13 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Commerce.ProductFeeds.Constants;
 
 namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
 {
+    [JsonCamelCaseFormatter]
     [PluginController(RouteParams.AreaName)]
     public class ProductFeedsTreeNodeController : UmbracoAuthorizedApiController
     {

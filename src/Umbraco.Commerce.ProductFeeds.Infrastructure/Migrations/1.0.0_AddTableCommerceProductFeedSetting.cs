@@ -27,17 +27,20 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             else
             {
                 Create.Table<UmbracoCommerceProductFeedSettingSchema>().Do();
-                Create.UniqueConstraint($"uc_{tableName}_feedRelativePath").OnTable(tableName).Column("feedRelativePath").Do();
+                Create
+                    .UniqueConstraint($"uc_{tableName}_feedRelativePath")
+                    .OnTable(tableName)
+                    .Column("feedRelativePath")
+                    .Do();
             }
         }
 
         [TableName("umbracoCommerceProductFeedSetting")]
-        [PrimaryKey("id", AutoIncrement = true)]
+        [PrimaryKey("id", AutoIncrement = false)]
         public class UmbracoCommerceProductFeedSettingSchema
         {
-            [PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]
             [Column("id")]
-            public int Id { get; set; }
+            public Guid Id { get; set; }
 
             [Column("feedType")]
             public required string FeedType { get; set; }
@@ -45,13 +48,26 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             [Column("feedRelativePath")]
             public required string FeedRelativePath { get; set; }
 
+            [Column("feedName")]
             public required string FeedName { get; set; }
-            public required string FeedDescription { get; set; }
+
+            [Column("feedDescription")]
+            [NullSetting(NullSetting = NullSettings.Null)]
+            public string? FeedDescription { get; set; }
+
+            [Column("productDocumentTypeAlias")]
             public required string ProductDocumentTypeAlias { get; set; }
+
+            [Column("imagesPropertyAlias")]
             public required string ImagesPropertyAlias { get; set; }
-            public required int ProductRootId { get; set; }
+
+            [Column("productRootId")]
+            public required Guid ProductRootId { get; set; }
+
+            [Column("storeId")]
             public required Guid StoreId { get; set; }
 
+            [Column("productPropertyNameMappings")]
             [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
             public required string ProductPropertyNameMappings { get; set; }
         }
