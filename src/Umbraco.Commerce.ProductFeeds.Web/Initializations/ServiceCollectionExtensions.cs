@@ -39,11 +39,17 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
             services.AddScoped<GoogleMerchantCenterFeedService>();
 
             services.AddScoped<IProductFeedSettingsService, ProductFeedSettingsService>();
-
             services.AddScoped<IProductQueryService, ProductQueryService>();
 
+            services.AddPropertyValueExtractors();
+
+        }
+
+        private static void AddPropertyValueExtractors(this IServiceCollection services)
+        {
             services.AddScoped<ISingleValuePropertyExtractorFactory, SingleValuePropertyExtractorFactory>();
             services.AddScoped<ISingleValuePropertyExtractor, DefaultSingleValuePropertyExtractor>();
+            services.AddScoped<DefaultSingleValuePropertyExtractor, DefaultSingleValuePropertyExtractor>();
 
             services.AddScoped<IMultipleValuePropertyExtractorFactory, MultipleValuePropertyExtractorFactory>();
             services.AddScoped<DefaultMultipleMediaPickerPropertyValueExtractor>();

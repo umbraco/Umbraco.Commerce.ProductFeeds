@@ -30,22 +30,27 @@
                                 <umb-control-group
                                     label="Feed Relative Path"
                                     class="required"
-                                    description="Should be unique among the feeds">
+                                    description="Must be unique among the feeds">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedRelativePath"
-                                        required
-                                        maxlength="255" />
+                                        required />
+                                    <a
+                                        style="display: inline-block; margin-top: 1em;"
+                                        ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
+                                        href="{{ '/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer">Open feed link</a>
                                 </umb-control-group>
 
                                 <umb-control-group
                                     label="Feed Description">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.feedDescription"
-                                        maxlength="255" />
+                                        ng-model="vm.content.feedDescription" />
                                 </umb-control-group>
-                                <umb-control-group label="Feed Type" class="required">
+                                <umb-control-group label="Feed Type" class="required"
+                                    description="">
                                     <select
                                         class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.feedType"
@@ -80,18 +85,17 @@
 
                                 <umb-control-group
                                     label="Product Root Id"
-                                    description="Enter Guid value. Only products under this root will be included in the feed"
+                                    description="Enter a valid guid. Only products under this root will be included in the feed."
                                     class="required">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.productRootId"
-                                        required
-                                        maxlength="255" />
+                                        required />
                                 </umb-control-group>
 
                                 <umb-control-group
                                     label="Property And Node Mapping"
-                                    description=""
+                                    description="Map between property alias and the node under <item>"
                                     class="required">
                                     <textarea
                                         class="umb-property-editor umb-textstring textstring"
@@ -130,14 +134,15 @@
                 </umb-editor-footer-content-left>
 
                 <umb-editor-footer-content-right>
+
                     <umb-button
                         ng-if="!vm.isCreateMode"
                         type="button"
+                        icon="icon-trash"
                         button-style="danger"
                         state="vm.page.deleteButtonState"
                         shortcut="delete"
-                        label="Delete"
-                        label-key="general_delete"
+                        label-key="actions_delete"
                         action="vm.onDeleteButtonClickAsync()">
                     </umb-button>
 
@@ -149,13 +154,11 @@
                         label="Save"
                         label-key="buttons_save">
                     </umb-button>
+
                 </umb-editor-footer-content-right>
 
             </umb-editor-footer>
         </umb-editor-view>
     </form>
-    <umb-overlay ng-if="vm.overlay.show"
-        model="vm.overlay"
-        view="vm.overlay.view"
-        position="right"></umb-overlay>
+
 </div>

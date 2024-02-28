@@ -191,6 +191,7 @@ angular
                         deleteAsync(vm.content.id)
                             .then(success => {
                                 if (success) {
+                                    notificationsService.success('Deleted successfully.');
                                     vm.back();
                                 }
                             }, handleApiError('Failed to delete record.'))
