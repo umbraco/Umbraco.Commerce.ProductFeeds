@@ -71,6 +71,17 @@
                                         <option value="" selected>-- Select a product document type alias --</option>
                                     </select>
                                 </umb-control-group>
+
+                                <umb-control-group
+                                    label="Product Variant Type Alias"
+                                    description="Use this when you use child variants implementation"
+                                    class="">
+                                    <input type="text"
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.productVariantTypeAlias"
+                                        required />
+                                </umb-control-group>
+
                                 <umb-control-group
                                     label="Image Property Alias"
                                     class="required">
@@ -119,7 +130,6 @@
                             </umb-box-content>
                         </umb-box>
                     </div>
-
                 </div>
             </umb-editor-container>
 

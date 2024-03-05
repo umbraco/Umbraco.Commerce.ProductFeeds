@@ -18,6 +18,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required string ProductDocumentTypeAlias { get; set; }
 
+        public string ProductVariantTypeAlias { get; set; } = string.Empty;
+
         public required string FeedRelativePath { get; set; }
 
         /// <summary>

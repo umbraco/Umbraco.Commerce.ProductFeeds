@@ -6,6 +6,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementat
         {
             { nameof(DefaultSingleValuePropertyExtractor), typeof(DefaultSingleValuePropertyExtractor) },
             { nameof(DefaultMultipleMediaPickerPropertyValueExtractor), typeof(DefaultMultipleMediaPickerPropertyValueExtractor) },
+            { nameof(DefaultGoogleAvailabilityValueExtractor), typeof(DefaultGoogleAvailabilityValueExtractor) },
         };
 
         public void AddNameTypeMap(string extractorName, Type type)

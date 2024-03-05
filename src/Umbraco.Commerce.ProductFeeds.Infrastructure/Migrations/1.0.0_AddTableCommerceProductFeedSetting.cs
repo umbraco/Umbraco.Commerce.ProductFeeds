@@ -58,6 +58,9 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             [Column("productDocumentTypeAlias")]
             public required string ProductDocumentTypeAlias { get; set; }
 
+            [Column("productVariantTypeAlias")]
+            public string ProductVariantTypeAlias { get; set; } = string.Empty;
+
             [Column("imagesPropertyAlias")]
             public required string ImagesPropertyAlias { get; set; }
 

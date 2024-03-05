@@ -18,6 +18,8 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
 
         public string ProductDocumentTypeAlias { get; set; } = string.Empty;
 
+        public string ProductVariantTypeAlias { get; set; } = string.Empty;
+
         public string ImagesPropertyAlias { get; set; } = string.Empty;
 
         public Guid ProductRootId { get; set; }

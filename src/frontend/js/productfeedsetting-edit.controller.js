@@ -105,6 +105,7 @@ angular
                             { 'NodeName': 'g:id', 'PropertyAlias': 'Id' },
                             { 'NodeName': 'g:title', 'PropertyAlias': 'Name' },
                             { 'NodeName': 'g:description', 'PropertyAlias': 'longDescription' },
+                            { 'NodeName': 'g:availability', 'PropertyAlias': 'stock', 'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor' },
                         ]),
                     });
                 } else {

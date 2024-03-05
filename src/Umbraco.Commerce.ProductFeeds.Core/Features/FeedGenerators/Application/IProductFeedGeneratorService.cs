@@ -5,6 +5,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application
 {
     public interface IProductFeedGeneratorService
     {
-        XmlDocument GenerateFeed(ProductFeedSettingReadModel feedSettings);
+        XmlDocument GenerateFeed(ProductFeedSettingReadModel feedSetting);
     }
 }

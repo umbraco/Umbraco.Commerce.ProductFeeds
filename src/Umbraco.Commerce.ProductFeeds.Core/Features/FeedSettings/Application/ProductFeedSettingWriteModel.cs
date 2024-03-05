@@ -20,6 +20,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 
         public required string ProductDocumentTypeAlias { get; set; }
 
+        public string ProductVariantTypeAlias { get; set; } = string.Empty;
+
         /// <summary>
         /// Gets or sets product image property alias.
         /// </summary>

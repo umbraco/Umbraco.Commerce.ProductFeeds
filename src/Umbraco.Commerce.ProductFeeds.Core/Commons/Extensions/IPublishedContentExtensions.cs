@@ -16,11 +16,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions
         /// <returns></returns>
         internal static T? GetPropertyValue<T>(this IPublishedContent content, string propertyAlias)
         {
-            if (content.HasProperty(propertyAlias))
+            T? valueWithFallback = content.Value<T>(propertyAlias, fallback: Fallback.ToAncestors);
+            if (valueWithFallback != null)
             {
-                return content.Value<T>(propertyAlias);
+                return valueWithFallback;
             }
 
+            // use reflection
             PropertyInfo? propertyInfo = typeof(IPublishedContent).GetProperty(propertyAlias, DefaultReflectionPropertyLookup | BindingFlags.IgnoreCase);
             if (propertyInfo != null)
             {
