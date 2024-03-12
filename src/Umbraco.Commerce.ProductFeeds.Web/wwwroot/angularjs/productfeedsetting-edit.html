@@ -49,6 +49,7 @@
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedDescription" />
                                 </umb-control-group>
+
                                 <umb-control-group label="Feed Type" class="required"
                                     description="">
                                     <select
@@ -56,9 +57,10 @@
                                         ng-model="vm.content.feedType"
                                         ng-options="item for item in vm.options.feedTypes"
                                         required>
-                                        <option value="" selected>-- Select a feed type --</option>
+                                        <option value="" selected disabled>-- Select a feed type --</option>
                                     </select>
                                 </umb-control-group>
+
                                 <umb-control-group
                                     label="Product Document Type Alias"
                                     class="required"
@@ -91,7 +93,7 @@
                                         ng-options="item for item in vm.options.propertyAliases"
                                         required
                                         ng-disabled="!vm.content.productDocumentTypeAlias && vm.options.propertyAliasesLoading">
-                                        <option value="" selected>-- Select an image property alias--</option>
+                                        <option value="" selected disabled>-- Select an image property alias--</option>
                                     </select>
                                 </umb-control-group>
 
@@ -103,17 +105,6 @@
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.productRootId"
                                         required />
-                                </umb-control-group>
-
-                                <umb-control-group
-                                    label="Property And Node Mapping"
-                                    description="Map between property alias and the node under <item>"
-                                    class="required">
-                                    <textarea
-                                        class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.propertyNameMappingsString"
-                                        required
-                                        style="min-height: 20em; resize: vertical;"></textarea>
                                 </umb-control-group>
 
                                 <umb-control-group

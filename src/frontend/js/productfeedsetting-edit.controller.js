@@ -136,7 +136,6 @@ angular
                         ...feedSetting,
                         name: feedSetting.feedName,
                         productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
-                        propertyNameMappingsString: JSON.stringify(feedSetting.propertyNameMappings),
                     });
                 }
             };
@@ -169,7 +168,6 @@ angular
                     saveSettingAsync({
                         ...vm.content,
                         feedName: vm.content.name,
-                        // propertyNameMappings: JSON.parse(vm.content.propertyNameMappingsString),
                         propertyNameMappings: vm.propertyAndNodeMappingVm,
                     }).then((savedId) => {
                         vm.page.saveButtonState = 'success';
