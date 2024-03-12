@@ -12,7 +12,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
         /// </summary>
         /// <param name="content"></param>
         /// <param name="propertyAlias"></param>
+        /// <param name="fallbackElement">Store fallback value of the property.</param>
         /// <returns></returns>
-        string Extract(IPublishedContent content, string propertyAlias);
+        string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement);
     }
 }

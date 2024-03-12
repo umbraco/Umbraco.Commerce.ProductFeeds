@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
@@ -13,7 +12,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
         /// </summary>
         /// <param name="content"></param>
         /// <param name="propertyAlias"></param>
+        /// <param name="fallbackElement"></param>
         /// <returns></returns>
-        ICollection<string> Extract(IPublishedContent content, string propertyAlias);
+        ICollection<string> Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement);
     }
 }

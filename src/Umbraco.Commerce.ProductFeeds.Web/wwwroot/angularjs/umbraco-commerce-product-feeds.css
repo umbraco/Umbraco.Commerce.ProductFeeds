@@ -5,3 +5,14 @@
   content: "*";
   color: red;
 }
+.umbraco-commerce-product-feeds .prop-mapping-row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0.5em;
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+.umbraco-commerce-product-feeds .prop-mapping-row .prop-mapping-col {
+  flex: 1 1;
+}

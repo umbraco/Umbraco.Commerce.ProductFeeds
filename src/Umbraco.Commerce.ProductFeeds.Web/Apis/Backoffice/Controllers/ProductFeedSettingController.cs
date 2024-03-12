@@ -14,6 +14,7 @@ using Umbraco.Cms.Web.Common.Controllers;
 using Umbraco.Commerce.ProductFeeds.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
+using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations;
 
 namespace Umbraco.Commerce.ProductFeeds.Controllers
 {
@@ -23,13 +24,16 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
     {
         private readonly IProductFeedSettingsService _feedSettingsService;
         private readonly IContentTypeService _contentTypeService;
+        private readonly PropertyExtractorNameTypeMapping _propertyExtractorNameTypeMapping;
 
         public ProductFeedSettingController(
             IProductFeedSettingsService feedConfigService,
-            IContentTypeService contentTypeService)
+            IContentTypeService contentTypeService,
+            PropertyExtractorNameTypeMapping propertyExtractorNameTypeMapping)
         {
             _feedSettingsService = feedConfigService;
             _contentTypeService = contentTypeService;
+            _propertyExtractorNameTypeMapping = propertyExtractorNameTypeMapping;
         }
 
         [HttpPost]
@@ -82,16 +86,33 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return Ok(aliases);
         }
 
+        /// <summary>
+        /// Get all property aliases of requested document types.
+        /// </summary>
+        /// <param name="documentTypeAliases">Multiple aliases that are separated by ';' character.</param>
+        /// <returns>An ordered string[].</returns>
         [HttpGet]
-        public IActionResult GetPropertyAliases(string documentTypeAlias)
+        public IActionResult GetPropertyAliases(string documentTypeAliases)
         {
-            IContentType? documentType = _contentTypeService.Get(documentTypeAlias);
-            if (documentType == null)
+            if (string.IsNullOrWhiteSpace(documentTypeAliases))
             {
-                return Ok(Enumerable.Empty<string>());
+                return BadRequest($"{nameof(documentTypeAliases)} must not be empty.");
             }
 
-            return Ok(documentType.PropertyTypes.Select(x => x.Alias).OrderBy(alias => alias));
+            string[] docTypeAliases = documentTypeAliases.Split(';');
+            HashSet<string> propertyAliases = new();
+            foreach (string doctTypeAlias in docTypeAliases)
+            {
+                IContentType? documentType = _contentTypeService.Get(doctTypeAlias);
+                if (documentType == null)
+                {
+                    continue;
+                }
+
+                propertyAliases.UnionWith(documentType.PropertyTypes.Select(x => x.Alias).OrderBy(alias => alias));
+            }
+
+            return Ok(propertyAliases.Order());
         }
 
         [HttpGet]
@@ -111,6 +132,12 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             }
 
             return Ok(success);
+        }
+
+        [HttpGet]
+        public IActionResult GetPropertyValueExtractors()
+        {
+            return Ok(_propertyExtractorNameTypeMapping.ReadOnlyDictionary.Keys);
         }
     }
 }

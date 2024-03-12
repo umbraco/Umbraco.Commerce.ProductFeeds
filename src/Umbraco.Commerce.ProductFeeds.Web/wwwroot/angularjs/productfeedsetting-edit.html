@@ -64,11 +64,12 @@
                                     class="required"
                                     description="The published content of this document type will be included in the feed">
                                     <select class="umb-property-editor umb-dropdown"
-                                        ng-model="vm.content.productDocumentTypeAlias"
+                                        ng-model="vm.content.productDocumentTypeAliasVm"
                                         ng-options="item for item in vm.options.documentTypeAliases"
                                         ng-change="vm.onProductDocumentTypeAliasChangeAsync()"
-                                        required>
-                                        <option value="" selected>-- Select a product document type alias --</option>
+                                        multiple="true"
+                                        required
+                                        style="min-height: 20em;">
                                     </select>
                                 </umb-control-group>
 
@@ -111,7 +112,67 @@
                                     <textarea
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.propertyNameMappingsString"
-                                        required></textarea>
+                                        required
+                                        style="min-height: 20em; resize: vertical;"></textarea>
+                                </umb-control-group>
+
+                                <umb-control-group
+                                    label="Property And Node Mapping (New)"
+                                    description="Map between property alias and the node under <item>"
+                                    class="required">
+                                    <div class="prop-mapping-row">
+                                        <div class="prop-mapping-col text-right" style="margin-bottom: .5em;">
+                                            <umb-button
+                                                type="button"
+                                                icon="icon-add"
+                                                button-style="primary"
+                                                label="Add Mapping"
+                                                action="vm.onAddPropertyMappingRowClick()">
+                                            </umb-button>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="prop-mapping-row"
+                                        ng-repeat="item in vm.propertyAndNodeMappingVm track by item.uiId"
+                                        ng-model="item.valueExtractorName">
+                                        <div class="prop-mapping-col">
+                                            <input
+                                                class="umb-property-editor umb-textstring prop-mapping-control"
+                                                type="text"
+                                                placeholder="Property Alias"
+                                                ng-model="item.propertyAlias"
+                                                required />
+                                        </div>
+                                        <div class="prop-mapping-col">
+                                            <input
+                                                class="umb-property-editor umb-textstring prop-mapping-control"
+                                                type="text"
+                                                placeholder="Feed Node Name"
+                                                ng-model="item.nodeName"
+                                                required />
+                                        </div>
+
+                                        <div class="prop-mapping-col">
+                                            <select
+                                                class="umb-property-editor prop-mapping-control"
+                                                placeholder="Property Value Extractor"
+                                                ng-model="item.valueExtractorName"
+                                                title="{{item.valueExtractorName}}"
+                                                ng-options="option.value as option.label disable when option.disabled for option in vm.options.propertyValueExtractors"
+                                                required>
+                                            </select>
+                                        </div>
+                                        <div class="prop-mapping-col">
+                                            <umb-button
+                                                type="button"
+                                                icon="icon-trash"
+                                                button-style="danger"
+                                                label="Delete"
+                                                action="vm.onDeletePropertyMappingRowClick(item.uiId)">
+                                            </umb-button>
+                                        </div>
+                                    </div>
                                 </umb-control-group>
                             </umb-box-content>
                         </umb-box>
@@ -151,7 +212,7 @@
                         icon="icon-trash"
                         button-style="danger"
                         state="vm.page.deleteButtonState"
-                        shortcut="delete"
+                        shortcut="ctrl+delete"
                         label-key="actions_delete"
                         action="vm.onDeleteButtonClickAsync()">
                     </umb-button>

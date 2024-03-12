@@ -20,7 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
 
             List<IPublishedContent> publishedProducts = productRoot
                 .Descendants()
-                .Where(x => x.IsDocumentType(parameters.ProductDocumentTypeAlias))
+                .Where(x => parameters.ProductDocumentTypeAliases.Contains(x.ContentType.Alias))
                 .ToList();
             return publishedProducts;
         }

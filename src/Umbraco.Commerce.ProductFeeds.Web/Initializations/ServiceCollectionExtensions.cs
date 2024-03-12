@@ -50,6 +50,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
             services.AddScoped<ISingleValuePropertyExtractor, DefaultSingleValuePropertyExtractor>();
             services.AddScoped<DefaultSingleValuePropertyExtractor>();
             services.AddScoped<DefaultGoogleAvailabilityValueExtractor>();
+            services.AddScoped<DefaultMediaPickerPropertyValueExtractor>();
 
             services.AddScoped<IMultipleValuePropertyExtractorFactory, MultipleValuePropertyExtractorFactory>();
             services.AddScoped<DefaultMultipleMediaPickerPropertyValueExtractor>();

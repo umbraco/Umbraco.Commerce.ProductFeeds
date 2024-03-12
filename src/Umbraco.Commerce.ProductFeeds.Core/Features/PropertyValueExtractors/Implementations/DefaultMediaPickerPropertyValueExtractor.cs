@@ -4,17 +4,20 @@ using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
 {
-    /// <summary>
-    /// Simply returns .ToString() value of the property.
-    /// </summary>
-    public class DefaultSingleValuePropertyExtractor : ISingleValuePropertyExtractor
+    public class DefaultMediaPickerPropertyValueExtractor : ISingleValuePropertyExtractor
     {
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)
         {
             ArgumentNullException.ThrowIfNull(content);
 
-            return content.GetPropertyValue<object?>(propertyAlias, fallbackElement)?.ToString() ?? string.Empty;
+            IPublishedContent? media = content.GetPropertyValue<IPublishedContent>(propertyAlias, fallbackElement);
+            if (media == null)
+            {
+                return string.Empty;
+            }
+
+            return media.MediaUrl(mode: UrlMode.Absolute);
         }
     }
 }

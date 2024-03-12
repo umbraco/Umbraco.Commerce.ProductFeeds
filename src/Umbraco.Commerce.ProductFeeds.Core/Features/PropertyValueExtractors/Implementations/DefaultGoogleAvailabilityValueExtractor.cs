@@ -4,12 +4,17 @@ using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
 {
+    /// <summary>
+    /// Returns either "in_stock" or "out_of_stock". If value of 'stock' property is null, still mark product as "in_stock".
+    /// </summary>
     public class DefaultGoogleAvailabilityValueExtractor : ISingleValuePropertyExtractor
     {
         /// <inheritdoc/>
-        public string Extract(IPublishedContent content, string propertyAlias = "stock")
+        public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)
         {
-            int? stock = content.GetPropertyValue<int?>(propertyAlias);
+            ArgumentNullException.ThrowIfNull(content);
+
+            int? stock = content.GetPropertyValue<int?>(propertyAlias, fallbackElement);
             string availability = stock <= 0 ? "out_of_stock" : "in_stock"; // if 'stock' is null, still mark product in_stock
 
             return availability;

@@ -64,7 +64,7 @@ export const getDocumentTypesAsync = async () => {
  * @returns {Promise<string[]>}
  */
 export const getCustomPropertyAliasesAsync = async (documentTypeAlias) => {
-    const { data } = await axios.get(BASE_BACKOFFICE_ROUTE + `/ProductFeedSetting/GetPropertyAliases?documentTypeAlias=${documentTypeAlias}`);
+    const { data } = await axios.get(BASE_BACKOFFICE_ROUTE + `/ProductFeedSetting/GetPropertyAliases?documentTypeAliases=${documentTypeAlias}`);
     return data;
 };
 
@@ -87,5 +87,14 @@ export const deleteAsync = async (id) => {
     const formData = new FormData();
     formData.append('id', id);
     const { data } = await axios.post(BASE_BACKOFFICE_ROUTE + '/ProductFeedSetting/Delete', formData);
+    return data;
+};
+
+/**
+ * 
+ * @returns {Promise<string[]>}
+ */
+export const getPropertyValueExtractorsAsync = async () => {
+    const { data } = await axios.get(BASE_BACKOFFICE_ROUTE + '/ProductFeedSetting/GetPropertyValueExtractors');
     return data;
 };

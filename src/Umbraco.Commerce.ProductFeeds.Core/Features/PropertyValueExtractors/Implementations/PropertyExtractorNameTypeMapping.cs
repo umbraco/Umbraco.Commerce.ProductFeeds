@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
 {
     public class PropertyExtractorNameTypeMapping
@@ -7,6 +9,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementat
             { nameof(DefaultSingleValuePropertyExtractor), typeof(DefaultSingleValuePropertyExtractor) },
             { nameof(DefaultMultipleMediaPickerPropertyValueExtractor), typeof(DefaultMultipleMediaPickerPropertyValueExtractor) },
             { nameof(DefaultGoogleAvailabilityValueExtractor), typeof(DefaultGoogleAvailabilityValueExtractor) },
+            { nameof(DefaultMediaPickerPropertyValueExtractor), typeof(DefaultMediaPickerPropertyValueExtractor) },
         };
 
         public void AddNameTypeMap(string extractorName, Type type)
@@ -18,5 +21,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementat
         {
             return _nameTypeDict[extractorName];
         }
+
+        public IReadOnlyDictionary<string, Type> ReadOnlyDictionary => new ReadOnlyDictionary<string, Type>(_nameTypeDict);
     }
 }

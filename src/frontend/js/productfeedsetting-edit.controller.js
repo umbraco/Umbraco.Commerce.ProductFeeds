@@ -1,6 +1,7 @@
+import { nanoid } from 'nanoid';
 import { MODULE } from './constants';
 import ucUtils from './utils';
-import { getDocumentTypesAsync, getFeedSettingAsync, getFeedTypesAsync, getCustomPropertyAliasesAsync, saveSettingAsync, deleteAsync } from './apis';
+import { getDocumentTypesAsync, getFeedSettingAsync, getFeedTypesAsync, getCustomPropertyAliasesAsync, saveSettingAsync, deleteAsync, getPropertyValueExtractorsAsync } from './apis';
 import { editRoute, listRoute } from './fe-routes';
 
 angular
@@ -67,8 +68,12 @@ angular
                 documentTypeAliases: [],
                 propertyAliases: [],
                 propertyAliasesLoading: true,
+                propertyValueExtractors: [],
             };
+
             vm.content = {};
+
+            vm.propertyAndNodeMappingVm = [];
 
             vm.back = function () {
                 $location.path(listRoute(storeId)).search({});
@@ -87,26 +92,42 @@ angular
                     feedTypes,
                     documentTypeAliases,
                     propertyAliases,
+                    propertyValueExtractors,
                 ] = await Promise.all([
                     getFeedTypesAsync(),
                     getDocumentTypesAsync(),
                     getCustomPropertyAliasesAsync(),
+                    getPropertyValueExtractorsAsync(),
                 ]);
 
                 vm.options.feedTypes = feedTypes;
                 vm.options.documentTypeAliases = documentTypeAliases;
                 vm.options.propertyAliases = propertyAliases;
+                vm.options.propertyValueExtractors = [
+                    {
+                        label: 'Select a property value extractor',
+                        value: '',
+                        disabled: true,
+                    },
+                    ...propertyValueExtractors.map(x => ({
+                        label: x,
+                        value: x,
+                        disabled: false,
+                    }))];
 
+                console.log(vm.options.propertyValueExtractors);
                 if (vm.isCreateMode) {
                     vm.ready({
                         id: null,
                         storeId,
-                        propertyNameMappingsString: JSON.stringify([
-                            { 'NodeName': 'g:id', 'PropertyAlias': 'Id' },
-                            { 'NodeName': 'g:title', 'PropertyAlias': 'Name' },
-                            { 'NodeName': 'g:description', 'PropertyAlias': 'longDescription' },
-                            { 'NodeName': 'g:availability', 'PropertyAlias': 'stock', 'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor' },
-                        ]),
+                        // generate sample mapping
+                        propertyNameMappings: [
+                            { uiId: nanoid(), 'nodeName': 'g:id', 'propertyAlias': 'sku', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
+                            { uiId: nanoid(), 'nodeName': 'g:title', 'propertyAlias': 'Name', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
+                            { uiId: nanoid(), 'nodeName': 'g:description', 'propertyAlias': 'longDescription', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
+                            { uiId: nanoid(), 'nodeName': 'g:availability', 'propertyAlias': 'stock', 'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor' },
+                            { uiId: nanoid(), 'nodeName': 'g:image_link', 'propertyAlias': 'image', 'valueExtractorName': 'DefaultMediaPickerPropertyValueExtractor' },
+                        ],
                     });
                 } else {
 
@@ -114,37 +135,28 @@ angular
                     vm.ready({
                         ...feedSetting,
                         name: feedSetting.feedName,
+                        productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
                         propertyNameMappingsString: JSON.stringify(feedSetting.propertyNameMappings),
                     });
                 }
-
-                // $scope.$on('Umbraco.Commerce.Entity.Deleted', function (evt, args) {
-                //     if (args.entityType === 'Country' && args.storeId === storeId && args.entityId === id) {
-                //         vm.back();
-                //     }
-                // });
             };
 
             vm.ready = function (model) {
-                vm.page.loading = false;
+                console.log(model);
                 vm.content = model;
+                vm.propertyAndNodeMappingVm = model.propertyNameMappings.map(x => ({
+                    ...x,
+                    uiId: nanoid(),
+                    message: '',
+                }));
                 vm.onProductDocumentTypeAliasChangeAsync();
+                vm.page.loading = false;
 
                 // sync state
                 editorState.set(vm.content);
 
                 let pathToSync = ['-1', '1', storeId, '7428'];
                 navigationService.syncTree({ tree: 'commercesettings', path: pathToSync, forceReload: true }).then(function (syncArgs) {
-                    // if (!vm.isCreateMode) {
-                    //     treeService.getChildren({ node: syncArgs.node }).then(function (children) {
-                    //         console.log(children);
-                    //         const node = children.find(function (item) {
-                    //             return item.id === id;
-                    //         });
-                    //         vm.page.menu.currentNode = node;
-                    //         vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(node);
-                    //     });
-                    // } else {
                     vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(syncArgs.node);
                     vm.page.breadcrumb.items.push({ name: vm.content?.name || 'Untitled' });
                 });
@@ -157,7 +169,8 @@ angular
                     saveSettingAsync({
                         ...vm.content,
                         feedName: vm.content.name,
-                        propertyNameMappings: JSON.parse(vm.content.propertyNameMappingsString),
+                        // propertyNameMappings: JSON.parse(vm.content.propertyNameMappingsString),
+                        propertyNameMappings: vm.propertyAndNodeMappingVm,
                     }).then((savedId) => {
                         vm.page.saveButtonState = 'success';
                         formHelper.resetForm({
@@ -173,7 +186,12 @@ angular
             };
 
             vm.onProductDocumentTypeAliasChangeAsync = async () => {
+                if (!vm.content.productDocumentTypeAliasVm || !vm.content.productDocumentTypeAliasVm.length) {
+                    return;
+                }
+
                 vm.options.propertyAliasesLoading = true;
+                vm.content.productDocumentTypeAlias = vm.content.productDocumentTypeAliasVm.join(';');
                 const data = await getCustomPropertyAliasesAsync(vm.content.productDocumentTypeAlias);
                 vm.options.propertyAliases = data;
                 vm.options.propertyAliasesLoading = false;
@@ -204,6 +222,21 @@ angular
                 };
 
                 overlayService.confirmDelete(overlay);
+            };
+
+            vm.onAddPropertyMappingRowClick = () => {
+                vm.propertyAndNodeMappingVm.push({
+                    uiId: nanoid(),
+                    propertyAlias: '',
+                    nodeName: '',
+                    valueExtractorName: '',
+                    message: 'Please fill in all the textbox',
+                });
+            };
+
+            vm.onDeletePropertyMappingRowClick = (uiId) => {
+                console.log('Delete ' + uiId);
+                vm.propertyAndNodeMappingVm = vm.propertyAndNodeMappingVm.filter(x => x.uiId != uiId);
             };
 
             // initialization call
