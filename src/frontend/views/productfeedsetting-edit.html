@@ -36,7 +36,7 @@
                                         ng-model="vm.content.feedRelativePath"
                                         required />
                                     <a
-                                        style="display: inline-block; margin-top: 1em;"
+                                        style="display: block; margin-top: .5em;"
                                         ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
                                         href="{{ '/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath }}"
                                         target="_blank"
@@ -131,16 +131,17 @@
                                             <input
                                                 class="umb-property-editor umb-textstring prop-mapping-control"
                                                 type="text"
-                                                placeholder="Property Alias"
-                                                ng-model="item.propertyAlias"
+                                                placeholder="Feed Node Name"
+                                                ng-model="item.nodeName"
                                                 required />
                                         </div>
+
                                         <div class="prop-mapping-col">
                                             <input
                                                 class="umb-property-editor umb-textstring prop-mapping-control"
                                                 type="text"
-                                                placeholder="Feed Node Name"
-                                                ng-model="item.nodeName"
+                                                placeholder="Property Alias"
+                                                ng-model="item.propertyAlias"
                                                 required />
                                         </div>
 
