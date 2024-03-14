@@ -15,8 +15,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
             ArgumentNullException.ThrowIfNull(parameters);
 
             IUmbracoContext umbracoContext = _umbracoContextAccessor.GetRequiredUmbracoContext();
-            IPublishedContent? productRoot = umbracoContext.Content?.GetById(parameters.ProductRootId)
-                ?? throw new InvalidOperationException($"Product root with id = {parameters.ProductRootId} could not be found.");
+            IPublishedContent? productRoot = umbracoContext.Content?.GetById(parameters.ProductRootKey)
+                ?? throw new InvalidOperationException($"Product root with id = {parameters.ProductRootKey} could not be found.");
 
             List<IPublishedContent> publishedProducts = productRoot
                 .Descendants()

@@ -1,19 +1,14 @@
-using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
     public class MultipleValuePropertyExtractorFactory : IMultipleValuePropertyExtractorFactory
     {
-        private readonly PropertyExtractorNameTypeMapping _extractorNameTypeMapping;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly MultipleValuePropertyExtractorCollection _valueExtractors;
 
-        public MultipleValuePropertyExtractorFactory(
-            PropertyExtractorNameTypeMapping extractorNameTypeMapping,
-            IServiceProvider serviceProvider)
+        public MultipleValuePropertyExtractorFactory(MultipleValuePropertyExtractorCollection valueExtractors)
         {
-            _extractorNameTypeMapping = extractorNameTypeMapping;
-            _serviceProvider = serviceProvider;
+            _valueExtractors = valueExtractors;
         }
 
         /// <inheritdoc/>
@@ -24,8 +19,11 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementat
                 throw new ArgumentNullException(nameof(uniqueExtractorName));
             }
 
-            Type extractorType = _extractorNameTypeMapping.GetExtractorType(uniqueExtractorName);
-            return (IMultipleValuePropertyExtractor)_serviceProvider.GetRequiredService(extractorType);
+
+            IMultipleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Name == uniqueExtractorName)
+                ?? throw new InvalidOperationException($"Can't find property extractor with name '{uniqueExtractorName}'");
+
+            return valueExtractor;
         }
     }
 }

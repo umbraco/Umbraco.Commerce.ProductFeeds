@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.BackOffice.Filters;
@@ -13,8 +12,8 @@ using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Controllers;
 using Umbraco.Commerce.ProductFeeds.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations;
 
 namespace Umbraco.Commerce.ProductFeeds.Controllers
 {
@@ -24,16 +23,19 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
     {
         private readonly IProductFeedSettingsService _feedSettingsService;
         private readonly IContentTypeService _contentTypeService;
-        private readonly PropertyExtractorNameTypeMapping _propertyExtractorNameTypeMapping;
+        private readonly SingleValuePropertyExtractorCollection _singleValuePropertyExtractors;
+        private readonly MultipleValuePropertyExtractorCollection _multipleValuePropertyExtractors;
 
         public ProductFeedSettingController(
             IProductFeedSettingsService feedConfigService,
             IContentTypeService contentTypeService,
-            PropertyExtractorNameTypeMapping propertyExtractorNameTypeMapping)
+            SingleValuePropertyExtractorCollection singleValuePropertyExtractors,
+            MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors)
         {
             _feedSettingsService = feedConfigService;
             _contentTypeService = contentTypeService;
-            _propertyExtractorNameTypeMapping = propertyExtractorNameTypeMapping;
+            _singleValuePropertyExtractors = singleValuePropertyExtractors;
+            _multipleValuePropertyExtractors = multipleValuePropertyExtractors;
         }
 
         [HttpPost]
@@ -86,35 +88,6 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return Ok(aliases);
         }
 
-        /// <summary>
-        /// Get all property aliases of requested document types.
-        /// </summary>
-        /// <param name="documentTypeAliases">Multiple aliases that are separated by ';' character.</param>
-        /// <returns>An ordered string[].</returns>
-        [HttpGet]
-        public IActionResult GetPropertyAliases(string documentTypeAliases)
-        {
-            if (string.IsNullOrWhiteSpace(documentTypeAliases))
-            {
-                return BadRequest($"{nameof(documentTypeAliases)} must not be empty.");
-            }
-
-            string[] docTypeAliases = documentTypeAliases.Split(';');
-            HashSet<string> propertyAliases = new();
-            foreach (string doctTypeAlias in docTypeAliases)
-            {
-                IContentType? documentType = _contentTypeService.Get(doctTypeAlias);
-                if (documentType == null)
-                {
-                    continue;
-                }
-
-                propertyAliases.UnionWith(documentType.PropertyTypes.Select(x => x.Alias).OrderBy(alias => alias));
-            }
-
-            return Ok(propertyAliases.Order());
-        }
-
         [HttpGet]
         public IActionResult GetFeedTypes()
         {
@@ -137,7 +110,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet]
         public IActionResult GetPropertyValueExtractors()
         {
-            return Ok(_propertyExtractorNameTypeMapping.ReadOnlyDictionary.Keys);
+            return Ok(_singleValuePropertyExtractors.Select(x => x.Name).Concat(_multipleValuePropertyExtractors.Select(x => x.Name)));
         }
     }
 }

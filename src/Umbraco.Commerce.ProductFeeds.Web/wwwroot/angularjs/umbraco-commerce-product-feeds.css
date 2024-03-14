@@ -16,3 +16,7 @@
 .umbraco-commerce-product-feeds .prop-mapping-row .prop-mapping-col {
   flex: 1 1;
 }
+.umbraco-commerce-product-feeds .ucpf-button-group {
+  margin-left: -5px;
+  margin-top: 0.5em;
+}

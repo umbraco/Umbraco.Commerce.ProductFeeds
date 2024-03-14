@@ -7,6 +7,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
     /// </summary>
     public interface ISingleValuePropertyExtractor
     {
+        public string Name { get; }
+
         /// <summary>
         /// Get property value using property alias.
         /// </summary>

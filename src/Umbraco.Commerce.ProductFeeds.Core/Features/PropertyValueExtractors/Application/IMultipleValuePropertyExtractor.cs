@@ -7,6 +7,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
     /// </summary>
     public interface IMultipleValuePropertyExtractor
     {
+        string Name { get; }
+
         /// <summary>
         /// Get a list of absolute url of the media.
         /// </summary>

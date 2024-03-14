@@ -9,10 +9,10 @@ using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 {
@@ -75,7 +75,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
             {
-                ProductRootId = feedSetting.ProductRootId,
+                ProductRootKey = feedSetting.ProductRootKey,
                 ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAlias.Split(';'),
             });
 
@@ -83,7 +83,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             foreach (IPublishedContent product in products)
             {
                 IEnumerable<IPublishedContent> childVariants = product.Children
-                    .Where(x => x.ContentType.Alias.Equals(feedSetting.ProductVariantTypeAlias, StringComparison.OrdinalIgnoreCase))
+                    .Where(x => x.ContentType.Key == feedSetting.ProductChildVariantTypeKey)
                     .ToList();
                 if (childVariants.Any())
                 {
@@ -145,7 +145,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             {
                 if (map.ValueExtractorName == nameof(DefaultMultipleMediaPickerPropertyValueExtractor))
                 {
-                    AddImageNodes(itemNode, map.ValueExtractorName, feedSetting.ImagesPropertyAlias, variant, mainProduct);
+                    AddImageNodes(itemNode, map.ValueExtractorName, map.PropertyAlias, variant, mainProduct);
                 }
                 else
                 {

@@ -2,10 +2,12 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
     public class DefaultMultipleMediaPickerPropertyValueExtractor : IMultipleValuePropertyExtractor
     {
+        public string Name => nameof(DefaultMultipleMediaPickerPropertyValueExtractor);
+
         /// <inheritdoc/>
         public ICollection<string> Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)
         {

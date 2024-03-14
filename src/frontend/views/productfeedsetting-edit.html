@@ -35,12 +35,16 @@
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedRelativePath"
                                         required />
-                                    <a
-                                        style="display: block; margin-top: .5em;"
-                                        ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
-                                        href="{{ '/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath }}"
-                                        target="_blank"
-                                        rel="noopener noreferrer">Open feed link</a>
+                                    <div>
+                                        <a
+                                            style="display: inline-block; margin-top: .5em;"
+                                            ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
+                                            href="{{ '/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer">Open feed link
+                                            <umb-icon icon="icon-out"></umb-icon>
+                                        </a>
+                                    </div>
                                 </umb-control-group>
 
                                 <umb-control-group
@@ -68,7 +72,6 @@
                                     <select class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.productDocumentTypeAliasVm"
                                         ng-options="item for item in vm.options.documentTypeAliases"
-                                        ng-change="vm.onProductDocumentTypeAliasChangeAsync()"
                                         multiple="true"
                                         required
                                         style="min-height: 20em;">
@@ -76,39 +79,60 @@
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Product Variant Type Alias"
+                                    label="Product Child Variant Type Key"
                                     description="Use this when you use child variants implementation"
                                     class="">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.productVariantTypeAlias"
-                                        required />
+                                        ng-model="vm.content.productChildVariantTypeKey"
+                                        disabled />
+                                    <div class="ucpf-button-group">
+                                        <umb-button
+                                            action="vm.onOpenContentTypePicker('productChildVariantTypeKey')"
+                                            icon="icon-search"
+                                            type="button"
+                                            button-style="action"
+                                            label="Select the type of child product variants"></umb-button>
+
+                                        <umb-button
+                                            ng-if="!!vm.content.productChildVariantTypeKey"
+                                            action="vm.onClearFieldClick('productChildVariantTypeKey')"
+                                            icon="icon-delete"
+                                            type="button"
+                                            button-style="default"
+                                            label="Clear"></umb-button>
+                                    </div>
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Image Property Alias"
-                                    class="required">
-                                    <select class="umb-property-editor umb-dropdown"
-                                        ng-model="vm.content.imagesPropertyAlias"
-                                        ng-options="item for item in vm.options.propertyAliases"
-                                        required
-                                        ng-disabled="!vm.content.productDocumentTypeAlias && vm.options.propertyAliasesLoading">
-                                        <option value="" selected disabled>-- Select an image property alias--</option>
-                                    </select>
-                                </umb-control-group>
-
-                                <umb-control-group
-                                    label="Product Root Id"
-                                    description="Enter a valid guid. Only products under this root will be included in the feed."
+                                    label="Product Root Key"
+                                    description="Select the root for products. Only products under this root will be included in the feed."
                                     class="required">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.productRootId"
-                                        required />
+                                        ng-model="vm.content.productRootKey"
+                                        required
+                                        disabled />
+                                    <div class="ucpf-button-group">
+                                        <umb-button
+                                            action="vm.onOpenContentPicker('productRootKey')"
+                                            icon="icon-search"
+                                            type="button"
+                                            button-style="action"
+                                            label="Select product root"></umb-button>
+                                        <umb-button
+                                            ng-if="!!vm.content.productRootKey"
+                                            action="vm.onClearFieldClick('productRootKey')"
+                                            icon="icon-delete"
+                                            type="button"
+                                            button-style="default"
+                                            label="Clear"></umb-button>
+                                    </div>
+
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Property And Node Mapping (New)"
+                                    label="Property And Node Mapping"
                                     description="Map between property alias and the node under <item>"
                                     class="required">
                                     <div class="prop-mapping-row">
@@ -155,7 +179,8 @@
                                                 required>
                                             </select>
                                         </div>
-                                        <div class="prop-mapping-col">
+                                        <div class="prop-mapping-col text-right"
+                                            style="flex:0 0 100px;">
                                             <umb-button
                                                 type="button"
                                                 icon="icon-trash"

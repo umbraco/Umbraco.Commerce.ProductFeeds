@@ -1,0 +1,13 @@
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
+{
+    public class MultipleValuePropertyExtractorCollection : BuilderCollectionBase<IMultipleValuePropertyExtractor>
+    {
+        public MultipleValuePropertyExtractorCollection(Func<IEnumerable<IMultipleValuePropertyExtractor>> items)
+            : base(items)
+        {
+        }
+    }
+}

@@ -2,13 +2,15 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
     /// <summary>
     /// Returns either "in_stock" or "out_of_stock". If value of 'stock' property is null, still mark product as "in_stock".
     /// </summary>
     public class DefaultGoogleAvailabilityValueExtractor : ISingleValuePropertyExtractor
     {
+        public string Name => nameof(DefaultGoogleAvailabilityValueExtractor);
+
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)
         {

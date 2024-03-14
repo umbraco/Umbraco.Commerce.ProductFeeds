@@ -13,10 +13,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
             RuleFor(x => x.FeedName).NotEmpty();
             RuleFor(x => x.FeedDescription).MaximumLength(MaximumStringLength);
             RuleFor(x => x.StoreId).NotEmpty();
-            RuleFor(x => x.ProductRootId).NotEmpty();
+            RuleFor(x => x.ProductRootKey).NotEmpty();
             RuleFor(x => x.ProductDocumentTypeAlias).NotEmpty().MaximumLength(MaximumStringLength);
-            RuleFor(x => x.ProductVariantTypeAlias).MaximumLength(MaximumStringLength);
-            RuleFor(x => x.ImagesPropertyAlias).NotEmpty().MaximumLength(MaximumStringLength);
             RuleFor(x => x.PropertyNameMappings).NotEmpty();
         }
     }

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { MODULE } from './constants';
 import ucUtils from './utils';
-import { getDocumentTypesAsync, getFeedSettingAsync, getFeedTypesAsync, getCustomPropertyAliasesAsync, saveSettingAsync, deleteAsync, getPropertyValueExtractorsAsync } from './apis';
+import { getDocumentTypesAsync, getFeedSettingAsync, getFeedTypesAsync, saveSettingAsync, deleteAsync, getPropertyValueExtractorsAsync } from './apis';
 import { editRoute, listRoute } from './fe-routes';
 
 angular
@@ -16,6 +16,7 @@ angular
         'notificationsService',
         'navigationService',
         'overlayService',
+        'editorService',
 
         function (
             $scope,
@@ -27,6 +28,7 @@ angular
             notificationsService,
             navigationService,
             overlayService,
+            editorService,
         ) {
             const vm = this;
             let [storeId, id] = ucUtils.parseCompositeId($routeParams.id);
@@ -66,8 +68,6 @@ angular
             vm.options = {
                 feedTypes: [],
                 documentTypeAliases: [],
-                propertyAliases: [],
-                propertyAliasesLoading: true,
                 propertyValueExtractors: [],
             };
 
@@ -91,18 +91,15 @@ angular
                 const [
                     feedTypes,
                     documentTypeAliases,
-                    propertyAliases,
                     propertyValueExtractors,
                 ] = await Promise.all([
                     getFeedTypesAsync(),
                     getDocumentTypesAsync(),
-                    getCustomPropertyAliasesAsync(),
                     getPropertyValueExtractorsAsync(),
                 ]);
 
                 vm.options.feedTypes = feedTypes;
                 vm.options.documentTypeAliases = documentTypeAliases;
-                vm.options.propertyAliases = propertyAliases;
                 vm.options.propertyValueExtractors = [
                     {
                         label: 'Select a property value extractor',
@@ -127,6 +124,7 @@ angular
                             { uiId: nanoid(), 'nodeName': 'g:description', 'propertyAlias': 'longDescription', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:availability', 'propertyAlias': 'stock', 'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:image_link', 'propertyAlias': 'image', 'valueExtractorName': 'DefaultMediaPickerPropertyValueExtractor' },
+                            { uiId: nanoid(), 'nodeName': 'g:image_link', 'propertyAlias': 'images', 'valueExtractorName': 'DefaultMultipleMediaPickerPropertyValueExtractor' },
                         ],
                     });
                 } else {
@@ -148,7 +146,6 @@ angular
                     uiId: nanoid(),
                     message: '',
                 }));
-                vm.onProductDocumentTypeAliasChangeAsync();
                 vm.page.loading = false;
 
                 // sync state
@@ -183,18 +180,6 @@ angular
                 };
             };
 
-            vm.onProductDocumentTypeAliasChangeAsync = async () => {
-                if (!vm.content.productDocumentTypeAliasVm || !vm.content.productDocumentTypeAliasVm.length) {
-                    return;
-                }
-
-                vm.options.propertyAliasesLoading = true;
-                vm.content.productDocumentTypeAlias = vm.content.productDocumentTypeAliasVm.join(';');
-                const data = await getCustomPropertyAliasesAsync(vm.content.productDocumentTypeAlias);
-                vm.options.propertyAliases = data;
-                vm.options.propertyAliasesLoading = false;
-            };
-
             vm.onDeleteButtonClickAsync = async () => {
                 let overlay = {
                     title: 'Caution',
@@ -227,14 +212,39 @@ angular
                     uiId: nanoid(),
                     propertyAlias: '',
                     nodeName: '',
-                    valueExtractorName: '',
+                    valueExtractorName: 'DefaultSingleValuePropertyExtractor',
                     message: 'Please fill in all the textbox',
                 });
             };
 
             vm.onDeletePropertyMappingRowClick = (uiId) => {
-                console.log('Delete ' + uiId);
                 vm.propertyAndNodeMappingVm = vm.propertyAndNodeMappingVm.filter(x => x.uiId != uiId);
+            };
+
+            vm.onOpenContentPicker = (targetField) => {
+                editorService.contentPicker({
+                    multiPicker: false,
+                    submit: (currentService) => {
+                        vm.content[targetField] = currentService.selection[0].key;
+                        editorService.close();
+                    },
+                    close: () => { editorService.close(); },
+                });
+            };
+
+            vm.onOpenContentTypePicker = (targetField) => {
+                editorService.contentTypePicker({
+                    multiPicker: false,
+                    submit: (currentService) => {
+                        vm.content[targetField] = currentService.selection[0].key;
+                        editorService.close();
+                    },
+                    close: () => { editorService.close(); },
+                });
+            };
+
+            vm.onClearFieldClick = (fieldName) => {
+                vm.content[fieldName] = '';
             };
 
             // initialization call

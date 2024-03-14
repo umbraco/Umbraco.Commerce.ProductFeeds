@@ -3,13 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Implementations;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 
@@ -30,16 +30,27 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
             return builder;
         }
 
+#pragma warning disable CA1062 // Validate arguments of public methods
+        public static SingleValuePropertyExtractorCollectionBuilder SingleValuePropertyExtractors(this IUmbracoBuilder builder) => builder.WithCollectionBuilder<SingleValuePropertyExtractorCollectionBuilder>();
+        public static MultipleValuePropertyExtractorCollectionBuilder MultipleValuePropertyExtractors(this IUmbracoBuilder builder) => builder.WithCollectionBuilder<MultipleValuePropertyExtractorCollectionBuilder>();
+#pragma warning restore CA1062 // Validate arguments of public methods
+
         private static void AddServices(this IUmbracoBuilder builder)
         {
             IServiceCollection services = builder.Services;
-            services.AddSingleton<PropertyExtractorNameTypeMapping>();
-
             services.AddScoped<IProductFeedGeneratorFactory, ProductFeedGeneratorFactory>();
             services.AddScoped<GoogleMerchantCenterFeedService>();
 
             services.AddScoped<IProductFeedSettingsService, ProductFeedSettingsService>();
             services.AddScoped<IProductQueryService, ProductQueryService>();
+
+            builder.SingleValuePropertyExtractors()
+                .Append<DefaultSingleValuePropertyExtractor>()
+                .Append<DefaultGoogleAvailabilityValueExtractor>()
+                .Append<DefaultMediaPickerPropertyValueExtractor>();
+
+            builder.MultipleValuePropertyExtractors()
+                .Append<DefaultMultipleMediaPickerPropertyValueExtractor>();
 
             services.AddPropertyValueExtractors();
         }
@@ -47,13 +58,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
         private static void AddPropertyValueExtractors(this IServiceCollection services)
         {
             services.AddScoped<ISingleValuePropertyExtractorFactory, SingleValuePropertyExtractorFactory>();
-            services.AddScoped<ISingleValuePropertyExtractor, DefaultSingleValuePropertyExtractor>();
-            services.AddScoped<DefaultSingleValuePropertyExtractor>();
-            services.AddScoped<DefaultGoogleAvailabilityValueExtractor>();
-            services.AddScoped<DefaultMediaPickerPropertyValueExtractor>();
-
             services.AddScoped<IMultipleValuePropertyExtractorFactory, MultipleValuePropertyExtractorFactory>();
-            services.AddScoped<DefaultMultipleMediaPickerPropertyValueExtractor>();
         }
 
         private static IUmbracoBuilder AddDbMigrations(this IUmbracoBuilder builder)

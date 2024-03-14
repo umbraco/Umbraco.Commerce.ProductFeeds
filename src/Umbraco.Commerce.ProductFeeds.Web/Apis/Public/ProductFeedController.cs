@@ -13,14 +13,14 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
     [PluginController(RouteParams.AreaName)]
     public class ProductFeedController : UmbracoApiController
     {
-        private readonly IProductFeedGeneratorFactory _productFeedService;
+        private readonly IProductFeedGeneratorFactory _feedGeneratorFactory;
         private readonly IProductFeedSettingsService _feedConfigService;
 
         public ProductFeedController(
             IProductFeedGeneratorFactory productFeedService,
             IProductFeedSettingsService feedConfigService)
         {
-            _productFeedService = productFeedService;
+            _feedGeneratorFactory = productFeedService;
             _feedConfigService = feedConfigService;
         }
 
@@ -38,7 +38,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
                 return NotFound("Unknown feed type.");
             }
 
-            IProductFeedGeneratorService feedGenerator = _productFeedService.GetGenerator(feedSettings.FeedType);
+            IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedType);
             XmlDocument feed = feedGenerator.GenerateFeed(feedSettings);
 
             return Content(feed.OuterXml, "text/xml");

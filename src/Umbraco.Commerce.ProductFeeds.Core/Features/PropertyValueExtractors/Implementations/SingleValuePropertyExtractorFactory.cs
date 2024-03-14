@@ -1,32 +1,28 @@
-using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
     public class SingleValuePropertyExtractorFactory : ISingleValuePropertyExtractorFactory
     {
-        private readonly PropertyExtractorNameTypeMapping _extractorNameTypeMapping;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly SingleValuePropertyExtractorCollection _valueExtractors;
 
-        public SingleValuePropertyExtractorFactory(
-            PropertyExtractorNameTypeMapping extractorNameTypeMapping,
-            IServiceProvider serviceProvider)
+        public SingleValuePropertyExtractorFactory(SingleValuePropertyExtractorCollection valueExtractors)
         {
-            _extractorNameTypeMapping = extractorNameTypeMapping;
-            _serviceProvider = serviceProvider;
+            _valueExtractors = valueExtractors;
         }
-
 
         /// <inheritdoc/>
         public ISingleValuePropertyExtractor GetExtractor(string? uniqueExtractorName = null)
         {
             if (string.IsNullOrWhiteSpace(uniqueExtractorName))
             {
-                return _serviceProvider.GetRequiredService<ISingleValuePropertyExtractor>();
+                uniqueExtractorName = nameof(DefaultSingleValuePropertyExtractor);
             }
 
-            Type extractorType = _extractorNameTypeMapping.GetExtractorType(uniqueExtractorName);
-            return (ISingleValuePropertyExtractor)_serviceProvider.GetRequiredService(extractorType);
+            ISingleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Name == uniqueExtractorName)
+                ?? throw new InvalidOperationException($"Can't find property extractor with name '{uniqueExtractorName}'");
+
+            return valueExtractor;
         }
     }
 }

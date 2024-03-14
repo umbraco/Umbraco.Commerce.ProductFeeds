@@ -14,13 +14,6 @@ let htmlEncodeObj = function (model) {
 };
 
 const ucUtils = {
-    // htmlEncodeObj: htmlEncodeObj,
-    // getSettings: function (key) {
-    //     if (!Umbraco || !Umbraco.Sys || !Umbraco.Sys.ServerVariables || !Umbraco.Sys.ServerVariables['umbracoCommerce'] || !Umbraco.Sys.ServerVariables['umbracoCommerce'][key]) {
-    //         throw 'No Umbraco Commerce setting found with key ' + key;
-    //     }
-    //     return Umbraco.Sys.ServerVariables['umbracoCommerce'][key];
-    // },
     parseCompositeId: function (id) {
         return id.replace(/[‐᠆﹣－⁃−]+/gi, '-').split('_');
     },
@@ -41,34 +34,20 @@ const ucUtils = {
 
         return breadcrumb;
     },
-    // createBreadcrumbFromTreeNode: function (treeNode) {
 
-    //     console.log(treeNode);
-    //     let breadcrumb = [];
-
-    //     let currentNode = treeNode;
-    //     while (currentNode.level > 0) {
-    //         breadcrumb.splice(0, 0, {
-    //             name: currentNode.name,
-    //             routePath: currentNode.routePath,
-    //         });
-    //         currentNode = currentNode.parent();
-    //     }
-
-    //     return breadcrumb;
-    // },
-    // generateGuid: function () {
-    //     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    //         let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-    //         return v.toString(16);
-    //     });
-    // },
-    // isGuid: function (stringToTest) {
-    //     if (stringToTest[0] === '{') {
-    //         stringToTest = stringToTest.substring(1, stringToTest.length - 1);
-    //     }
-    //     return regexGuid.test(stringToTest);
-    // },
+    /**
+     * 
+     * @param {Function} func 
+     * @param {number} timeout in milliseconds
+     * @returns A debounced function.
+     */
+    debounce: function (func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    },
 };
 
 export default ucUtils;

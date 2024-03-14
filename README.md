@@ -3,7 +3,7 @@
 ## Features
 Product feed generator for Umbraco Commerce.
 Supported feed type:
-- [Google Merchant Center](./docs/google-merchant-center.md).
+- Google Merchant Center.
 
 ## Documentation
 - [Getting started](./docs/getting-started.md).

@@ -14,18 +14,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required Guid StoreId { get; set; }
 
-        public Guid ProductRootId { get; set; }
+        public Guid ProductRootKey { get; set; }
 
         public required string ProductDocumentTypeAlias { get; set; }
 
-        public string ProductVariantTypeAlias { get; set; } = string.Empty;
+        public Guid? ProductChildVariantTypeKey { get; set; }
 
         public required string FeedRelativePath { get; set; }
-
-        /// <summary>
-        /// Gets or sets product image property alias.
-        /// </summary>
-        public required string ImagesPropertyAlias { get; set; }
 
 #pragma warning disable CA2227 // Collection properties should be read only
         public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = new HashSet<PropertyValueMapping>();
