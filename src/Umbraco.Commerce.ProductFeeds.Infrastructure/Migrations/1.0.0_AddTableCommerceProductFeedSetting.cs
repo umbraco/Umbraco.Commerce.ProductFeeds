@@ -59,6 +59,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             public required string ProductDocumentTypeAlias { get; set; }
 
             [Column("productChildVariantTypeKey")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public Guid? ProductChildVariantTypeKey { get; set; }
 
             [Column("productRootKey")]

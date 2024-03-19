@@ -1,21 +1,22 @@
 <div ng-controller="umbraco.commerce.productfeeds.settingEditController as vm"
     class="umbraco-commerce-product-feeds">
 
-    <umb-load-indicator ng-if="vm.page.loading"></umb-load-indicator>
+    <umb-load-indicator ng-if="vm.page.initializing"></umb-load-indicator>
 
-    <form name="contentForm"
+    <form name="ucpfFeedSettingForm"
         ng-submit="vm.saveAsync()"
         novalidate
         val-form-manager>
 
-        <umb-editor-view ng-if="!vm.page.loading">
+        <umb-editor-view ng-if="!vm.page.initializing">
             <umb-editor-header
                 name="vm.content.name"
                 hide-icon="true"
                 hide-description="true"
                 hide-alias="true"
                 show-back-button="true"
-                on-back="vm.back()">
+                on-back="vm.back()"
+                menu="vm.page.menu">
             </umb-editor-header>
 
             <umb-editor-container class="form-horizontal">
@@ -35,15 +36,15 @@
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedRelativePath"
                                         required />
-                                    <div>
-                                        <a
-                                            style="display: inline-block; margin-top: .5em;"
+                                    <div class="ucpf-button-group">
+                                        <umb-button
                                             ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
-                                            href="{{ '/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath }}"
-                                            target="_blank"
-                                            rel="noopener noreferrer">Open feed link
-                                            <umb-icon icon="icon-out"></umb-icon>
-                                        </a>
+                                            type="button"
+                                            icon="icon-out"
+                                            button-style="link"
+                                            label="Open feed"
+                                            action="vm.onOpenFeedClick()">
+                                        </umb-button>
                                     </div>
                                 </umb-control-group>
 
@@ -69,7 +70,9 @@
                                     label="Product Document Type Alias"
                                     class="required"
                                     description="The published content of this document type will be included in the feed">
-                                    <select class="umb-property-editor umb-dropdown"
+                                    <select
+                                        class="umb-property-editor umb-dropdown"
+                                        ng-change="vm.onProductDocumentTypeAliasChange()"
                                         ng-model="vm.content.productDocumentTypeAliasVm"
                                         ng-options="item for item in vm.options.documentTypeAliases"
                                         multiple="true"
@@ -92,7 +95,7 @@
                                             icon="icon-search"
                                             type="button"
                                             button-style="action"
-                                            label="Select the type of child product variants"></umb-button>
+                                            label="Select child variant type"></umb-button>
 
                                         <umb-button
                                             ng-if="!!vm.content.productChildVariantTypeKey"
@@ -184,7 +187,7 @@
                                             <umb-button
                                                 type="button"
                                                 icon="icon-trash"
-                                                button-style="danger"
+                                                button-style="default"
                                                 label="Delete"
                                                 action="vm.onDeletePropertyMappingRowClick(item.uiId)">
                                             </umb-button>
@@ -232,6 +235,15 @@
                         shortcut="ctrl+delete"
                         label-key="actions_delete"
                         action="vm.onDeleteButtonClickAsync()">
+                    </umb-button>
+
+                    <umb-button
+                        ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
+                        type="button"
+                        icon="icon-out"
+                        button-style="default"
+                        label="Open feed"
+                        action="vm.onOpenFeedClick()">
                     </umb-button>
 
                     <umb-button

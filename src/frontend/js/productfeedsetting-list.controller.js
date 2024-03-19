@@ -1,4 +1,4 @@
-import { getFeedSetingsAsync } from './apis';
+import { deleteAsync, getFeedSetingsAsync } from './apis';
 import { MODULE } from './constants';
 import { createRoute } from './fe-routes';
 import ucUtils from './utils';
@@ -6,12 +6,16 @@ import ucUtils from './utils';
 angular
     .module(MODULE.NAME)
     .controller('umbraco.commerce.productfeeds.settingListController', [
+        '$scope',
+        '$q',
         '$location',
         '$routeParams',
         'appState',
         'navigationService',
 
         function (
+            $scope,
+            $q,
             $location,
             $routeParams,
             appState,
@@ -42,7 +46,21 @@ angular
                             $location.path(createRoute(storeId));
                         },
                     }],
-                bulkActions: [],
+                bulkActions: [
+                    {
+                        name: 'Delete',
+                        icon: 'icon-trash',
+                        itemAction: function (item, config) {
+                            return deleteAsync(item.id);
+                        },
+                        getConfirmMessage: function (total) {
+                            return $q.resolve('Are you sure you want to delete ' + total + ' ' + (total > 1 ? 'items' : 'item') + '?');
+                        },
+                        condition: function (ctx) {
+                            return true;
+                        },
+                    },
+                ],
                 items: [],
                 itemProperties: [
                     { alias: 'feedTypeName', header: 'Type' },
@@ -55,28 +73,23 @@ angular
 
             vm.loadSettingsAsync = async function () {
                 const entities = await getFeedSetingsAsync(storeId);
-                console.log(entities);
                 vm.options.items = entities;
             };
 
             /**
              * Actions to initialize this controller.
              */
-            vm.init = async function () {
-                console.log($routeParams);
-
-                navigationService
-                    .syncTree({ tree: 'commercesettings', path: ['-1', '1', storeId, '7428'], forceReload: true })
+            vm.initAsync = async function () {
+                navigationService.syncTree({ tree: 'commercesettings', path: ['-1', '1', storeId, '7428'], forceReload: true })
                     .then(function (syncArgs) {
                         vm.page.menu.currentNode = syncArgs.node;
                         vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(syncArgs.node);
-                        vm.page.loading = false;
                     });
-
                 await vm.loadSettingsAsync();
                 vm.page.loading = false;
+                $scope.$apply();
             };
 
             // initialization call
-            vm.init();
+            vm.initAsync();
         }]);

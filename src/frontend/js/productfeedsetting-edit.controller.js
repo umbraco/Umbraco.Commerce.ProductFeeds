@@ -17,6 +17,7 @@ angular
         'navigationService',
         'overlayService',
         'editorService',
+        'treeService',
 
         function (
             $scope,
@@ -29,12 +30,13 @@ angular
             navigationService,
             overlayService,
             editorService,
+            treeService,
         ) {
             const vm = this;
             let [storeId, id] = ucUtils.parseCompositeId($routeParams.id);
             vm.isCreateMode = !id;
             vm.page = {};
-            vm.page.loading = true;
+            vm.page.initializing = true;
             vm.page.saveButtonState = 'init';
             vm.page.deleteButtonState = 'init';
 
@@ -112,7 +114,6 @@ angular
                         disabled: false,
                     }))];
 
-                console.log(vm.options.propertyValueExtractors);
                 if (vm.isCreateMode) {
                     vm.ready({
                         id: null,
@@ -121,14 +122,12 @@ angular
                         propertyNameMappings: [
                             { uiId: nanoid(), 'nodeName': 'g:id', 'propertyAlias': 'sku', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:title', 'propertyAlias': 'Name', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
-                            { uiId: nanoid(), 'nodeName': 'g:description', 'propertyAlias': 'longDescription', valueExtractorName: 'DefaultSingleValuePropertyExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:availability', 'propertyAlias': 'stock', 'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:image_link', 'propertyAlias': 'image', 'valueExtractorName': 'DefaultMediaPickerPropertyValueExtractor' },
                             { uiId: nanoid(), 'nodeName': 'g:image_link', 'propertyAlias': 'images', 'valueExtractorName': 'DefaultMultipleMediaPickerPropertyValueExtractor' },
                         ],
                     });
                 } else {
-
                     const feedSetting = await getFeedSettingAsync(id);
                     vm.ready({
                         ...feedSetting,
@@ -136,23 +135,30 @@ angular
                         productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
                     });
                 }
+                $scope.$apply();
             };
 
             vm.ready = function (model) {
-                console.log(model);
                 vm.content = model;
                 vm.propertyAndNodeMappingVm = model.propertyNameMappings.map(x => ({
                     ...x,
                     uiId: nanoid(),
                     message: '',
                 }));
-                vm.page.loading = false;
+                vm.page.initializing = false;
 
                 // sync state
-                editorState.set(vm.content);
 
                 let pathToSync = ['-1', '1', storeId, '7428'];
                 navigationService.syncTree({ tree: 'commercesettings', path: pathToSync, forceReload: true }).then(function (syncArgs) {
+                    if (!vm.isCreateMode) {
+                        vm.page.menu.currentNode = {
+                            content: model,
+                            storeId,
+                            id,
+                            menuUrl: '/umbraco/backoffice/umbracocommerceproductfeeds/productfeedstreenode/getmenu',
+                        };
+                    }
                     vm.page.breadcrumb.items = ucUtils.createSettingsBreadcrumbFromTreeNode(syncArgs.node);
                     vm.page.breadcrumb.items.push({ name: vm.content?.name || 'Untitled' });
                 });
@@ -161,23 +167,28 @@ angular
             vm.saveAsync = async function () {
                 if (formHelper.submitForm({ scope: $scope, statusMessage: 'Saving...' })) {
                     vm.page.saveButtonState = 'busy';
-
                     saveSettingAsync({
                         ...vm.content,
                         feedName: vm.content.name,
                         propertyNameMappings: vm.propertyAndNodeMappingVm,
-                    }).then((savedId) => {
-                        vm.page.saveButtonState = 'success';
-                        formHelper.resetForm({
-                            scope: $scope,
-                        });
+                    })
+                        .then((savedId) => {
+                            $scope.$apply(() => {
+                                formHelper.resetForm({
+                                    scope: $scope,
+                                });
 
-                        notificationsService.success('Feed setting saved', `Feed setting \'${vm.content.name}\' successfully saved.`);
-                        if (vm.isCreateMode) {
-                            $location.path(editRoute(storeId, savedId));
-                        }
-                    }, handleApiError(`Failed to save setting '${vm.content.name}'`));
-                };
+                                vm.page.saveButtonState = 'success';
+                                notificationsService.success('Feed setting saved', `Feed setting \'${vm.content.name}\' successfully saved.`);
+
+                                if (vm.isCreateMode) {
+                                    $location.path(editRoute(storeId, savedId));
+                                }
+                            });
+                        }, handleApiError(`Failed to save setting '${vm.content.name}'`));
+                } else {
+                    vm.page.saveButtonState = 'error';
+                }
             };
 
             vm.onDeleteButtonClickAsync = async () => {
@@ -198,8 +209,10 @@ angular
                                 }
                             }, handleApiError('Failed to delete record.'))
                             .finally(() => {
-                                vm.page.deleteButtonState = 'init';
-                                vm.page.saveButtonState = 'init';
+                                $scope.$apply(() => {
+                                    vm.page.deleteButtonState = 'init';
+                                    vm.page.saveButtonState = 'init';
+                                });
                             });
                     },
                 };
@@ -245,6 +258,19 @@ angular
 
             vm.onClearFieldClick = (fieldName) => {
                 vm.content[fieldName] = '';
+            };
+
+            vm.onProductDocumentTypeAliasChange = async () => {
+                if (!vm.content.productDocumentTypeAliasVm || !vm.content.productDocumentTypeAliasVm.length) {
+                    vm.content.productDocumentTypeAlias = '';
+                    return;
+                }
+
+                vm.content.productDocumentTypeAlias = vm.content.productDocumentTypeAliasVm.join(';');
+            };
+
+            vm.onOpenFeedClick = () => {
+                window.open('/umbraco/umbracocommerceproductfeeds/productfeed/index?path=' + vm.content.feedRelativePath, '_blank');
             };
 
             // initialization call
