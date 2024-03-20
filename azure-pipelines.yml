@@ -72,9 +72,8 @@ stages:
           - task: CmdLine@2
             displayName: 'Build frontend'
             inputs:
-              workingDirectory: $(Build.SourcesDirectory)
+              workingDirectory: $(Build.SourcesDirectory)/src/frontend
               script: |
-                ls
                 npm i
                 npm run build
 
