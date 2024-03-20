@@ -8,7 +8,7 @@ using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
+namespace Umbraco.Commerce.ProductFeeds.Apis.Public
 {
     [PluginController(RouteParams.AreaName)]
     public class ProductFeedController : UmbracoApiController

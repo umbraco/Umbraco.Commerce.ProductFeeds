@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Core", "src\Umbraco.Commerce.ProductFeeds.Core\Umbraco.Commerce.ProductFeeds.Core.csproj", "{345539B5-D383-4448-9F61-67CD86630F39}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Web", "src\Umbraco.Commerce.ProductFeeds.Web\Umbraco.Commerce.ProductFeeds.Web.csproj", "{B8DE4FAC-0440-4FAB-AF63-A1BD7ED43D69}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A0DEA483-7FB6-4C5B-B801-EF5232E895D0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests", "tests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests.csproj", "{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds", "src\Umbraco.Commerce.ProductFeeds\Umbraco.Commerce.ProductFeeds.csproj", "{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,14 +27,14 @@ Global
 		{345539B5-D383-4448-9F61-67CD86630F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{345539B5-D383-4448-9F61-67CD86630F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{345539B5-D383-4448-9F61-67CD86630F39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8DE4FAC-0440-4FAB-AF63-A1BD7ED43D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8DE4FAC-0440-4FAB-AF63-A1BD7ED43D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8DE4FAC-0440-4FAB-AF63-A1BD7ED43D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8DE4FAC-0440-4FAB-AF63-A1BD7ED43D69}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ using System.Reflection;
 using Umbraco.Cms.Core.Manifest;
 using Umbraco.Commerce.ProductFeeds.Constants;
 
-namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
+namespace Umbraco.Commerce.ProductFeeds.Initializations
 {
     public class UmbracoCommerceProductFeedsManifestFilter : IManifestFilter
     {

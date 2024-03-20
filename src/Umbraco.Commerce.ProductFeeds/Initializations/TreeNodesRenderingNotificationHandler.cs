@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Trees;
 using Umbraco.Commerce.ProductFeeds.Constants;
 
-namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
+namespace Umbraco.Commerce.ProductFeeds.Initializations
 {
     /// <summary>
     /// Inject custom tree on menu rendering event.

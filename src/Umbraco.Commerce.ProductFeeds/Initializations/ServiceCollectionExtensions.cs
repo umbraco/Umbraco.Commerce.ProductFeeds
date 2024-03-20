@@ -13,7 +13,7 @@ using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 
-namespace Umbraco.Commerce.ProductFeeds.Web.Initializations
+namespace Umbraco.Commerce.ProductFeeds.Initializations
 {
     public static class ServiceCollectionExtensions
     {
