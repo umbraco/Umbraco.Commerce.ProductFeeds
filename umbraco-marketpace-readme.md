@@ -1,4 +1,4 @@
 ## Umbraco Commerce Product Feeds
-
-A plugin that helps generate product feeds. Supported feed types:
-- Google Merchant Center XML feed.
+Product feed generator for Umbraco Commerce.
+Supported feed type:
+- Google Merchant Center.

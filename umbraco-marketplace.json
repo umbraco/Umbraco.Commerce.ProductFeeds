@@ -10,7 +10,7 @@
   "LicenseTypes": [
     "Free"
   ],
-  "DocumentationUrl": "https://docs.umbraco.com/umbraco-commerce-payment-providers/stripe",
+  "DocumentationUrl": "https://github.com/umbraco/Umbraco.Commerce.ProductFeeds",
   "IssueTrackerUrl": "https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/issues",
   "PackageType": "Package",
   "PackagesByAuthor": [
@@ -35,6 +35,6 @@
   "Tags": [
     "umbraco",
     "ecommerce",
-    "paymentprovider"
+    "productfeeds"
   ]
 }
