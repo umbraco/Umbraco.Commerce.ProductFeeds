@@ -61,10 +61,29 @@ stages:
 
           - script: dotnet restore $(solution) --locked-mode
             displayName: Restore NuGet packages
+          
+          # Build frontend
+          - task: NodeTool@0
+            displayName: 'Install nodejs 20.x'
+            inputs:
+              versionSource: 'spec'
+              versionSpec: '20.x'
+
+          - task: CmdLine@2
+            displayName: 'Build frontend'
+            inputs:
+              script: |
+                npm i
+                npm run build
 
           # Build
           - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore -p:ContinuousIntegrationBuild=true
             displayName: Run dotnet build
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Running tests'
+            inputs:
+              command: 'test'
 
           # Pack
           - script: dotnet pack $(solution) --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/nupkg
