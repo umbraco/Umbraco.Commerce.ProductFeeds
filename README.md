@@ -12,4 +12,4 @@ Supported feed type:
 ## Working locally
 ### Frontend
 - Nodejs v20+.
-- Go to `./frontend/backoffice` folder and run `npm i` then `npm start`.
+- Go to `./src/frontend` folder and run `npm i` then `npm run build` to build frontend code.
