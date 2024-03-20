@@ -72,6 +72,7 @@ stages:
           - task: CmdLine@2
             displayName: 'Build frontend'
             inputs:
+              workingDirectory: $(Build.SourcesDirectory)/src/frontend
               script: |
                 npm i
                 npm run build
@@ -96,8 +97,9 @@ stages:
               targetPath: $(Build.ArtifactStagingDirectory)/nupkg
               artifactName: nupkg
 
+
           - task: PublishPipelineArtifact@1
             displayName: Publish build output
             inputs:
-              targetPath: $(Build.SourcesDirectory)
+              targetPath: $(Build.SourcesDirectory)/src
               artifactName: build_output
