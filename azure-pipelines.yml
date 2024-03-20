@@ -74,6 +74,7 @@ stages:
             inputs:
               workingDirectory: $(Agent.BuildDirectory)/src/frontend
               script: |
+                ls
                 npm i
                 npm run build
 
