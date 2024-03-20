@@ -97,8 +97,9 @@ stages:
               targetPath: $(Build.ArtifactStagingDirectory)/nupkg
               artifactName: nupkg
 
+
           - task: PublishPipelineArtifact@1
             displayName: Publish build output
             inputs:
-              targetPath: $(Build.SourcesDirectory)
+              targetPath: $(Build.SourcesDirectory)/src
               artifactName: build_output
