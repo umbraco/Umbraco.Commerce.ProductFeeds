@@ -72,7 +72,7 @@ stages:
           - task: CmdLine@2
             displayName: 'Build frontend'
             inputs:
-              workingDirectory: $(Agent.BuildDirectory)
+              workingDirectory: $(Build.SourcesDirectory)
               script: |
                 ls
                 npm i
