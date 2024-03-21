@@ -8,7 +8,31 @@
         novalidate
         val-form-manager>
 
-        <umb-editor-view ng-if="!vm.page.initializing">
+        <umb-editor-view ng-if="!vm.page.initializing && vm.page.notfound">
+            <umb-editor-container
+                class="form-horizontal">
+                <div class="uc-layout uc-layout--layout1">
+                    <div class="uc-layout__left">
+                        <umb-box>
+                            <umb-box-content>
+                                <div>
+                                    <div>Feed setting not found.</div>
+                                    <umb-button
+                                        type="button"
+                                        icon="fa fa-arrow-left"
+                                        button-style="link"
+                                        label="Back to list"
+                                        action="vm.back()">
+                                    </umb-button>
+                                </div>
+                            </umb-box-content>
+                        </umb-box>
+                    </div>
+                </div>
+            </umb-editor-container>
+        </umb-editor-view>
+
+        <umb-editor-view ng-if="!vm.page.initializing && !vm.page.notfound">
             <umb-editor-header
                 name="vm.content.name"
                 hide-icon="true"

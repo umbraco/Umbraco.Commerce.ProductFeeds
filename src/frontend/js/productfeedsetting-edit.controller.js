@@ -12,12 +12,10 @@ angular
         '$location',
         'formHelper',
         'appState',
-        'editorState',
         'notificationsService',
         'navigationService',
         'overlayService',
         'editorService',
-        'treeService',
 
         function (
             $scope,
@@ -25,29 +23,29 @@ angular
             $location,
             formHelper,
             appState,
-            editorState,
             notificationsService,
             navigationService,
             overlayService,
             editorService,
-            treeService,
         ) {
             const vm = this;
             let [storeId, id] = ucUtils.parseCompositeId($routeParams.id);
             vm.isCreateMode = !id;
-            vm.page = {};
-            vm.page.initializing = true;
-            vm.page.saveButtonState = 'init';
-            vm.page.deleteButtonState = 'init';
-
-            vm.page.menu = {};
-            vm.page.menu.currentSection = appState.getSectionState('currentSection');
-            vm.page.menu.currentNode = null;
-
-            vm.page.breadcrumb = {};
-            vm.page.breadcrumb.items = [];
-            vm.page.breadcrumb.itemClick = function (ancestor) {
-                $location.path(ancestor.routePath);
+            vm.page = {
+                initializing: true,
+                notfound: false,
+                saveButtonState: 'init',
+                deleteButtonState: 'init',
+                menu: {
+                    currentSection: appState.getSectionState('currentSection'),
+                    currentNode: null,
+                },
+                breadcrumb: {
+                    items: [],
+                    itemClick: function (ancestor) {
+                        $location.path(ancestor.routePath);
+                    },
+                },
             };
 
             vm.overlay = {
@@ -128,17 +126,27 @@ angular
                         ],
                     });
                 } else {
-                    const feedSetting = await getFeedSettingAsync(id);
-                    vm.ready({
-                        ...feedSetting,
-                        name: feedSetting.feedName,
-                        productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
-                    });
+                    getFeedSettingAsync(id)
+                        .then((feedSetting) => {
+                            vm.ready({
+                                ...feedSetting,
+                                name: feedSetting.feedName,
+                                productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
+                            });
+                        }, () => {
+                            vm.ready(null);
+                        });
                 }
                 $scope.$apply();
             };
 
             vm.ready = function (model) {
+                if (!model) {
+                    vm.page.notfound = true;
+                    vm.page.initializing = false;
+                    return;
+                }
+
                 vm.content = model;
                 vm.propertyAndNodeMappingVm = model.propertyNameMappings.map(x => ({
                     ...x,

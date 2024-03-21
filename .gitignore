@@ -473,3 +473,4 @@ $RECYCLE.BIN/
 ##
 /local_pack.bat
 src/Umbraco.Commerce.ProductFeeds/packages.lock.json
+**/wwwroot/angularjs
