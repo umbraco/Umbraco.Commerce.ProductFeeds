@@ -1,17 +1,13 @@
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.Common.Attributes;
-using Umbraco.Cms.Web.Common.Controllers;
-using Umbraco.Commerce.ProductFeeds.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Apis.Public
 {
-    [PluginController(RouteParams.AreaName)]
-    public class ProductFeedController : UmbracoApiController
+    public class ProductFeedController : ControllerBase
     {
         private readonly IProductFeedGeneratorFactory _feedGeneratorFactory;
         private readonly IProductFeedSettingsService _feedConfigService;
@@ -24,8 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Apis.Public
             _feedConfigService = feedConfigService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index(string path)
+        public async Task<IActionResult> Xml(string path)
         {
             ProductFeedSettingReadModel? feedSettings = await _feedConfigService
                 .FindSettingAsync(new FindSettingParams

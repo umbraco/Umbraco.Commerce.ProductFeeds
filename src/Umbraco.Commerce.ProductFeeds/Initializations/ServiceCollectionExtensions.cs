@@ -1,8 +1,10 @@
 using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Implementations;
+using Umbraco.Cms.Web.Common.ApplicationBuilder;
+using Umbraco.Commerce.ProductFeeds.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations;
@@ -11,6 +13,7 @@ using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
+using Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 
 namespace Umbraco.Commerce.ProductFeeds.Initializations
@@ -53,6 +56,23 @@ namespace Umbraco.Commerce.ProductFeeds.Initializations
                 .Append<DefaultMultipleMediaPickerPropertyValueExtractor>();
 
             services.AddPropertyValueExtractors();
+
+            // Custom routing
+            services.AddSingleton<CustomRouting>();
+            services.Configure<UmbracoPipelineOptions>(options =>
+            {
+                options.AddFilter(new UmbracoPipelineFilter(General.PackageId)
+                {
+                    Endpoints = applicationBuilder =>
+                    {
+                        applicationBuilder.UseEndpoints(e =>
+                        {
+                            CustomRouting customRouting = applicationBuilder.ApplicationServices.GetRequiredService<CustomRouting>();
+                            customRouting.CreateRoutes(e);
+                        });
+                    },
+                });
+            });
         }
 
         private static void AddPropertyValueExtractors(this IServiceCollection services)

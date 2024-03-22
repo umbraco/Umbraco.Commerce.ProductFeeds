@@ -15,8 +15,8 @@ namespace Umbraco.Commerce.ProductFeeds.Initializations
 
             PackageManifest manifest = new()
             {
-                PackageId = "Umbraco.Commerce.ProductFeeds",
-                PackageName = "Umbraco Commerce ProductFeeds",
+                PackageId = General.PackageId,
+                PackageName = "Umbraco Commerce Product Feeds",
                 Version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion?.Split('+')[0] ?? throw new InvalidOperationException("Unable to identity the assembly version."),
                 BundleOptions = BundleOptions.None,
                 AllowPackageTelemetry = true,

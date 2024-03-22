@@ -55,8 +55,10 @@
                                 <umb-control-group
                                     label="Feed Relative Path"
                                     class="required"
-                                    description="Must be unique among the feeds">
-                                    <input type="text"
+                                    description="Enter a url-friendly string. Value must be unique among the feeds.">
+                                    <input
+                                        placeholder="Enter a url-friendly string"
+                                        type="text"
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedRelativePath"
                                         required />
