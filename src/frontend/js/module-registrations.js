@@ -21,4 +21,4 @@ angular.module('umbraco.commerce.productfeeds').factory('commerceProductFeedsRou
     };
   }]);
 
-angular.module('umbraco.commerce').requires.push(MODULE.NAME);
+angular.module('umbraco').requires.push(MODULE.NAME);

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using NPoco;
+using NPoco.DatabaseTypes;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
@@ -27,11 +28,14 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             else
             {
                 Create.Table<UmbracoCommerceProductFeedSettingSchema>().Do();
-                Create
-                    .UniqueConstraint($"uc_{tableName}_feedRelativePath")
-                    .OnTable(tableName)
-                    .Column("feedRelativePath")
-                    .Do();
+                if (Context.SqlContext.DatabaseType is not SQLiteDatabaseType)
+                {
+                    Create
+                        .UniqueConstraint($"uc_{tableName}_feedRelativePath")
+                        .OnTable(tableName)
+                        .Column("feedRelativePath")
+                        .Do();
+                }
             }
         }
 
