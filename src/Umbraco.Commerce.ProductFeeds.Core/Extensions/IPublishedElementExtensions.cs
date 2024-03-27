@@ -1,7 +1,7 @@
 using System.Reflection;
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions
+namespace Umbraco.Commerce.ProductFeeds.Extensions
 {
     internal static class IPublishedElementExtensions
     {

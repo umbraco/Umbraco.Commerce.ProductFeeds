@@ -37,7 +37,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
 
             // Create a migration plan for a specific project/feature
             // We can then track that latest migration state/step for this project/feature
-            var migrationPlan = new MigrationPlan("uCommerceProductFeedSetting");
+            var migrationPlan = new MigrationPlan("UmbracoCommerceProductFeeds Migration");
 
             // This is the steps we need to take
             // Each step in the migration adds a unique value

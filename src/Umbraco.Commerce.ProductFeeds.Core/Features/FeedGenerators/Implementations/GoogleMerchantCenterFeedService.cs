@@ -6,7 +6,7 @@ using Umbraco.Commerce.Cms.Models;
 using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Extensions;
-using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
+using Umbraco.Commerce.ProductFeeds.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;

@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Umbraco.Cms.Core.Manifest;
-using Umbraco.Commerce.ProductFeeds.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Constants;
 
-namespace Umbraco.Commerce.ProductFeeds.Initializations
+namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
 {
     public class UmbracoCommerceProductFeedsManifestFilter : IManifestFilter
     {
