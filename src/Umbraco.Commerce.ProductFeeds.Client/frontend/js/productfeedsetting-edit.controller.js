@@ -278,7 +278,7 @@ angular
             };
 
             vm.onOpenFeedClick = () => {
-                window.open(`/umbraco/commerce/productfeed/xml/${vm.content.feedRelativePath}`, '_blank');
+                window.open(`/umbraco/commerce/productfeed/${vm.content.feedRelativePath}`, '_blank');
             };
 
             // initialization call

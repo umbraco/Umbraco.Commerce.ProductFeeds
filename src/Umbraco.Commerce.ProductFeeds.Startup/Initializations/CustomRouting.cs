@@ -23,10 +23,9 @@ namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
         {
             endpoints.MapControllerRoute(
                 RouteParams.AreaName,
-                _globalSettings.GetUmbracoMvcArea(_hostingEnvironment) + "/commerce/productfeed/{action}/{path}",
+                _globalSettings.GetUmbracoMvcArea(_hostingEnvironment) + "/commerce/productfeed/{path}/{action}",
                 new
                 {
-                    //controller = ControllerExtensions.GetControllerName(typeof(ProductFeedController)),
                     controller = "ProductFeed",
                     Action = "Xml",
                 });
