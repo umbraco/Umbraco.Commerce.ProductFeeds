@@ -199,35 +199,6 @@ angular
                 }
             };
 
-            vm.onDeleteButtonClickAsync = async () => {
-                let overlay = {
-                    title: 'Caution',
-                    content: `Are you sure you want to delete '${vm.content.name}'?`,
-                    disableBackdropClick: false,
-                    disableEscKey: false,
-                    submit: function () {
-                        overlayService.close();
-                        vm.page.deleteButtonState = 'busy';
-                        vm.page.saveButtonState = 'busy';
-                        deleteAsync(vm.content.id)
-                            .then(success => {
-                                if (success) {
-                                    notificationsService.success('Deleted successfully.');
-                                    vm.back();
-                                }
-                            }, handleApiError('Failed to delete record.'))
-                            .finally(() => {
-                                $scope.$apply(() => {
-                                    vm.page.deleteButtonState = 'init';
-                                    vm.page.saveButtonState = 'init';
-                                });
-                            });
-                    },
-                };
-
-                overlayService.confirmDelete(overlay);
-            };
-
             vm.onAddPropertyMappingRowClick = () => {
                 vm.propertyAndNodeMappingVm.push({
                     uiId: nanoid(),

@@ -229,7 +229,8 @@
                             <umb-box-header title-key="general_info"></umb-box-header>
                             <umb-box-content class="block-form">
                                 <umb-control-group label="Id">
-                                    <uc-id-label value="vm.content.id"></uc-id-label>
+                                    <uc-id-label ng-if="!!vm.content.id" value="vm.content.id"></uc-id-label>
+                                    <div ng-if="!vm.content.id"><umb-badge size="xs">Unsaved</umb-badge></div>
                                 </umb-control-group>
                                 <umb-control-group label="Store Id">
                                     <uc-id-label value="vm.content.storeId"></uc-id-label>
@@ -251,17 +252,6 @@
                 </umb-editor-footer-content-left>
 
                 <umb-editor-footer-content-right>
-
-                    <umb-button
-                        ng-if="!vm.isCreateMode"
-                        type="button"
-                        icon="icon-trash"
-                        button-style="danger"
-                        state="vm.page.deleteButtonState"
-                        shortcut="ctrl+delete"
-                        label-key="actions_delete"
-                        action="vm.onDeleteButtonClickAsync()">
-                    </umb-button>
 
                     <umb-button
                         ng-if="!!vm.content.feedRelativePath && !vm.isCreateMode"
