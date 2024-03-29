@@ -24,6 +24,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
             _logger = logger;
         }
 
+        /// <inheritdoc/>
         public ICollection<IPublishedContent> GetPublishedProducts(GetPublishedProductsParams parameters)
         {
             ArgumentNullException.ThrowIfNull(parameters);
