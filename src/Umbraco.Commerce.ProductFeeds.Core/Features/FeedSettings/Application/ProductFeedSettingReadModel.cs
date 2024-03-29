@@ -23,7 +23,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
         public required string FeedRelativePath { get; set; }
 
 #pragma warning disable CA2227 // Collection properties should be read only
-        public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = new HashSet<PropertyValueMapping>();
+        public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = [];
 #pragma warning restore CA2227 // Collection properties should be read only
     }
 }

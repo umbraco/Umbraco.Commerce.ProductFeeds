@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Hosting;
 using Umbraco.Cms.Web.Common.Routing;
-using Umbraco.Commerce.ProductFeeds.Core.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 
 namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
 {

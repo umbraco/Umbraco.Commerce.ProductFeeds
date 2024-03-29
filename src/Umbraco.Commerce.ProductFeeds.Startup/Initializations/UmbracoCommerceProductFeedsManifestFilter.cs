@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Umbraco.Cms.Core.Manifest;
-using Umbraco.Commerce.ProductFeeds.Core.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 
 namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
 {

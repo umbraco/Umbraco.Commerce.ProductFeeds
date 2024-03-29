@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Commerce.Core;
-using Umbraco.Commerce.ProductFeeds.Core.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations;
@@ -39,9 +39,16 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
             return ucBuilder;
         }
 
+#pragma warning disable CA1062 // Validate arguments of public methods
         public static SingleValuePropertyExtractorCollectionBuilder SingleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.GetUmbracoBuilder().WithCollectionBuilder<SingleValuePropertyExtractorCollectionBuilder>();
         public static MultipleValuePropertyExtractorCollectionBuilder MultipleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.GetUmbracoBuilder().WithCollectionBuilder<MultipleValuePropertyExtractorCollectionBuilder>();
+#pragma warning restore CA1062 // Validate arguments of public methods
 
+        /// <summary>
+        /// A hack using reflection to get <see cref="IUmbracoBuilder"/> property inside <see cref="IUmbracoCommerceBuilder"/>.
+        /// </summary>
+        /// <param name="ucBuilder"></param>
+        /// <returns></returns>
         private static IUmbracoBuilder GetUmbracoBuilder(this IUmbracoCommerceBuilder ucBuilder)
         {
             var umbBuilder = ucBuilder

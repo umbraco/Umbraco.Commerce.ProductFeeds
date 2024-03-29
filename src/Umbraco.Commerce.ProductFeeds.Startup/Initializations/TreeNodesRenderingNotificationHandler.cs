@@ -1,7 +1,7 @@
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Trees;
-using Umbraco.Commerce.ProductFeeds.Core.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 
 namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
 {
