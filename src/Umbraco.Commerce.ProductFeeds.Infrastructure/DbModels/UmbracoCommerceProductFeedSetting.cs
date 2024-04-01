@@ -16,9 +16,12 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
 
         public string FeedDescription { get; set; } = string.Empty;
 
-        public string ProductDocumentTypeAlias { get; set; } = string.Empty;
+        /// <summary>
+        /// Values are separated by ';'.
+        /// </summary>
+        public string ProductDocumentTypeAliases { get; set; } = string.Empty;
 
-        public Guid? ProductChildVariantTypeKey { get; set; }
+        public string? ProductChildVariantTypeAlias { get; set; }
 
         public Guid ProductRootKey { get; set; }
 

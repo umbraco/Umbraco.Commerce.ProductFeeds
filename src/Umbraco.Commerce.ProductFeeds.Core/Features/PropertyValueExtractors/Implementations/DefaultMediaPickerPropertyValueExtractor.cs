@@ -6,7 +6,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
 {
     public class DefaultMediaPickerPropertyValueExtractor : ISingleValuePropertyExtractor
     {
-        public string Name => nameof(DefaultMediaPickerPropertyValueExtractor);
+        public string Id => nameof(DefaultMediaPickerPropertyValueExtractor);
+
+        public string DisplayName => "Default Media Picker Property Value Extractor";
 
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)

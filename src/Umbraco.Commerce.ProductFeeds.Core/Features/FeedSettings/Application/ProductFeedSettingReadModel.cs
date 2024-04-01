@@ -1,12 +1,16 @@
+using Umbraco.Commerce.Extensions;
+
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
+
+#pragma warning disable CA2227 // Collection properties should be read only
     public class ProductFeedSettingReadModel
     {
         public Guid Id { get; set; }
 
         public ProductFeedType FeedType { get; set; }
 
-        public string FeedTypeName => FeedType.ToString();
+        public string FeedTypeName => FeedType.GetDescription();
 
         public required string FeedName { get; set; }
 
@@ -16,14 +20,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public Guid ProductRootKey { get; set; }
 
-        public required string ProductDocumentTypeAlias { get; set; }
+        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; }
 
-        public Guid? ProductChildVariantTypeKey { get; set; }
+        public string? ProductChildVariantTypeAlias { get; set; }
 
         public required string FeedRelativePath { get; set; }
 
-#pragma warning disable CA2227 // Collection properties should be read only
         public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = [];
-#pragma warning restore CA2227 // Collection properties should be read only
     }
+#pragma warning restore CA2227 // Collection properties should be read only
 }

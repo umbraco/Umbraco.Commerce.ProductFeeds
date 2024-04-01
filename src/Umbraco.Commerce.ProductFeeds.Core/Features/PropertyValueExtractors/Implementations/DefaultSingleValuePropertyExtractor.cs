@@ -9,7 +9,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
     /// </summary>
     public class DefaultSingleValuePropertyExtractor : ISingleValuePropertyExtractor
     {
-        public string Name => nameof(DefaultSingleValuePropertyExtractor);
+        public string Id => nameof(DefaultSingleValuePropertyExtractor);
+
+        public string DisplayName => "Default Single Value Property Extractor";
 
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)

@@ -18,9 +18,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 
         public Guid ProductRootKey { get; set; }
 
-        public required string ProductDocumentTypeAlias { get; set; }
+        public required string ProductDocumentTypeAliases { get; set; }
 
-        public Guid? ProductChildVariantTypeKey { get; set; }
+        public string? ProductChildVariantTypeAlias { get; set; }
 
 #pragma warning disable CA2227 // Collection properties should be read only
         public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = [];

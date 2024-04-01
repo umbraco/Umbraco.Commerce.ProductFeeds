@@ -12,15 +12,15 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
         }
 
         /// <inheritdoc/>
-        public ISingleValuePropertyExtractor GetExtractor(string? uniqueExtractorName = null)
+        public ISingleValuePropertyExtractor GetExtractor(string? extractorId = null)
         {
-            if (string.IsNullOrWhiteSpace(uniqueExtractorName))
+            if (string.IsNullOrWhiteSpace(extractorId))
             {
-                uniqueExtractorName = nameof(DefaultSingleValuePropertyExtractor);
+                extractorId = nameof(DefaultSingleValuePropertyExtractor);
             }
 
-            ISingleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Name == uniqueExtractorName)
-                ?? throw new InvalidOperationException($"Can't find property extractor with name '{uniqueExtractorName}'");
+            ISingleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Id == extractorId)
+                ?? throw new InvalidOperationException($"Can't find property extractor with name '{extractorId}'");
 
             return valueExtractor;
         }

@@ -86,76 +86,102 @@
                                     <select
                                         class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.feedType"
-                                        ng-options="item for item in vm.options.feedTypes"
+                                        ng-options="item.value as item.label for item in vm.options.feedTypes"
                                         required>
                                         <option value="" selected disabled>-- Select a feed type --</option>
                                     </select>
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Product Document Type Alias"
+                                    label="Product Document Type"
                                     class="required"
                                     description="The published content of this document type will be included in the feed">
-                                    <select
-                                        class="umb-property-editor umb-dropdown"
-                                        ng-change="vm.onProductDocumentTypeAliasChange()"
-                                        ng-model="vm.content.productDocumentTypeAliasVm"
-                                        ng-options="item for item in vm.options.documentTypeAliases"
-                                        multiple="true"
-                                        required
-                                        style="min-height: 20em;">
-                                    </select>
-                                </umb-control-group>
+                                    <div>
+                                        <umb-node-preview
+                                            ng-repeat="docType in vm.preview.productDocumentTypeAliasesVm"
+                                            icon="docType.icon"
+                                            name="docType.name"
+                                            published="true"
+                                            description="docType.alias"
+                                            sortable="false"
+                                            allow-remove="true"
+                                            allow-open="false"
+                                            on-remove="vm.onRemoveProductDocumentType(docType.id)">
+                                        </umb-node-preview>
 
-                                <umb-control-group
-                                    label="Product Child Variant Type Key"
-                                    description="Use this when you use child variants implementation"
-                                    class="">
-                                    <input type="text"
-                                        class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.productChildVariantTypeKey"
-                                        disabled />
-                                    <div class="ucpf-button-group">
-                                        <umb-button
-                                            action="vm.onOpenContentTypePicker('productChildVariantTypeKey')"
-                                            icon="icon-search"
+                                        <button
                                             type="button"
-                                            button-style="action"
-                                            label="Select child variant type"></umb-button>
-
-                                        <umb-button
-                                            ng-if="!!vm.content.productChildVariantTypeKey"
-                                            action="vm.onClearFieldClick('productChildVariantTypeKey')"
-                                            icon="icon-delete"
-                                            type="button"
-                                            button-style="default"
-                                            label="Clear"></umb-button>
+                                            class="umb-node-preview-add"
+                                            ng-click="vm.onOpenContentTypePicker('productDocumentTypeAliasesVm', true)"
+                                            aria-label="Add item">
+                                            <localize key="general_add">Add</localize>
+                                            <span class="sr-only">...</span>
+                                        </button>
                                     </div>
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Product Root Key"
+                                    label="Product Child Variant Type"
+                                    description="Use this when you use child variants implementation"
+                                    class="">
+                                    <div>
+                                        <umb-node-preview
+                                            ng-if="!!vm.preview.productChildVariantTypeAlias"
+                                            icon="vm.preview.productChildVariantTypeAlias.icon"
+                                            name="vm.preview.productChildVariantTypeAlias.name"
+                                            published="vm.preview.productChildVariantTypeAlias.metaData.IsPublished"
+                                            description="vm.preview.productChildVariantTypeAlias.alias"
+                                            sortable="false"
+                                            allow-remove="true"
+                                            allow-open="false"
+                                            on-remove="vm.onClearFieldClick('productChildVariantTypeAlias')">
+                                        </umb-node-preview>
+
+                                        <button
+                                            type="button"
+                                            ng-show="!vm.content.productChildVariantTypeAlias"
+                                            class="umb-node-preview-add"
+                                            ng-click="vm.onOpenContentTypePicker('productChildVariantTypeAlias')"
+                                            aria-label="Add item">
+                                            <localize key="general_add">Add</localize>
+                                            <span class="sr-only">...</span>
+                                        </button>
+                                    </div>
+                                </umb-control-group>
+
+                                <umb-control-group
+                                    label="Product Root"
                                     description="Select the root for products. Only products under this root will be included in the feed."
                                     class="required">
-                                    <input type="text"
-                                        class="umb-property-editor umb-textstring textstring"
-                                        ng-model="vm.content.productRootKey"
-                                        required
-                                        disabled />
-                                    <div class="ucpf-button-group">
-                                        <umb-button
-                                            action="vm.onOpenContentPicker('productRootKey')"
-                                            icon="icon-search"
-                                            type="button"
-                                            button-style="action"
-                                            label="Select product root"></umb-button>
-                                        <umb-button
-                                            ng-if="!!vm.content.productRootKey"
-                                            action="vm.onClearFieldClick('productRootKey')"
-                                            icon="icon-delete"
-                                            type="button"
-                                            button-style="default"
-                                            label="Clear"></umb-button>
+
+                                    <div class="umb-contentpicker">
+                                        <p ng-if="vm.preview.productRootKey.trashed">
+                                            <localize key="contentPicker_pickedTrashedItem"></localize>
+                                        </p>
+
+                                        <div>
+                                            <umb-node-preview
+                                                ng-if="!!vm.preview.productRootKey"
+                                                icon="vm.preview.productRootKey.icon"
+                                                name="vm.preview.productRootKey.name"
+                                                published="vm.preview.productRootKey.metaData.IsPublished"
+                                                description="vm.preview.productRootKey.key"
+                                                sortable="false"
+                                                allow-remove="true"
+                                                allow-open="false"
+                                                on-remove="vm.onClearFieldClick('productRootKey')">
+                                            </umb-node-preview>
+
+                                            <button
+                                                type="button"
+                                                ng-show="!vm.content.productRootKey"
+                                                class="umb-node-preview-add"
+                                                ng-click="vm.onOpenContentPicker('productRootKey')"
+                                                aria-label="Add item">
+                                                <localize key="general_add">Add</localize>
+                                                <span class="sr-only">...</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                 </umb-control-group>
@@ -164,15 +190,20 @@
                                     label="Property And Node Mapping"
                                     description="Map between property alias and the node under <item>"
                                     class="required">
-                                    <div class="prop-mapping-row">
-                                        <div class="prop-mapping-col text-right" style="margin-bottom: .5em;">
-                                            <umb-button
-                                                type="button"
-                                                icon="icon-add"
-                                                button-style="primary"
-                                                label="Add Mapping"
-                                                action="vm.onAddPropertyMappingRowClick()">
-                                            </umb-button>
+
+                                    <div class="prop-mapping-row" style="font-weight: 600;">
+                                        <div class="prop-mapping-col">
+                                            <div class="umb-property-editor">Node name in feed</div>
+                                        </div>
+                                        <div class="prop-mapping-col"
+                                            style="flex:0 0 150px;">
+                                            <div class="umb-property-editor">Property alias</div>
+                                        </div>
+                                        <div class="prop-mapping-col">
+                                            <div class="umb-property-editor">Value extractor</div>
+                                        </div>
+                                        <div class="prop-mapping-col" style="flex:0 0 100px;">
+                                            <div class="text-center"></div>
                                         </div>
                                     </div>
 
@@ -189,7 +220,8 @@
                                                 required />
                                         </div>
 
-                                        <div class="prop-mapping-col">
+                                        <div class="prop-mapping-col"
+                                            style="flex:0 0 150px;">
                                             <input
                                                 class="umb-property-editor umb-textstring prop-mapping-control"
                                                 type="text"
@@ -208,15 +240,27 @@
                                                 required>
                                             </select>
                                         </div>
-                                        <div class="prop-mapping-col text-right"
+                                        <div class="prop-mapping-col"
                                             style="flex:0 0 100px;">
-                                            <umb-button
+                                            <button
                                                 type="button"
-                                                icon="icon-trash"
-                                                button-style="default"
-                                                label="Delete"
-                                                action="vm.onDeletePropertyMappingRowClick(item.uiId)">
-                                            </umb-button>
+                                                ng-click="vm.onDeletePropertyMappingRowClick(item.uiId)"
+                                                class="btn umb-button--xs dropdown-toggle umb-button-group__toggle"
+                                                title="Remove Value"
+                                                aria-hidden="true"
+                                                style="font-size: 1.2em;">
+                                                <i class="icon icon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="prop-mapping-row">
+                                        <div class="prop-mapping-col">
+                                            <button type="button" class="umb-node-preview-add mt-10"
+                                                ng-click="vm.onAddPropertyMappingRowClick()">
+                                                <span>Add Value</span>
+                                                <span class="sr-only">...</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </umb-control-group>

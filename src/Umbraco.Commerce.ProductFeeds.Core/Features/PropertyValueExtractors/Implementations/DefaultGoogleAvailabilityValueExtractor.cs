@@ -9,7 +9,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
     /// </summary>
     public class DefaultGoogleAvailabilityValueExtractor : ISingleValuePropertyExtractor
     {
-        public string Name => nameof(DefaultGoogleAvailabilityValueExtractor);
+        public string Id => nameof(DefaultGoogleAvailabilityValueExtractor);
+
+        public string DisplayName => "Default Google Availability Property Value Extractor";
 
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)

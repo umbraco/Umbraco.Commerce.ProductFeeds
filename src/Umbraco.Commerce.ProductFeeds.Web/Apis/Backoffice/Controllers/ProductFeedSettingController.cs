@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Controllers;
+using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
@@ -82,8 +82,18 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet]
         public IActionResult GetDocumentTypes()
         {
-            IEnumerable<string> aliases = _contentTypeService.GetAllContentTypeAliases()
-                .OrderBy(x => x);
+            var aliases = _contentTypeService
+                .GetAll()
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Icon,
+                    x.Name,
+                    x.Description,
+                    x.Key,
+                    x.Alias,
+                })
+                .OrderBy(x => x.Name);
 
             return Ok(aliases);
         }
@@ -91,7 +101,14 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet]
         public IActionResult GetFeedTypes()
         {
-            return Ok(new string[] { ProductFeedType.GoogleMerchantCenter.ToString() });
+            return Ok(new[]
+            {
+                new
+                {
+                    value = ProductFeedType.GoogleMerchantCenter.ToString(),
+                    label = ProductFeedType.GoogleMerchantCenter.GetDescription(),
+                },
+            });
         }
 
         [HttpPost]
@@ -110,7 +127,8 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet]
         public IActionResult GetPropertyValueExtractors()
         {
-            return Ok(_singleValuePropertyExtractors.Select(x => x.Name).Concat(_multipleValuePropertyExtractors.Select(x => x.Name)));
+            return Ok(_singleValuePropertyExtractors.Select(x => new { value = x.Id, label = x.DisplayName })
+                .Concat(_multipleValuePropertyExtractors.Select(x => new { value = x.Id, label = x.DisplayName })));
         }
     }
 }

@@ -72,14 +72,14 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
             {
                 ProductRootKey = feedSetting.ProductRootKey,
-                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAlias.Split(';'),
+                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
             });
 
             // render doc/channel/item nodes
             foreach (IPublishedContent product in products)
             {
                 IEnumerable<IPublishedContent> childVariants = product.Children
-                    .Where(x => x.ContentType.Key == feedSetting.ProductChildVariantTypeKey)
+                    .Where(x => x.ContentType.Alias == feedSetting.ProductChildVariantTypeAlias)
                     .ToList();
                 if (childVariants.Any())
                 {

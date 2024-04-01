@@ -4,6 +4,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application
     {
         public Guid ProductRootKey { get; set; }
 
-        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; } = Enumerable.Empty<string>();
+        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; } = [];
     }
 }

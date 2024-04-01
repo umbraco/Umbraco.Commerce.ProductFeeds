@@ -5,8 +5,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
         /// <summary>
         /// Get the property extractor. Returns the default extractor implementation if no extractor name is provided.
         /// </summary>
-        /// <param name="uniqueExtractorName"></param>
+        /// <param name="extractorId"></param>
         /// <returns></returns>
-        ISingleValuePropertyExtractor GetExtractor(string? uniqueExtractorName = null);
+        ISingleValuePropertyExtractor GetExtractor(string? extractorId = null);
     }
 }
