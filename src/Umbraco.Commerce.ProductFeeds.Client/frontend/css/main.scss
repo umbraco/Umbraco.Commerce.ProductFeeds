@@ -1,10 +1,23 @@
 .umbraco-commerce-product-feeds {
     $red: red;
+    $bgDanger: rgb(255 0 0 / 20%);
 
-    .umb-property.required label>span::after {
-        content: '*';
-        color: $red;
+
+    .show-validation {
+        .error {
+            background-color: $bgDanger;
+        }
     }
+
+    .umb-property {
+        &.required {
+            label>span::after {
+                content: '*';
+                color: $red;
+            }
+        }
+    }
+
 
     .prop-mapping-row {
         display: flex;

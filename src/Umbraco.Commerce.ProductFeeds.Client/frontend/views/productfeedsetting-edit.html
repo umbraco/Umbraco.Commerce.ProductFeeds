@@ -97,8 +97,14 @@
                                     class="required"
                                     description="The published content of this document type will be included in the feed">
                                     <div>
+                                        <!-- this is a cheap way to do validation -->
+                                        <input
+                                            class="hide"
+                                            ng-model="vm.content.productDocumentTypeAliases"
+                                            required />
+
                                         <umb-node-preview
-                                            ng-repeat="docType in vm.preview.productDocumentTypeAliasesVm"
+                                            ng-repeat="docType in vm.preview.productDocumentTypeAliases"
                                             icon="docType.icon"
                                             name="docType.name"
                                             published="true"
@@ -112,7 +118,7 @@
                                         <button
                                             type="button"
                                             class="umb-node-preview-add"
-                                            ng-click="vm.onOpenContentTypePicker('productDocumentTypeAliasesVm', true)"
+                                            ng-click="vm.onAddProductDocumentTypeClick()"
                                             aria-label="Add item">
                                             <localize key="general_add">Add</localize>
                                             <span class="sr-only">...</span>
@@ -160,6 +166,12 @@
                                         </p>
 
                                         <div>
+                                            <!-- this is a cheap way to do validation -->
+                                            <input
+                                                class="hide"
+                                                ng-model="vm.content.productRootKey"
+                                                required />
+
                                             <umb-node-preview
                                                 ng-if="!!vm.preview.productRootKey"
                                                 icon="vm.preview.productRootKey.icon"
@@ -189,7 +201,8 @@
                                 <umb-control-group
                                     label="Property And Node Mapping"
                                     description="Map between property alias and the node under <item>"
-                                    class="required">
+                                    class="required"
+                                    label-for="">
 
                                     <div class="prop-mapping-row" style="font-weight: 600;">
                                         <div class="prop-mapping-col">
