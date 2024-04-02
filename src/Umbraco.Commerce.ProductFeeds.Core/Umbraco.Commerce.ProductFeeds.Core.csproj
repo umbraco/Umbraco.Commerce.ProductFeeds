@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Description>Contains the main logic of the plugin</Description>
     <Nullable>enable</Nullable>
     <NoWarn>IDE0007</NoWarn>
   </PropertyGroup>
