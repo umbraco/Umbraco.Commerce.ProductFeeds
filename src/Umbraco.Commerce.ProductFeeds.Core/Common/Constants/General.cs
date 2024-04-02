@@ -1,4 +1,4 @@
-namespace Umbraco.Commerce.ProductFeeds.Constants
+namespace Umbraco.Commerce.ProductFeeds.Core.Common.Constants
 {
     internal static class General
     {

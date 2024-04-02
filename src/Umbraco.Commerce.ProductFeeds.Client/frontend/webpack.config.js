@@ -7,7 +7,7 @@ module.exports = {
         'umbraco-commerce-product-feeds': './js/index.js',
     },
     output: {
-        path: path.resolve(__dirname, '../Umbraco.Commerce.ProductFeeds/wwwroot/angularjs'),
+        path: path.resolve(__dirname, '../../Umbraco.Commerce.ProductFeeds.Web/wwwroot/angularjs'),
         filename: '[name].js',
     },
     module: {

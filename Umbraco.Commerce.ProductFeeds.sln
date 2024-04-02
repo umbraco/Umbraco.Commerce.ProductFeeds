@@ -11,7 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A0DEA483
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests", "tests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests\Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests.csproj", "{1E9407C0-4D66-45B2-BEAC-E179EEE3303E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds", "src\Umbraco.Commerce.ProductFeeds\Umbraco.Commerce.ProductFeeds.csproj", "{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Web", "src\Umbraco.Commerce.ProductFeeds.Web\Umbraco.Commerce.ProductFeeds.Web.csproj", "{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds.Startup", "src\Umbraco.Commerce.ProductFeeds.Startup\Umbraco.Commerce.ProductFeeds.Startup.csproj", "{B1BE5714-3D0F-4A98-B1A6-47ECC5756A82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds", "src\Umbraco.Commerce.ProductFeeds\Umbraco.Commerce.ProductFeeds.csproj", "{3AD792B3-34E1-4ADF-9037-D1FC9A149611}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds.Client", "src\Umbraco.Commerce.ProductFeeds.Client\Umbraco.Commerce.ProductFeeds.Client.csproj", "{1BE67FB6-841C-4B64-8945-95FB18A8B607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +41,18 @@ Global
 		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFCCEDCF-9A35-4C88-8CF6-20303832E5E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1BE5714-3D0F-4A98-B1A6-47ECC5756A82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1BE5714-3D0F-4A98-B1A6-47ECC5756A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1BE5714-3D0F-4A98-B1A6-47ECC5756A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1BE5714-3D0F-4A98-B1A6-47ECC5756A82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD792B3-34E1-4ADF-9037-D1FC9A149611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD792B3-34E1-4ADF-9037-D1FC9A149611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD792B3-34E1-4ADF-9037-D1FC9A149611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD792B3-34E1-4ADF-9037-D1FC9A149611}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

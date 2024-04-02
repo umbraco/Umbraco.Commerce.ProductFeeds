@@ -1,12 +1,14 @@
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
+using Umbraco.Commerce.ProductFeeds.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
     public class DefaultMediaPickerPropertyValueExtractor : ISingleValuePropertyExtractor
     {
-        public string Name => nameof(DefaultMediaPickerPropertyValueExtractor);
+        public string Id => nameof(DefaultMediaPickerPropertyValueExtractor);
+
+        public string DisplayName => "Default Media Picker Property Value Extractor";
 
         /// <inheritdoc/>
         public string Extract(IPublishedElement content, string propertyAlias, IPublishedElement? fallbackElement)

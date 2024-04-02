@@ -14,8 +14,8 @@ angular
         'appState',
         'notificationsService',
         'navigationService',
-        'overlayService',
         'editorService',
+        'entityResource',
 
         function (
             $scope,
@@ -25,8 +25,8 @@ angular
             appState,
             notificationsService,
             navigationService,
-            overlayService,
             editorService,
+            entityResource,
         ) {
             const vm = this;
             let [storeId, id] = ucUtils.parseCompositeId($routeParams.id);
@@ -48,30 +48,16 @@ angular
                 },
             };
 
-            vm.overlay = {
-                title: '',
-                subtitle: '',
-                editModel: '',
-                show: false,
-                submitButtonLabel: 'SUBMIT BUTTON TEXT',
-                closeButtonLabel: 'CLOSE BUTTON TEXT',
-                submit: function (model) {
-                    vm.overlay.show = false;
-                    vm.overlay = null;
-                },
-                close: function (oldModel) {
-                    vm.overlay.show = false;
-                    vm.overlay = null;
-                },
-            };
-
             vm.options = {
                 feedTypes: [],
-                documentTypeAliases: [],
+                documentTypes: [],
                 propertyValueExtractors: [],
             };
 
             vm.content = {};
+            vm.preview = {
+                productDocumentTypeAliasesVm: [],
+            };
 
             vm.propertyAndNodeMappingVm = [];
 
@@ -90,7 +76,7 @@ angular
             vm.initAsync = async function () {
                 const [
                     feedTypes,
-                    documentTypeAliases,
+                    documentTypes,
                     propertyValueExtractors,
                 ] = await Promise.all([
                     getFeedTypesAsync(),
@@ -99,7 +85,7 @@ angular
                 ]);
 
                 vm.options.feedTypes = feedTypes;
-                vm.options.documentTypeAliases = documentTypeAliases;
+                vm.options.documentTypes = documentTypes;
                 vm.options.propertyValueExtractors = [
                     {
                         label: 'Select a property value extractor',
@@ -107,8 +93,7 @@ angular
                         disabled: true,
                     },
                     ...propertyValueExtractors.map(x => ({
-                        label: x,
-                        value: x,
+                        ...x,
                         disabled: false,
                     }))];
 
@@ -131,7 +116,6 @@ angular
                             vm.ready({
                                 ...feedSetting,
                                 name: feedSetting.feedName,
-                                productDocumentTypeAliasVm: feedSetting.productDocumentTypeAlias.split(';'),
                             });
                         }, () => {
                             vm.ready(null);
@@ -153,6 +137,19 @@ angular
                     uiId: nanoid(),
                     message: '',
                 }));
+
+                if (!vm.isCreateMode) {
+                    vm.preview.productDocumentTypeAliasesVm = vm.options.documentTypes.filter(x => model.productDocumentTypeAliases.includes(x.alias));
+
+                    // load previews
+                    entityResource.getById(model.productRootKey, 'Document')
+                        .then(function (entity) {
+                            vm.preview['productRootKey'] = entity;
+                        });
+
+                    vm.preview.productChildVariantTypeAlias = vm.options.documentTypes.find(x => x.alias === model.productChildVariantTypeAlias);
+                }
+
                 vm.page.initializing = false;
 
                 // sync state
@@ -179,6 +176,7 @@ angular
                         ...vm.content,
                         feedName: vm.content.name,
                         propertyNameMappings: vm.propertyAndNodeMappingVm,
+                        productDocumentTypeAliases: vm.preview.productDocumentTypeAliasesVm.map(x => x.alias).join(';'),
                     })
                         .then((savedId) => {
                             $scope.$apply(() => {
@@ -197,35 +195,6 @@ angular
                 } else {
                     vm.page.saveButtonState = 'error';
                 }
-            };
-
-            vm.onDeleteButtonClickAsync = async () => {
-                let overlay = {
-                    title: 'Caution',
-                    content: `Are you sure you want to delete '${vm.content.name}'?`,
-                    disableBackdropClick: false,
-                    disableEscKey: false,
-                    submit: function () {
-                        overlayService.close();
-                        vm.page.deleteButtonState = 'busy';
-                        vm.page.saveButtonState = 'busy';
-                        deleteAsync(vm.content.id)
-                            .then(success => {
-                                if (success) {
-                                    notificationsService.success('Deleted successfully.');
-                                    vm.back();
-                                }
-                            }, handleApiError('Failed to delete record.'))
-                            .finally(() => {
-                                $scope.$apply(() => {
-                                    vm.page.deleteButtonState = 'init';
-                                    vm.page.saveButtonState = 'init';
-                                });
-                            });
-                    },
-                };
-
-                overlayService.confirmDelete(overlay);
             };
 
             vm.onAddPropertyMappingRowClick = () => {
@@ -247,17 +216,31 @@ angular
                     multiPicker: false,
                     submit: (currentService) => {
                         vm.content[targetField] = currentService.selection[0].key;
+                        vm.preview[targetField] = currentService.selection[0];
                         editorService.close();
                     },
                     close: () => { editorService.close(); },
                 });
             };
 
-            vm.onOpenContentTypePicker = (targetField) => {
+            vm.onOpenContentTypePicker = (targetField, multiPicker = false) => {
                 editorService.contentTypePicker({
-                    multiPicker: false,
+                    multiPicker,
                     submit: (currentService) => {
                         vm.content[targetField] = currentService.selection[0].key;
+                        if (!multiPicker) {
+                            const selected = vm.options.documentTypes.find(x => x.id === currentService.selection[0].id);
+                            vm.preview[targetField] = selected;
+                            vm.content[targetField] = selected.alias;
+                        }
+                        else {
+                            const selectedIds = currentService.selection.map(x => x.id);
+                            vm.preview[targetField] = [
+                                ...vm.preview[targetField],
+                                ...vm.options.documentTypes.filter(x => selectedIds.includes(x.id)),
+                            ];
+                        }
+
                         editorService.close();
                     },
                     close: () => { editorService.close(); },
@@ -266,19 +249,15 @@ angular
 
             vm.onClearFieldClick = (fieldName) => {
                 vm.content[fieldName] = '';
+                vm.preview[fieldName] = null;
             };
 
-            vm.onProductDocumentTypeAliasChange = async () => {
-                if (!vm.content.productDocumentTypeAliasVm || !vm.content.productDocumentTypeAliasVm.length) {
-                    vm.content.productDocumentTypeAlias = '';
-                    return;
-                }
-
-                vm.content.productDocumentTypeAlias = vm.content.productDocumentTypeAliasVm.join(';');
+            vm.onRemoveProductDocumentType = (docTypeId) => {
+                vm.preview.productDocumentTypeAliasesVm = vm.preview.productDocumentTypeAliasesVm.filter(x => x.id !== docTypeId);
             };
 
             vm.onOpenFeedClick = () => {
-                window.open(`/umbraco/commerce/productfeed/xml/${vm.content.feedRelativePath}`, '_blank');
+                window.open(`/umbraco/commerce/productfeed/${vm.content.feedRelativePath}`, '_blank');
             };
 
             // initialization call

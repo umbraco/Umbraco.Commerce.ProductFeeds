@@ -1,28 +1,67 @@
+using Examine;
+using Examine.Search;
+using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Web.Common;
+using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
 {
     public class ProductQueryService : IProductQueryService
     {
-        private readonly IUmbracoContextAccessor _umbracoContextAccessor;
+        private readonly IExamineManager _examineManager;
+        private readonly UmbracoHelper _umbracoHelper;
+        private readonly ILogger<ProductQueryService> _logger;
 
-        public ProductQueryService(IUmbracoContextAccessor uContextAccessor) => _umbracoContextAccessor = uContextAccessor;
+        public ProductQueryService(
+            IExamineManager examineManager,
+            UmbracoHelper umbracoHelper,
+            ILogger<ProductQueryService> logger)
+        {
+            _examineManager = examineManager;
+            _umbracoHelper = umbracoHelper;
+            _logger = logger;
+        }
 
+        /// <inheritdoc/>
         public ICollection<IPublishedContent> GetPublishedProducts(GetPublishedProductsParams parameters)
         {
             ArgumentNullException.ThrowIfNull(parameters);
 
-            IUmbracoContext umbracoContext = _umbracoContextAccessor.GetRequiredUmbracoContext();
-            IPublishedContent? productRoot = umbracoContext.Content?.GetById(parameters.ProductRootKey)
-                ?? throw new InvalidOperationException($"Product root with id = {parameters.ProductRootKey} could not be found.");
+            if (!_examineManager.TryGetIndex("ExternalIndex", out IIndex? index) || index == null)
+            {
+                return [];
+            }
 
-            List<IPublishedContent> publishedProducts = productRoot
-                .Descendants()
-                .Where(x => parameters.ProductDocumentTypeAliases.Contains(x.ContentType.Alias))
-                .ToList();
-            return publishedProducts;
+            IPublishedContent? productRoot = _umbracoHelper.Content(parameters.ProductRootKey)
+                    ?? throw new ContentNotFoundException(string.Format(null, "Unable to find product root with key = '{0}'", parameters.ProductRootKey));
+
+            IBooleanOperation baseQuery = index
+                .Searcher
+                .CreateQuery("content")
+                .Field("__Path", productRoot.Path.MultipleCharacterWildcard());
+
+            if (parameters.ProductDocumentTypeAliases.Any())
+            {
+                _ = baseQuery.And(nestedQuery => nestedQuery.GroupedOr(new[] { ExamineFieldNames.ItemTypeFieldName }, parameters.ProductDocumentTypeAliases.ToArray()));
+            }
+
+            IEnumerable<string> ids = baseQuery
+                .Execute()
+                .Select(x => x.Id);
+
+            List<IPublishedContent> result = new();
+            foreach (string id in ids)
+            {
+                IPublishedContent? content = _umbracoHelper.Content(id);
+                if (content != null)
+                {
+                    result.Add(content);
+                }
+            }
+
+            return result;
         }
     }
 }

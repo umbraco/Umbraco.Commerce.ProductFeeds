@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
@@ -14,15 +15,18 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations
         private readonly IScopeProvider _scopeProvider;
         private readonly IMapper _mapper;
         private readonly ILogger<ProductFeedSettingsService> _logger;
+        private readonly UmbracoHelper _umbracoHelper;
 
         public ProductFeedSettingsService(
             IScopeProvider scopeProvider,
             IMapper mapper,
-            ILogger<ProductFeedSettingsService> logger)
+            ILogger<ProductFeedSettingsService> logger,
+            UmbracoHelper umbracoHelper)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;
             _logger = logger;
+            _umbracoHelper = umbracoHelper;
         }
 
         /// <inheritdoc/>
@@ -55,7 +59,8 @@ AND (@1 IS NULL OR id = @1)",
                     throw new InvalidOperationException($"Unknown feed type: '{feedSetting.FeedType}'.");
                 }
 
-                return _mapper.Map<ProductFeedSettingReadModel>(feedSetting);
+                ProductFeedSettingReadModel readModel = _mapper.Map<ProductFeedSettingReadModel>(feedSetting);
+                return readModel;
             }
         }
 

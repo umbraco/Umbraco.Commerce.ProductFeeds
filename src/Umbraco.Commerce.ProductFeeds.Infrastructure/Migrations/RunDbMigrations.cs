@@ -37,13 +37,17 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
 
             // Create a migration plan for a specific project/feature
             // We can then track that latest migration state/step for this project/feature
-            var migrationPlan = new MigrationPlan("uCommerceProductFeedSetting");
+            var migrationPlan = new MigrationPlan("UmbracoCommerceProductFeeds Migration");
 
             // This is the steps we need to take
             // Each step in the migration adds a unique value
             migrationPlan
                 .From(string.Empty)
-                .To<AddTableCommerceProductFeedSetting>("1.0.0");
+                .To<AddTableCommerceProductFeedSetting>("1.0.0")
+                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.1")
+                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.2")
+                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.3")
+                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.4");
 
             // Go and upgrade our site (Will check if it needs to do the work or not)
             // Based on the current/latest step

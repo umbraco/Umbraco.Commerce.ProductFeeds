@@ -3,19 +3,11 @@
 ## Basic usage
 - Install the package from nuget: [![NuGet](https://img.shields.io/nuget/v/Umbraco.Commerce.ProductFeeds.svg?style=modern&label=nuget)](https://www.nuget.org/packages/Umbraco.Commerce.ProductFeeds/) 
 
-- In your `Startup.cs` file, call `IServiceCollection.AddCommerceProductFeeds()` in `ConfigureServices` method
+- When you call `IUmbracoBuilder.AddUmbracoCommerce()`, call `IUmbracoCommerceBuilder.AddCommerceProductFeeds()` to add this plugin to your website.
 
 ```cs
-        public void ConfigureServices(IServiceCollection services)
-        {
-methods
-            services.AddUmbraco(_env, _config)
-                .AddBackOffice()
-                .AddWebsite()
-                .AddDemoStore()
-                .AddComposers()
-                .AddCommerceProductFeeds() // <====== this line
-                .Build();
+        umbracoBuilder.AddUmbracoCommerce(ucBuilder => {
+            ucBuilder.AddCommerceProductFeeds(); // this line
         }
 ```
 - Go to your backoffice, open your store's setting page then click on `Product Feed` link.

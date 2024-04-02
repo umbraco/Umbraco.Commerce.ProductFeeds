@@ -1,18 +1,17 @@
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Commerce.Cms.Models;
 using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Extensions;
-using Umbraco.Commerce.ProductFeeds.Core.Commons.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+using Umbraco.Commerce.ProductFeeds.Extensions;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 {
@@ -28,7 +27,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         private readonly ILogger<GoogleMerchantCenterFeedService> _logger;
         private readonly IProductQueryService _productQueryService;
         private readonly IUmbracoCommerceApi _commerceApi;
-        private readonly IUmbracoContext _umbracoContext;
         private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
         private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
 
@@ -36,14 +34,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             ILogger<GoogleMerchantCenterFeedService> logger,
             IProductQueryService productQueryService,
             IUmbracoCommerceApi commerceApi,
-            IUmbracoContextAccessor umbracoContextAccessor,
             ISingleValuePropertyExtractorFactory singleValuePropertyExtractor,
             IMultipleValuePropertyExtractorFactory multipleValuePropertyExtractorFactory)
         {
             _logger = logger;
             _productQueryService = productQueryService;
             _commerceApi = commerceApi;
-            _umbracoContext = umbracoContextAccessor.GetRequiredUmbracoContext();
             _singleValuePropertyExtractorFactory = singleValuePropertyExtractor;
             _multipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
@@ -76,14 +72,14 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
             {
                 ProductRootKey = feedSetting.ProductRootKey,
-                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAlias.Split(';'),
+                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
             });
 
             // render doc/channel/item nodes
             foreach (IPublishedContent product in products)
             {
                 IEnumerable<IPublishedContent> childVariants = product.Children
-                    .Where(x => x.ContentType.Key == feedSetting.ProductChildVariantTypeKey)
+                    .Where(x => x.ContentType.Alias == feedSetting.ProductChildVariantTypeAlias)
                     .ToList();
                 if (childVariants.Any())
                 {

@@ -72,7 +72,7 @@ stages:
           - task: CmdLine@2
             displayName: 'Build frontend'
             inputs:
-              workingDirectory: $(Build.SourcesDirectory)/src/frontend
+              workingDirectory: $(Build.SourcesDirectory)/src/Umbraco.Commerce.ProductFeeds.Client/frontend
               script: |
                 npm i
                 npm run build
