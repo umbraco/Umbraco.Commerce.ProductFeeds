@@ -56,7 +56,7 @@ angular
 
             vm.content = {};
             vm.preview = {
-                productDocumentTypeAliasesVm: [],
+                productDocumentTypeAliases: [],
             };
 
             vm.propertyAndNodeMappingVm = [];
@@ -139,12 +139,12 @@ angular
                 }));
 
                 if (!vm.isCreateMode) {
-                    vm.preview.productDocumentTypeAliasesVm = vm.options.documentTypes.filter(x => model.productDocumentTypeAliases.includes(x.alias));
+                    vm.preview.productDocumentTypeAliases = vm.options.documentTypes.filter(x => model.productDocumentTypeAliases.includes(x.alias));
 
                     // load previews
                     entityResource.getById(model.productRootKey, 'Document')
                         .then(function (entity) {
-                            vm.preview['productRootKey'] = entity;
+                            vm.preview.productRootKey = entity;
                         });
 
                     vm.preview.productChildVariantTypeAlias = vm.options.documentTypes.find(x => x.alias === model.productChildVariantTypeAlias);
@@ -176,7 +176,6 @@ angular
                         ...vm.content,
                         feedName: vm.content.name,
                         propertyNameMappings: vm.propertyAndNodeMappingVm,
-                        productDocumentTypeAliases: vm.preview.productDocumentTypeAliasesVm.map(x => x.alias).join(';'),
                     })
                         .then((savedId) => {
                             $scope.$apply(() => {
@@ -223,23 +222,14 @@ angular
                 });
             };
 
-            vm.onOpenContentTypePicker = (targetField, multiPicker = false) => {
+            vm.onOpenContentTypePicker = (targetField) => {
                 editorService.contentTypePicker({
-                    multiPicker,
+                    multiPicker: false,
                     submit: (currentService) => {
                         vm.content[targetField] = currentService.selection[0].key;
-                        if (!multiPicker) {
-                            const selected = vm.options.documentTypes.find(x => x.id === currentService.selection[0].id);
-                            vm.preview[targetField] = selected;
-                            vm.content[targetField] = selected.alias;
-                        }
-                        else {
-                            const selectedIds = currentService.selection.map(x => x.id);
-                            vm.preview[targetField] = [
-                                ...vm.preview[targetField],
-                                ...vm.options.documentTypes.filter(x => selectedIds.includes(x.id)),
-                            ];
-                        }
+                        const selected = vm.options.documentTypes.find(x => x.id === currentService.selection[0].id);
+                        vm.preview[targetField] = selected;
+                        vm.content[targetField] = selected.alias;
 
                         editorService.close();
                     },
@@ -247,13 +237,32 @@ angular
                 });
             };
 
+            vm.onAddProductDocumentTypeClick = () => {
+                editorService.contentTypePicker({
+                    multiPicker: true,
+                    submit: (currentService) => {
+                        const selectedIds = currentService.selection.map(x => x.id);
+                        vm.preview.productDocumentTypeAliases = [
+                            ...vm.preview.productDocumentTypeAliases,
+                            ...vm.options.documentTypes.filter(x => selectedIds.includes(x.id)),
+                        ];
+
+                        vm.content.productDocumentTypeAliases = vm.preview.productDocumentTypeAliases.map(x => x.alias);
+                        editorService.close();
+                    },
+                    close: () => { editorService.close(); },
+                });
+            };
+
             vm.onClearFieldClick = (fieldName) => {
-                vm.content[fieldName] = '';
+                vm.content[fieldName] = null;
                 vm.preview[fieldName] = null;
             };
 
             vm.onRemoveProductDocumentType = (docTypeId) => {
-                vm.preview.productDocumentTypeAliasesVm = vm.preview.productDocumentTypeAliasesVm.filter(x => x.id !== docTypeId);
+                vm.preview.productDocumentTypeAliases = vm.preview.productDocumentTypeAliases.filter(x => x.id !== docTypeId);
+                vm.content.productDocumentTypeAliases = vm.preview.productDocumentTypeAliases.map(x => x.alias);
+                console.log(vm.content.productDocumentTypeAliases);
             };
 
             vm.onOpenFeedClick = () => {
