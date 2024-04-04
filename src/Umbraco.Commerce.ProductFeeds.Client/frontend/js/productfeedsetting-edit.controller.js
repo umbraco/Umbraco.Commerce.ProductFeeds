@@ -262,7 +262,6 @@ angular
             vm.onRemoveProductDocumentType = (docTypeId) => {
                 vm.preview.productDocumentTypeAliases = vm.preview.productDocumentTypeAliases.filter(x => x.id !== docTypeId);
                 vm.content.productDocumentTypeAliases = vm.preview.productDocumentTypeAliases.map(x => x.alias);
-                console.log(vm.content.productDocumentTypeAliases);
             };
 
             vm.onOpenFeedClick = () => {
