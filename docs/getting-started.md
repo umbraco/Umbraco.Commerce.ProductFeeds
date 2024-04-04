@@ -16,7 +16,7 @@
 - From `Product Feeds` page, click on `Create Product Feed` button and fill in the feed settings. Mandatory fields are marked with a red asterisk (*).
 ![feed setting page](./assets/feed-setting-page.png)
 
-- After saving the feed setting, you can find the feed link under `Feed Relative Path` field.
+- After saving the feed setting, you can find the feed link under `Feed URL Segment` field.
 ![open feed link](./assets/open-feed-link.png)
 
 ## Extending the plugin

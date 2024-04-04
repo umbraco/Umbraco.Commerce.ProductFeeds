@@ -10,6 +10,9 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
 
         public string FeedType { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Feed URL segment.
+        /// </summary>
         public string FeedRelativePath { get; set; } = string.Empty;
 
         public string FeedName { get; set; } = string.Empty;

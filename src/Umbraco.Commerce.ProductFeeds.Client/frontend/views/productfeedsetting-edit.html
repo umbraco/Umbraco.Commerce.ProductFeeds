@@ -53,7 +53,7 @@
 
                             <umb-box-content>
                                 <umb-control-group
-                                    label="Feed Relative Path"
+                                    label="Feed URL Segment"
                                     class="required"
                                     description="Enter a url-friendly string. Value must be unique among the feeds.">
                                     <input
@@ -75,14 +75,17 @@
                                 </umb-control-group>
 
                                 <umb-control-group
-                                    label="Feed Description">
+                                    label="Feed Description"
+                                    description="A brief description about this feed. It can be used in <description>.">
                                     <input type="text"
                                         class="umb-property-editor umb-textstring textstring"
                                         ng-model="vm.content.feedDescription" />
                                 </umb-control-group>
 
-                                <umb-control-group label="Feed Type" class="required"
-                                    description="">
+                                <umb-control-group
+                                    label="Feed Type"
+                                    class="required"
+                                    description="Choose the type that suits the consumer of this feed. Each type has a different template.">
                                     <select
                                         class="umb-property-editor umb-dropdown"
                                         ng-model="vm.content.feedType"
@@ -205,18 +208,16 @@
                                     label-for="">
 
                                     <div class="prop-mapping-row" style="font-weight: 600;">
-                                        <div class="prop-mapping-col">
+                                        <div class="prop-mapping-col"
+                                            style="max-width: 200px;">
                                             <div class="umb-property-editor">Node name in feed</div>
                                         </div>
                                         <div class="prop-mapping-col"
-                                            style="flex:0 0 150px;">
+                                            style="max-width: 200px;">
                                             <div class="umb-property-editor">Property alias</div>
                                         </div>
                                         <div class="prop-mapping-col">
                                             <div class="umb-property-editor">Value extractor</div>
-                                        </div>
-                                        <div class="prop-mapping-col" style="flex:0 0 100px;">
-                                            <div class="text-center"></div>
                                         </div>
                                     </div>
 
@@ -224,7 +225,8 @@
                                         class="prop-mapping-row"
                                         ng-repeat="item in vm.propertyAndNodeMappingVm track by item.uiId"
                                         ng-model="item.valueExtractorName">
-                                        <div class="prop-mapping-col">
+                                        <div class="prop-mapping-col"
+                                            style="max-width: 200px;">
                                             <input
                                                 class="umb-property-editor umb-textstring prop-mapping-control"
                                                 type="text"
@@ -234,7 +236,7 @@
                                         </div>
 
                                         <div class="prop-mapping-col"
-                                            style="flex:0 0 150px;">
+                                            style="max-width: 200px;">
                                             <input
                                                 class="umb-property-editor umb-textstring prop-mapping-control"
                                                 type="text"
@@ -252,16 +254,13 @@
                                                 ng-options="option.value as option.label disable when option.disabled for option in vm.options.propertyValueExtractors"
                                                 required>
                                             </select>
-                                        </div>
-                                        <div class="prop-mapping-col"
-                                            style="flex:0 0 100px;">
                                             <button
                                                 type="button"
                                                 ng-click="vm.onDeletePropertyMappingRowClick(item.uiId)"
                                                 class="btn umb-button--xs dropdown-toggle umb-button-group__toggle"
-                                                title="Remove Value"
+                                                title="Remove mapping row"
                                                 aria-hidden="true"
-                                                style="font-size: 1.2em;">
+                                                style="font-size: 1.2em; margin-left: 0.5em;">
                                                 <i class="icon icon-trash"></i>
                                             </button>
                                         </div>

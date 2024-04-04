@@ -18,17 +18,19 @@
         }
     }
 
-
     .prop-mapping-row {
         display: flex;
         flex-wrap: wrap;
         width: 100%;
+        max-width: 800px;
         gap: 0.5em;
         box-sizing: border-box;
-        padding: 0.5rem;
+        padding: 0;
+        margin-bottom: 0.5em;
 
         .prop-mapping-col {
             flex: 1 1;
+            display: flex;
         }
     }
 
