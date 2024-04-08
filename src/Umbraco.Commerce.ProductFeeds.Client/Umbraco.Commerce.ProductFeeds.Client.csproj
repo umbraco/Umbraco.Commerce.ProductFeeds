@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds Client</Title>
     <TargetFramework>net8.0</TargetFramework>
     <Description>Contains frontend code of the project</Description>
     <ImplicitUsings>enable</ImplicitUsings>

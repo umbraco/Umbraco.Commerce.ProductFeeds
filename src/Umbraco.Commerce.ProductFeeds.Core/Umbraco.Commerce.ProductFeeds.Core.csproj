@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds Core</Title>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains the main logic of the plugin</Description>
     <Nullable>enable</Nullable>

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds</Title>
     <TargetFramework>net8.0</TargetFramework>
     <Description>Product feed generator for Umbraco nodes. This is the main package.</Description>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds Startup</Title>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains code which run when app starts and method to register the plugin to your site</Description>

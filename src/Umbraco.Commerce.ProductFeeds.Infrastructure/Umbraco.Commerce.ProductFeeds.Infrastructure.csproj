@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Title>Umbraco Commerce Product Feeds Infrastructure</Title>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains code which connects to external resources like database actions</Description>
     <Nullable>enable</Nullable>

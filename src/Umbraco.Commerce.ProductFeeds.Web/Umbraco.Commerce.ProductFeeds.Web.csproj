@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <Title>Umbraco Commerce Product Feeds</Title>
+    <Title>Umbraco Commerce Product Feeds Web</Title>
     <Description>Contains apis</Description>
     <Nullable>enable</Nullable>
     <NoWarn>IDE0007</NoWarn>
