@@ -12,4 +12,4 @@ Supported feed type:
 ## Working locally
 ### Frontend
 - Nodejs v20+.
-- Go to `./src/frontend` folder and run `npm i` then `npm run build` to build frontend code.
+- Go to `./src/Umbraco.Commerce.ProductFeeds.Client/frontend` folder and run `npm i` then `npm run build` to build frontend code.
