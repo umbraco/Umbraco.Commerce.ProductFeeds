@@ -7,7 +7,7 @@
     <Product>Umbraco Commerce Product Feeds</Product>
     <PackageProjectUrl>https://github.com/umbraco/Umbraco.Commerce.ProductFeeds</PackageProjectUrl>
     <PackageIcon>logo-128.png</PackageIcon>
-    <PackageTags>umbraco commerce product-feeds umbraco-marketplace</PackageTags>
+    <PackageTags>umbraco commerce product-feeds</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage>en-US</NeutralLanguage>

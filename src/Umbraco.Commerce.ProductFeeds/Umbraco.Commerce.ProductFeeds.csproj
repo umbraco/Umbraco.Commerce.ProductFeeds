@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/umbraco/Umbraco.Commerce.ProductFeeds</RepositoryUrl>
+    <PackageTags>umbraco commerce product-feeds umbraco-marketplace</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
