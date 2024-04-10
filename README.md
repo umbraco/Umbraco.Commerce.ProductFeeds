@@ -6,7 +6,7 @@ Supported feed type:
 - Google Merchant Center.
 
 ## Documentation
-- [Getting started](./docs/getting-started.md).
+- [Getting started [↗]](https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/installation).
 
 
 ## Working locally
