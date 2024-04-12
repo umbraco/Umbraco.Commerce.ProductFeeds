@@ -12,7 +12,7 @@
   ],
   "DocumentationUrl": "https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/product-feeds",
   "IssueTrackerUrl": "https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/issues",
-  "Description": "Expand your product reach and show your products to a larger audience with the help of product feeds. With the Umbraco.Commerce.ProductFeeds installed you will be able to configure product feeds, and expose them in an XML-format feed containing comprehensive product information. Umbraco.Commerce.ProductFeeds supports the feed template for Google Merchant Center.",
+  "Description": "Expand your product reach and show your products to a larger audience with the help of product feeds. With the Umbraco.Commerce.ProductFeeds installed you will be able to configure product feeds, and expose them in an XML-format feed containing comprehensive product information.",
   "PackageType": "Package",
   "PackagesByAuthor": [
     "Umbraco.Forms",
