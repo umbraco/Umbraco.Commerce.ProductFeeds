@@ -1,13 +1,14 @@
 # Umbraco Commerce Product Feeds &middot; [![NuGet](https://img.shields.io/nuget/v/Umbraco.Commerce.ProductFeeds.svg?style=modern&label=nuget)](https://www.nuget.org/packages/Umbraco.Commerce.ProductFeeds/) 
 
+Expand your product reach and show your products to a larger audience with the help of product feeds.
+
 ## Features
-Product feed generator for Umbraco Commerce.
-Supported feed type:
-- Google Merchant Center.
+With the Umbraco.Commerce.ProductFeeds installed you will be able to configure product feeds, and expose them in an XML-format feed containing comprehensive product information.
+
+`Umbraco.Commerce.ProductFeeds` supports the feed template for `Google Merchant Center`.
 
 ## Documentation
 - [Getting started [↗]](https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/installation).
-
 
 ## Working locally
 ### Frontend
