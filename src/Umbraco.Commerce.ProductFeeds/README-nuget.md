@@ -7,3 +7,4 @@ With the `Umbraco.Commerce.ProductFeeds` package installed you will be able to c
 
 ## Documentation
 - [Getting started [↗]](https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/installation).
+- [Release Notes [↗]](https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/releases).
