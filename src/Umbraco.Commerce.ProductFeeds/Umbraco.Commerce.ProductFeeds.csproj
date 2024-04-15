@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Title>Umbraco Commerce Product Feeds</Title>
     <TargetFramework>net8.0</TargetFramework>
-    <Description>Product feed generator for Umbraco nodes. This is the main package.</Description>
+    <Description>Expand your product reach and show your products to a larger audience with the help of product feeds.</Description>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>README-nuget.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/umbraco/Umbraco.Commerce.ProductFeeds</RepositoryUrl>
     <PackageTags>umbraco commerce product-feeds umbraco-marketplace</PackageTags>
   </PropertyGroup>
@@ -16,15 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include=".\README-nuget.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Startup\Umbraco.Commerce.ProductFeeds.Startup.csproj" />
+    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Web\Umbraco.Commerce.ProductFeeds.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Startup\Umbraco.Commerce.ProductFeeds.Startup.csproj" />
-    <ProjectReference Include="..\Umbraco.Commerce.ProductFeeds.Web\Umbraco.Commerce.ProductFeeds.Web.csproj" />
+    <None Update="README-nuget.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
