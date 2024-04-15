@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md">
+    <None Include=".\README-nuget.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

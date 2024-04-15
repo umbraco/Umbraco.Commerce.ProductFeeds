@@ -12,7 +12,7 @@
   ],
   "DocumentationUrl": "https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/product-feeds",
   "IssueTrackerUrl": "https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/issues",
-  "Description": "Expand your product reach and show your products to a larger audience with the help of product feeds. With the Umbraco.Commerce.ProductFeeds installed you will be able to configure product feeds, and expose them in an XML-format feed containing comprehensive product information.",
+  "Description": "Expand your product reach and show your products to a larger audience with the help of product feeds.",
   "PackageType": "Package",
   "PackagesByAuthor": [
     "Umbraco.Forms",
@@ -44,12 +44,13 @@
       "Caption": "product feeds section"
     },
     {
-      "ImageUrl": "https://docs.umbraco.com/~gitbook/image?url=https:%2F%2F721296160-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F4kB9Trqs7XbQsP80vWVA%252Fuploads%252Fgit-blob-dbceb11e853012c39ba6c6877f86b6d855e6413c%252Fgoogle-merchant-center-feed.png%3Falt=media&width=400&dpr=2&quality=100&sign=f336f2fdeb03d4d78286490f37c95736fda76938d74023af8a5b4d494119daa6",
-      "Caption": "sample google merchant center feed"
-    },
-    {
       "ImageUrl": "https://raw.githubusercontent.com/umbraco/Umbraco.Commerce.ProductFeeds/main/docs/assets/feed-setting-page.png",
       "Caption": "product feed settings"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/umbraco/Umbraco.Commerce.ProductFeeds/main/docs/assets/sample-google-merchant-center-feed.png",
+      "Caption": "sample google merchant center feed"
     }
-  ]
+  ],
+  "VideoUrl": "https://www.youtube.com/watch?v=NCxkmgO0GXc"
 }
