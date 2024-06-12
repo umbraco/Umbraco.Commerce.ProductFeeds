@@ -25,19 +25,22 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             "Unable to find any product with these parameters: storeId = '{StoreId}', product key= '{ProductKey}', variant key = '{VariantKey}'.");
 
         private readonly ILogger<GoogleMerchantCenterFeedService> _logger;
-        private readonly IProductQueryService _productQueryService;
+        private readonly ICurrencyService _currencyService;
+        private readonly IProductQueryService _productQueryService;        
         private readonly IUmbracoCommerceApi _commerceApi;
         private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
         private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
 
         public GoogleMerchantCenterFeedService(
             ILogger<GoogleMerchantCenterFeedService> logger,
+            ICurrencyService currencyService,
             IProductQueryService productQueryService,
             IUmbracoCommerceApi commerceApi,
             ISingleValuePropertyExtractorFactory singleValuePropertyExtractor,
             IMultipleValuePropertyExtractorFactory multipleValuePropertyExtractorFactory)
         {
             _logger = logger;
+            _currencyService = currencyService;
             _productQueryService = productQueryService;
             _commerceApi = commerceApi;
             _singleValuePropertyExtractorFactory = singleValuePropertyExtractor;
@@ -192,7 +195,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             }
 
             XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
-            priceNode.InnerText = productSnapshot.CalculatePrice()?.Formatted();
+            Price calculatedPrice = productSnapshot.CalculatePrice();
+            priceNode.InnerText = $"{calculatedPrice.WithTax.ToString("0.00")} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
             itemNode.AppendChild(priceNode);
         }
 
