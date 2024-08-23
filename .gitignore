@@ -474,6 +474,5 @@ $RECYCLE.BIN/
 /local_pack.bat
 
 ## Umbraco Commerce Product Feed
-**/wwwroot/angularjs
-src/**/appsettings-schema.Umbraco.*.json
-src/Umbraco.Commerce.ProductFeeds.Core/appsettings-schema.json
+**/wwwroot/**
+src/**/packages.lock.json

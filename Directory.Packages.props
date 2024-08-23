@@ -2,12 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
-    <GlobalPackageReference Include="Umbraco.Code" Version="2.1.0" />
+    <GlobalPackageReference Include="Umbraco.Code" Version="2.2.0" />
     <GlobalPackageReference Include="Umbraco.GitVersioning.Extensions" Version="0.2.0" />
   </ItemGroup>
   <ItemGroup>
@@ -16,10 +17,10 @@
     <PackageVersion Include="FluentValidation" Version="11.9.0" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0, 7.0)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageVersion Include="Umbraco.Cms" Version="[13.0.0, 14)" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[13.0.0, 14)" />
-    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[13.0.0, 14)" />
-    <PackageVersion Include="Umbraco.Commerce" Version="[13.0.0, 14)" />
+    <PackageVersion Include="Umbraco.Cms" Version="[14.0.0, 15)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[14.0.0, 15)" />
+    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[14.0.0, 15)" />
+    <PackageVersion Include="Umbraco.Commerce" Version="[14.0.0-rc3, 15)" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="xunit" Version="2.6.6" />

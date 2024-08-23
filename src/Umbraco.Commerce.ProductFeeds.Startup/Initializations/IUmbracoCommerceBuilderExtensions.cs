@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Commerce.Core;
+using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
@@ -15,6 +16,7 @@ using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 using Umbraco.Commerce.ProductFeeds.Startup.Initializations;
+using Umbraco.Commerce.ProductFeeds.Startup.Swaggers;
 
 namespace Umbraco.Commerce.ProductFeeds.Extensions
 {
@@ -28,42 +30,26 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
         public static IUmbracoCommerceBuilder AddCommerceProductFeeds(this IUmbracoCommerceBuilder ucBuilder)
         {
             ArgumentNullException.ThrowIfNull(ucBuilder, "umbracoCommerceBuilder");
-            IUmbracoBuilder umbBuilder = ucBuilder.GetUmbracoBuilder();
+            IUmbracoBuilder umbBuilder = ucBuilder.WithUmbracoBuilder();
 
-            umbBuilder.AddNotificationHandler<TreeNodesRenderingNotification, TreeNodesRenderingNotificationHandler>();
-            umbBuilder.ManifestFilters().Append<UmbracoCommerceProductFeedsManifestFilter>();
+            //TODO: DInh - review
+            //umbBuilder.AddNotificationHandler<TreeNodesRenderingNotification, TreeNodesRenderingNotificationHandler>();
+            //umbBuilder.ManifestFilters().Append<UmbracoCommerceProductFeedsManifestFilter>();
 
+            ucBuilder.AddSwagger();
             ucBuilder.AddServices();
             ucBuilder.AddDbMigrations();
             ucBuilder.AddAutoMapper();
             return ucBuilder;
         }
 
-#pragma warning disable CA1062 // Validate arguments of public methods
-        public static SingleValuePropertyExtractorCollectionBuilder SingleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.GetUmbracoBuilder().WithCollectionBuilder<SingleValuePropertyExtractorCollectionBuilder>();
-        public static MultipleValuePropertyExtractorCollectionBuilder MultipleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.GetUmbracoBuilder().WithCollectionBuilder<MultipleValuePropertyExtractorCollectionBuilder>();
-#pragma warning restore CA1062 // Validate arguments of public methods
+        public static SingleValuePropertyExtractorCollectionBuilder SingleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.WithUmbracoBuilder().WithCollectionBuilder<SingleValuePropertyExtractorCollectionBuilder>();
 
-        /// <summary>
-        /// A hack using reflection to get <see cref="IUmbracoBuilder"/> property inside <see cref="IUmbracoCommerceBuilder"/>.
-        /// </summary>
-        /// <param name="ucBuilder"></param>
-        /// <returns></returns>
-        private static IUmbracoBuilder GetUmbracoBuilder(this IUmbracoCommerceBuilder ucBuilder)
-        {
-            var umbBuilder = ucBuilder
-                .GetType()
-                .GetProperties()
-                .FirstOrDefault(p => p.PropertyType == typeof(IUmbracoBuilder))?
-                .GetValue(ucBuilder) as IUmbracoBuilder;
-            ArgumentNullException.ThrowIfNull(umbBuilder, "umbracoBuilder");
-
-            return umbBuilder;
-        }
+        public static MultipleValuePropertyExtractorCollectionBuilder MultipleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.WithUmbracoBuilder().WithCollectionBuilder<MultipleValuePropertyExtractorCollectionBuilder>();
 
         private static IUmbracoCommerceBuilder AddDbMigrations(this IUmbracoCommerceBuilder builder)
         {
-            builder.GetUmbracoBuilder().AddNotificationHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
+            builder.WithUmbracoBuilder().AddNotificationHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
             return builder;
         }
 
@@ -108,6 +94,12 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
                     },
                 });
             });
+        }
+
+        private static IUmbracoCommerceBuilder AddSwagger(this IUmbracoCommerceBuilder ucBuilder)
+        {
+            ucBuilder.WithUmbracoBuilder().Services.ConfigureOptions<ProductFeedsConfigureSwaggerGenOptions>();
+            return ucBuilder;
         }
     }
 }

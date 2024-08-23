@@ -1,0 +1,12 @@
+{
+    "name": "Umbraco Commerce Checkout",
+    "extensions": [
+        {
+            "name": "Umbraco Commerce Checkout Entry Point",
+            "alias": "Umbraco.Commerce.Checkout.EntryPoint",
+            "type": "entryPoint",
+            "js": "/App_Plugins/umbracocommerceproductfeeds/ucproductfeeds.backoffice.js"
+        }
+    ],
+    "version": ""
+}

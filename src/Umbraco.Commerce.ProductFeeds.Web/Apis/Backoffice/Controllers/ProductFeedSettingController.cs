@@ -1,25 +1,33 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Asp.Versioning;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.BackOffice.Controllers;
-using Umbraco.Cms.Web.BackOffice.Filters;
-using Umbraco.Cms.Web.Common.Attributes;
-using Umbraco.Cms.Web.Common.Controllers;
+using Umbraco.Commerce.Cms.Authorization;
 using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
+using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice;
 
 namespace Umbraco.Commerce.ProductFeeds.Controllers
 {
-    [JsonCamelCaseFormatter]
-    [PluginController(RouteParams.AreaName)]
-    public class ProductFeedSettingController : UmbracoAuthorizedApiController
+    [ApiVersion("1.0")]
+    [MapToApi(RouteParams.ApiName)]
+    [ProductFeedsVersionedApiBackofficeRoute("setting")]
+    [ApiExplorerSettings(GroupName = "Settings")]
+    [Authorize(UmbracoCommerceAuthorizationPolicies.SectionAccessCommerce)]
+    public class ProductFeedSettingController : ManagementApiControllerBase
     {
         private readonly IProductFeedSettingsService _feedSettingsService;
         private readonly IContentTypeService _contentTypeService;
@@ -38,7 +46,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             _multipleValuePropertyExtractors = multipleValuePropertyExtractors;
         }
 
-        [HttpPost]
+        [HttpPost("save")]
         public async Task<IActionResult> Save(ProductFeedSettingWriteModel? model)
         {
             if (model == null)
@@ -47,14 +55,14 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             }
 
             ProductFeedSettingWriteModelValidator validator = new ProductFeedSettingWriteModelValidator();
-            ValidationResult validationResult = await validator.ValidateAsync(model).ConfigureAwait(true);
+            ValidationResult validationResult = await validator.ValidateAsync(model);
 
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
             }
 
-            Guid? recordId = await _feedSettingsService.SaveSettingAsync(model).ConfigureAwait(true);
+            Guid? recordId = await _feedSettingsService.SaveSettingAsync(model);
             if (recordId == null)
             {
                 return Problem("Save failed.", statusCode: (int)HttpStatusCode.InternalServerError);
@@ -65,8 +73,10 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return result;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("get/{id}")]
+        [ProducesResponseType<ProductFeedSettingReadModel>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDetails(Guid id)
         {
             ProductFeedSettingReadModel? feedSetting = await _feedSettingsService
                 .FindSettingAsync(new FindSettingParams { Id = id })
@@ -79,7 +89,14 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return Ok(feedSetting);
         }
 
-        [HttpGet]
+        [HttpGet("getbystore")]
+        public async Task<ActionResult<List<ProductFeedSettingReadModel>>> GetByStore([FromQuery, BindRequired] Guid storeId)
+        {
+            List<ProductFeedSettingReadModel> feedSettings = await _feedSettingsService.GetListAsync(storeId).ConfigureAwait(true);
+            return Ok(feedSettings);
+        }
+
+        [HttpGet("documenttypes")]
         public IActionResult GetDocumentTypes()
         {
             var aliases = _contentTypeService
@@ -98,7 +115,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return Ok(aliases);
         }
 
-        [HttpGet]
+        [HttpGet("feedtypes")]
         public IActionResult GetFeedTypes()
         {
             return Ok(new[]
@@ -111,8 +128,8 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             });
         }
 
+        [Route("[action]")]
         [HttpPost]
-        [HttpDelete]
         public async Task<IActionResult> Delete([FromForm] Guid id)
         {
             bool success = await _feedSettingsService.DeleteSettingAsync(id).ConfigureAwait(true);
@@ -124,7 +141,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
             return Ok(success);
         }
 
-        [HttpGet]
+        [HttpGet("propertyvalueextractors")]
         public IActionResult GetPropertyValueExtractors()
         {
             return Ok(_singleValuePropertyExtractors.Select(x => new { value = x.Id, label = x.DisplayName })
