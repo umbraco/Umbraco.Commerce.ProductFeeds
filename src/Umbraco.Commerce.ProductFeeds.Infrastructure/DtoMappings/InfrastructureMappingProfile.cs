@@ -10,14 +10,21 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings
     {
         public InfrastructureMappingProfile()
         {
-            CreateMap<ProductFeedSettingWriteModel, UmbracoCommerceProductFeedSetting>(MemberList.Source)
+            CreateMap<ProductFeedSettingWriteModel, UmbracoCommerceProductFeedSetting>()
                 .ForSourceMember(src => src.PropertyNameMappings, opt => opt.DoNotValidate())
                 .ForMember(dest => dest.ProductPropertyNameMappings, opt => opt.MapFrom((src, dest) => JsonSerializer.Serialize(src.PropertyNameMappings)))
-                .ForSourceMember(src => src.ProductDocumentTypeAliases, opt => opt.DoNotValidate())
+                .ForMember(dest => dest.ProductChildVariantTypeIds, opt => opt.MapFrom((src, dest) => string.Join(';', src.ProductChildVariantTypeIds)))
+                .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => string.Join(';', src.ProductDocumentTypeIds)))
+
+                // legacy mapping
                 .ForMember(dest => dest.ProductDocumentTypeAliases, opt => opt.MapFrom((src, dest) => string.Join(';', src.ProductDocumentTypeAliases)));
 
             CreateMap<UmbracoCommerceProductFeedSetting, ProductFeedSettingReadModel>()
-                .ForMember(dest => dest.PropertyNameMappings, opt => opt.MapFrom((src, dest) => JsonSerializer.Deserialize<ICollection<PropertyValueMapping>>(src.ProductPropertyNameMappings)))
+                .ForMember(dest => dest.PropertyNameMappings, opt => opt.MapFrom((src, dest) => JsonSerializer.Deserialize<ICollection<PropertyAndNodeMapItem>>(src.ProductPropertyNameMappings)))
+                .ForMember(dest => dest.ProductChildVariantTypeIds, opt => opt.MapFrom((src, dest) => src.ProductChildVariantTypeIds?.Split(';') ?? []))
+                .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => src.ProductDocumentTypeIds.Split(';')))
+
+                // legacy mapping
                 .ForMember(dest => dest.ProductDocumentTypeAliases, opt => opt.MapFrom((src, dest) => src.ProductDocumentTypeAliases.Split(';')));
         }
     }

@@ -2,6 +2,11 @@
 
 export type EventMessageTypeModel = 'Default' | 'Info' | 'Error' | 'Success' | 'Warning';
 
+export type LookupReadModel = {
+    value: string;
+    label: string;
+};
+
 export type NotificationHeaderModel = {
     message: string;
     category: string;
@@ -15,11 +20,19 @@ export type ProductFeedSettingReadModel = {
     feedName: string;
     feedDescription: string;
     storeId: string;
-    productRootKey: string;
+    productRootId: string;
+    /**
+     * @deprecated
+     */
     productDocumentTypeAliases: Array<(string)>;
+    productDocumentTypeIds: Array<(string)>;
+    /**
+     * @deprecated
+     */
     productChildVariantTypeAlias?: (string) | null;
+    productChildVariantTypeIds: Array<(string)>;
     feedRelativePath: string;
-    propertyNameMappings: Array<(PropertyValueMapping)>;
+    propertyNameMappings: Array<(PropertyAndNodeMapDetails)>;
 };
 
 export type ProductFeedSettingWriteModel = {
@@ -29,15 +42,23 @@ export type ProductFeedSettingWriteModel = {
     feedName: string;
     feedDescription: string;
     storeId: string;
-    productRootKey: string;
-    productChildVariantTypeAlias?: (string) | null;
+    productRootId: string;
+    /**
+     * @deprecated
+     */
     productDocumentTypeAliases: Array<(string)>;
-    propertyNameMappings: Array<(PropertyValueMapping)>;
+    /**
+     * @deprecated
+     */
+    productChildVariantTypeAlias?: (string) | null;
+    propertyNameMappings: Array<(PropertyAndNodeMapDetails)>;
+    productChildVariantTypeIds: Array<(string)>;
+    productDocumentTypeIds: Array<(string)>;
 };
 
 export type ProductFeedType = 'GoogleMerchantCenter';
 
-export type PropertyValueMapping = {
+export type PropertyAndNodeMapDetails = {
     propertyAlias: string;
     nodeName: string;
     valueExtractorName?: (string) | null;
@@ -49,7 +70,7 @@ export type DeleteData = {
     };
 };
 
-export type DeleteResponse = (string);
+export type DeleteResponse = (boolean);
 
 export type DeleteError = (unknown | string);
 
@@ -57,7 +78,7 @@ export type GetDocumentTypesResponse = (unknown);
 
 export type GetDocumentTypesError = (unknown);
 
-export type GetFeedTypesResponse = (unknown);
+export type GetFeedTypesResponse = (Array<(LookupReadModel)>);
 
 export type GetFeedTypesError = (unknown);
 
@@ -72,8 +93,8 @@ export type GetDetailsResponse = ((ProductFeedSettingReadModel));
 export type GetDetailsError = (unknown);
 
 export type GetByStoreData = {
-    query?: {
-        storeId?: string;
+    query: {
+        storeId: string;
     };
 };
 
@@ -81,14 +102,10 @@ export type GetByStoreResponse = (Array<(ProductFeedSettingReadModel)>);
 
 export type GetByStoreError = (unknown);
 
-export type GetPropertyValueExtractorsResponse = (unknown);
+export type GetPropertyValueExtractorsResponse = (Array<(LookupReadModel)>);
 
 export type GetPropertyValueExtractorsError = (unknown);
 
 export type SaveData = {
     body?: (ProductFeedSettingWriteModel);
 };
-
-export type SaveResponse = (string);
-
-export type SaveError = (unknown | string);

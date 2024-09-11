@@ -7,19 +7,19 @@ import {
     LitElement,
 } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { UC_PRODUCT_FEEDS_WORKSPACE_CONTEXT } from './context.js';
 import { UC_STORE_CONTEXT, UcStoreModel } from '@umbraco-commerce/backoffice';
-import { WORKSPACE_COLLECTION_ALIAS } from '../constants.js';
-import { UcProductFeedsCollectionConfiguration } from '../types.js';
-import { storeRoute } from './fe-routes.js';
+import { UcpfListCollectionConfiguration } from '../../types.js';
+import { storeRoute } from '../routes.js';
+import { listingWorkspaceCollectionManifest } from './manifests.js';
 
 const elementName = 'uc-product-feeds-workspace-collection';
 @customElement(elementName)
-export class UcProductFeedsWorkspaceCollectionElement extends UmbElementMixin(LitElement) {
-    #workspaceContext?: typeof UC_PRODUCT_FEEDS_WORKSPACE_CONTEXT.TYPE;
+export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
+
+    // #workspaceContext?: typeof LISTING_WORKSPACE_CONTEXT.TYPE;
 
     @state()
-    private _config?: UcProductFeedsCollectionConfiguration;
+    private _config?: UcpfListCollectionConfiguration;
 
     @state()
     _store?: UcStoreModel;
@@ -30,21 +30,20 @@ export class UcProductFeedsWorkspaceCollectionElement extends UmbElementMixin(Li
         this.consumeContext(UC_STORE_CONTEXT, (ctx) => {
             this.observe(ctx.store, (store) => {
                 this._store = store;
-                console.log('workspace element store', store);
                 this.#constructConfig();
             });
         });
 
-        this.consumeContext(UC_PRODUCT_FEEDS_WORKSPACE_CONTEXT, (ctx) => {
-            this.#workspaceContext = ctx;
-        });
+        // this.consumeContext(LISTING_WORKSPACE_CONTEXT, (ctx) => {
+        //     this.#workspaceContext = ctx;
+        // });
     }
 
     #constructConfig() {
         if (!this._store) return;
 
         this._config = {
-            // storeId: this._store.id,
+            storeId: this._store.id,
             pageSize: 200, // Currently have to set a page size otherwise it doesn't load initial data
         };
     }
@@ -56,7 +55,7 @@ export class UcProductFeedsWorkspaceCollectionElement extends UmbElementMixin(Li
                       slot="action-menu"
                   ></umb-workspace-entity-action-menu>
                   <umb-collection
-                      alias=${WORKSPACE_COLLECTION_ALIAS}
+                      alias=${listingWorkspaceCollectionManifest.alias}
                       .config=${this._config}
                   ></umb-collection>
                   <div slot="footer-info" id="footer">
@@ -83,10 +82,10 @@ export class UcProductFeedsWorkspaceCollectionElement extends UmbElementMixin(Li
     ];
 }
 
-export default UcProductFeedsWorkspaceCollectionElement;
+export default UcpfListWorkspaceElement;
 
 declare global {
     interface HTMLElementTagNameMap {
-        [elementName]: UcProductFeedsWorkspaceCollectionElement;
+        [elementName]: UcpfListWorkspaceElement;
     }
 }

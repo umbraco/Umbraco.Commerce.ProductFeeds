@@ -19,6 +19,7 @@ using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice;
+using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers.Models;
 
 namespace Umbraco.Commerce.ProductFeeds.Controllers
 {
@@ -47,6 +48,8 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         }
 
         [HttpPost("save")]
+        [ProducesResponseType<string>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<string>(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Save(ProductFeedSettingWriteModel? model)
         {
             if (model == null)
@@ -116,20 +119,22 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         }
 
         [HttpGet("feedtypes")]
-        public IActionResult GetFeedTypes()
+        public ActionResult<IEnumerable<LookupReadModel>> GetFeedTypes()
         {
-            return Ok(new[]
+            return Ok(new LookupReadModel[]
             {
-                new
+                new LookupReadModel
                 {
-                    value = ProductFeedType.GoogleMerchantCenter.ToString(),
-                    label = ProductFeedType.GoogleMerchantCenter.GetDescription(),
+                    Value = ProductFeedType.GoogleMerchantCenter.ToString(),
+                    Label = ProductFeedType.GoogleMerchantCenter.GetDescription(),
                 },
             });
         }
 
         [Route("[action]")]
         [HttpPost]
+        [ProducesResponseType<bool>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromForm] Guid id)
         {
             bool success = await _feedSettingsService.DeleteSettingAsync(id).ConfigureAwait(true);
@@ -142,10 +147,10 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         }
 
         [HttpGet("propertyvalueextractors")]
-        public IActionResult GetPropertyValueExtractors()
+        public ActionResult<IEnumerable<LookupReadModel>> GetPropertyValueExtractors()
         {
-            return Ok(_singleValuePropertyExtractors.Select(x => new { value = x.Id, label = x.DisplayName })
-                .Concat(_multipleValuePropertyExtractors.Select(x => new { value = x.Id, label = x.DisplayName })));
+            return Ok(_singleValuePropertyExtractors.Select(x => new LookupReadModel { Value = x.Id, Label = x.DisplayName })
+                .Concat(_multipleValuePropertyExtractors.Select(x => new LookupReadModel { Value = x.Id, Label = x.DisplayName })));
         }
     }
 }

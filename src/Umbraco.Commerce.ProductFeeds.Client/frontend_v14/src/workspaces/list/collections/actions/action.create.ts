@@ -1,7 +1,7 @@
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbCollectionActionBase } from '@umbraco-cms/backoffice/collection';
 import { UC_STORE_CONTEXT } from '@umbraco-commerce/backoffice';
-import { createRoute } from '../fe-routes';
+import { createRoute } from '../../../routes';
 
 export class CollectionCreateAction extends UmbCollectionActionBase {
     #storeId?: string = undefined;

@@ -47,7 +47,8 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
                 .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.1")
                 .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.2")
                 .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.3")
-                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.4");
+                .To<AlterTableUmbracoCommerceProductFeedSetting>("1.0.4")
+                .To<UpdateSchemaForV14>("1.0.5");
 
             // Go and upgrade our site (Will check if it needs to do the work or not)
             // Based on the current/latest step

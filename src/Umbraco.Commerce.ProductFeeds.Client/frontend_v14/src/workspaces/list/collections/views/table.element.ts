@@ -1,15 +1,17 @@
-import type { UmbDefaultCollectionContext } from '@umbraco-cms/backoffice/collection';
+import type { UmbCollectionFilterModel, UmbDefaultCollectionContext } from '@umbraco-cms/backoffice/collection';
 import { UMB_COLLECTION_CONTEXT } from '@umbraco-cms/backoffice/collection';
 import type { UmbTableColumn, UmbTableConfig, UmbTableDeselectedEvent, UmbTableElement, UmbTableItem, UmbTableSelectedEvent } from '@umbraco-cms/backoffice/components';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { customElement, html, css, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { ProductFeedSettingReadModel } from '../../../generated/apis/types.gen';
-import { editRoute } from '../../fe-routes';
+import { ProductFeedSettingReadModel } from '../../../../generated/apis/types.gen';
+import { editRoute, viewFeedRoute } from '../../../routes';
+import { UcpfListCollectionConfiguration } from '../../../../types';
+import { ProductFeedsCollectionModel } from '../../types';
 
-const elementName = 'uc-product-feeds-table-collection-view';
+const elementName = 'uc-product-feeds-collection-view-table';
 @customElement(elementName)
-export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
+export class UcpfListCollectionViewTableElement extends UmbLitElement {
 
     @state()
     private _storeId?: string;
@@ -27,11 +29,15 @@ export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
         },
         {
             alias: 'feedTypeName',
-            name: this.localize.term('ucProductFeeds_typeLabel'),
+            name: this.localize.term('ucProductFeeds_prop:feedTypeNameLabel'),
         },
         {
             alias: 'feedRelativePath',
-            name: this.localize.term('ucProductFeeds_pathLabel'),
+            name: this.localize.term('ucProductFeeds_prop:feedRelativePathLabel'),
+        },
+        {
+            alias: 'openFeed',
+            name: '',
         },
     ];
 
@@ -41,15 +47,15 @@ export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
     @state()
     private _selection: Array<string> = [];
 
-    #collectionContext?: UmbDefaultCollectionContext<UcEmailTemplateCollectionModel, UcStoreEntityCollectionFilterModel>;
-    #collectionConfig?: UcStoreEntityCollectionConfiguration;
+    #collectionContext?: UmbDefaultCollectionContext<ProductFeedsCollectionModel, UmbCollectionFilterModel>;
+    #collectionConfig?: UcpfListCollectionConfiguration;
 
     constructor() {
         super();
         this.consumeContext(UMB_COLLECTION_CONTEXT, (instance) => {
             this.#collectionContext = instance;
             this.#collectionContext?.selection.setSelectable(true);
-            this.#collectionConfig = this.#collectionContext?.getConfig() as UcStoreEntityCollectionConfiguration;
+            this.#collectionConfig = this.#collectionContext?.getConfig() as UcpfListCollectionConfiguration;
             this._storeId = this.#collectionConfig?.storeId;
             this.#observeCollectionItems();
         });
@@ -85,15 +91,19 @@ export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
                         columnAlias: 'name',
                         value: html`<uc-silent-link
                             href=${editRoute(this._storeId!, item.id)}>
-							${item.feedName}</uc-silent-link> `,
+							${item.feedName}</uc-silent-link>`,
                     },
                     {
                         columnAlias: 'feedTypeName',
-                        value: html`<uc-enum-label .value=${item.feedTypeName}></uc-enum-label>`,
+                        value: item.feedTypeName,
                     },
                     {
                         columnAlias: 'feedRelativePath',
-                        value: html`<uc-enum-label .value=${item.feedRelativePath}></uc-enum-label>`,
+                        value: item.feedRelativePath,
+                    },
+                    {
+                        columnAlias: 'openFeed',
+                        value: html`<a href=${viewFeedRoute(item.feedRelativePath)} target="_blank" rel="noopener" onclick="event.stopPropagation()">View feed</a>`,
                     },
                 ],
             };
@@ -116,6 +126,7 @@ export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
     }
 
     render() {
+        console.log('render');
         return html`
 			<umb-table
                 .config=${this._tableConfig}
@@ -143,10 +154,10 @@ export class UcProductFeedsTableCollectionViewElement extends UmbLitElement {
     ];
 }
 
-export default UcProductFeedsTableCollectionViewElement;
+export default UcpfListCollectionViewTableElement;
 
 declare global {
     interface HTMLElementTagNameMap {
-        [elementName]: UcProductFeedsTableCollectionViewElement;
+        [elementName]: UcpfListCollectionViewTableElement;
     }
 }

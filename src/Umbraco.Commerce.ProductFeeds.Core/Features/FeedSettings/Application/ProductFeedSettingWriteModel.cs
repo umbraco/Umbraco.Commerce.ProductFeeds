@@ -17,13 +17,20 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 
         public required Guid StoreId { get; set; }
 
-        public Guid ProductRootKey { get; set; }
+        public Guid ProductRootId { get; set; }
 
+        [Obsolete("Will be removed in v15. Use ProductDocumentTypeIds instead")]
+        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; }
+
+        [Obsolete("Will be removed in v15. Use ProductChildVariantTypeIds instead")]
         public string? ProductChildVariantTypeAlias { get; set; }
 
-        public ICollection<string> ProductDocumentTypeAliases { get; set; } = [];
+        public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; set; } = [];
 
-        public ICollection<PropertyValueMapping> PropertyNameMappings { get; set; } = [];
+        public IEnumerable<Guid> ProductChildVariantTypeIds { get; set; } = [];
+
+        public ICollection<Guid> ProductDocumentTypeIds { get; set; } = [];
+
     }
 #pragma warning restore CA2227 // Collection properties should be read only
 }

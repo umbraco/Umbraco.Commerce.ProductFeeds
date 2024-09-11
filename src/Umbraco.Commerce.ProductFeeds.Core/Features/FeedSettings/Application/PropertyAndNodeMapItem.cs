@@ -1,6 +1,6 @@
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
-    public class PropertyValueMapping
+    public class PropertyAndNodeMapItem
     {
         public required string PropertyAlias { get; set; }
         public required string NodeName { get; set; }

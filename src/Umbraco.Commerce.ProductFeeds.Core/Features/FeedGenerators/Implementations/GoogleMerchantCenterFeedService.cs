@@ -75,7 +75,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
             {
-                ProductRootKey = feedSetting.ProductRootKey,
+                ProductRootKey = feedSetting.ProductRootId,
                 ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
             });
 
@@ -98,7 +98,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                         AddPriceNode(itemNode, feedSetting.StoreId, childVariant, null);
 
                         // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
                         AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
 
                         channel.AppendChild(itemNode);
@@ -119,7 +119,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                         AddPriceNode(itemNode, feedSetting.StoreId, product, complexVariant.Content);
 
                         // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
                         AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
 
                         channel.AppendChild(itemNode);
@@ -141,7 +141,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             XmlElement itemNode = channel.OwnerDocument.CreateElement("item");
 
             // add custom properties
-            foreach (PropertyValueMapping map in feedSetting.PropertyNameMappings)
+            foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
                 if (map.ValueExtractorName == nameof(DefaultMultipleMediaPickerPropertyValueExtractor))
                 {
