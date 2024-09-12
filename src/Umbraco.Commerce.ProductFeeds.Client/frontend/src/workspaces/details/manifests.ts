@@ -1,4 +1,5 @@
 import type {
+    ManifestEntityAction,
     ManifestWorkspace,
     ManifestWorkspaceAction,
     ManifestWorkspaceView,
@@ -6,6 +7,7 @@ import type {
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import { UcpfDetailsWorkspaceContext } from './context.js';
 import UcpfDetailsWorkspaceViewElement from './views/details.element.js';
+import { ProductFeedEntityActionDelete } from './actions/action.delete.js';
 
 export const detailsWorkspaceManifest: ManifestWorkspace = {
     type: 'workspace',
@@ -64,4 +66,17 @@ export const manifests = [
     detailsWorkspaceManifest,
     ...workspaceViews,
     ...workspaceActions,
+    {
+        type: 'entityAction',
+        kind: 'default',
+        alias: 'Forms.EntityAction.Form.Delete',
+        name: 'Delete Form Entity Action',
+        weight: 50,
+        api: ProductFeedEntityActionDelete,
+        forEntityTypes: [detailsWorkspaceManifest.meta.entityType],
+        meta: {
+            icon: 'icon-delete',
+            label: 'Delete...',
+        },
+    } as ManifestEntityAction,
 ];

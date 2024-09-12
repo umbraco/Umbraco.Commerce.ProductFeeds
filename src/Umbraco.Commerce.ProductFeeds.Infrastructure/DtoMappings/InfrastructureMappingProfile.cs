@@ -21,11 +21,11 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings
 
             CreateMap<UmbracoCommerceProductFeedSetting, ProductFeedSettingReadModel>()
                 .ForMember(dest => dest.PropertyNameMappings, opt => opt.MapFrom((src, dest) => JsonSerializer.Deserialize<ICollection<PropertyAndNodeMapItem>>(src.ProductPropertyNameMappings)))
-                .ForMember(dest => dest.ProductChildVariantTypeIds, opt => opt.MapFrom((src, dest) => src.ProductChildVariantTypeIds?.Split(';') ?? []))
-                .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => src.ProductDocumentTypeIds.Split(';')))
+                .ForMember(dest => dest.ProductChildVariantTypeIds, opt => opt.MapFrom((src, dest) => !string.IsNullOrEmpty(src.ProductChildVariantTypeIds) ? src.ProductChildVariantTypeIds?.Split(';') : []))
+                .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => !string.IsNullOrEmpty(src.ProductDocumentTypeIds) ? src.ProductDocumentTypeIds.Split(';') : []))
 
                 // legacy mapping
-                .ForMember(dest => dest.ProductDocumentTypeAliases, opt => opt.MapFrom((src, dest) => src.ProductDocumentTypeAliases.Split(';')));
+                .ForMember(dest => dest.ProductDocumentTypeAliases, opt => opt.MapFrom((src, dest) => !string.IsNullOrEmpty(src.ProductDocumentTypeAliases) ? src.ProductDocumentTypeAliases.Split(';') : []));
         }
     }
 }

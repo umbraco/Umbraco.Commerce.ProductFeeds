@@ -32,7 +32,7 @@ export type ProductFeedSettingReadModel = {
     productChildVariantTypeAlias?: (string) | null;
     productChildVariantTypeIds: Array<(string)>;
     feedRelativePath: string;
-    propertyNameMappings: Array<(PropertyAndNodeMapDetails)>;
+    propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
 };
 
 export type ProductFeedSettingWriteModel = {
@@ -51,14 +51,14 @@ export type ProductFeedSettingWriteModel = {
      * @deprecated
      */
     productChildVariantTypeAlias?: (string) | null;
-    propertyNameMappings: Array<(PropertyAndNodeMapDetails)>;
+    propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
     productChildVariantTypeIds: Array<(string)>;
     productDocumentTypeIds: Array<(string)>;
 };
 
 export type ProductFeedType = 'GoogleMerchantCenter';
 
-export type PropertyAndNodeMapDetails = {
+export type PropertyAndNodeMapItem = {
     propertyAlias: string;
     nodeName: string;
     valueExtractorName?: (string) | null;
@@ -109,3 +109,7 @@ export type GetPropertyValueExtractorsError = (unknown);
 export type SaveData = {
     body?: (ProductFeedSettingWriteModel);
 };
+
+export type SaveResponse = (string);
+
+export type SaveError = (string | unknown);

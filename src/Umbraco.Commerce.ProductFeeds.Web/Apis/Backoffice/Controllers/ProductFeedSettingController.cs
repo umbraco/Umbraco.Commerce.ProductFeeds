@@ -48,6 +48,8 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         }
 
         [HttpPost("save")]
+        [ProducesResponseType<Guid>(StatusCodes.Status200OK)]
+        [ProducesResponseType<Guid>(StatusCodes.Status201Created)]
         [ProducesResponseType<string>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<string>(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Save(ProductFeedSettingWriteModel? model)
@@ -71,9 +73,13 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
                 return Problem("Save failed.", statusCode: (int)HttpStatusCode.InternalServerError);
             }
 
-            CreatedResult result = Created();
-            result.Value = recordId;
-            return result;
+            ContentResult actionResult = new()
+            {
+                Content = recordId.ToString(),
+                StatusCode = model.Id.HasValue ? (int)HttpStatusCode.OK : (int)HttpStatusCode.Created,
+            };
+
+            return actionResult;
         }
 
         [HttpGet("get/{id}")]

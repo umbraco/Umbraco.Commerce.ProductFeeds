@@ -3,17 +3,19 @@ import {
     html,
     customElement,
     state,
+    nothing,
 } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type {
+    UUIInputElement,
     UUIInputEvent,
 } from '@umbraco-cms/backoffice/external/uui';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { DETAILS_WORKSPACE_CONTEXT } from './context.js';
 import { listRoute, storeRoute } from '../routes.js';
 import { UC_STORE_CONTEXT, UcStoreModel } from '@umbraco-commerce/backoffice';
-import { ProductFeedSettingWriteModel } from '../../generated/apis/types.gen.js';
 import { detailsWorkspaceManifest } from './manifests.js';
+import { FeProductFeedSettingWriteModel } from './types.js';
 
 const ELEMENT_NAME = 'uc-product-feed-workspace-editor';
 @customElement(ELEMENT_NAME)
@@ -24,7 +26,7 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
     _store?: UcStoreModel;
 
     @state()
-    _model?: ProductFeedSettingWriteModel;
+    _model?: FeProductFeedSettingWriteModel;
 
     @state()
     _isNew?: boolean;
@@ -34,7 +36,6 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
 
     constructor() {
         super();
-        console.log('details workspace ctor');
         this.consumeContext(DETAILS_WORKSPACE_CONTEXT, (context) => {
             this.#workspaceContext = context;
             this.#observeWorkspace();
@@ -49,7 +50,6 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
 
     #observeWorkspace() {
         if (!this.#workspaceContext) return;
-        // this.observe(this.#workspaceContext.store, (store) => (this._store = store));
         this.observe(this.#workspaceContext.model, (model) => (this._model = model));
         this.observe(this.#workspaceContext.isNew, (isNew) => {
             this._isNew = isNew;
@@ -63,32 +63,12 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
 
     #onNameChange(event: UUIInputEvent) {
         event.stopPropagation();
-        // const target = event.composedPath()[0] as UUIInputElement;
-        // this.#workspaceContext?.handleCommand(
-        //     new UcNameWithAliasUpdateCommand(
-        //         target.value.toString(),
-        //         this._model?.alias,
-        //         this._aliasLocked,
-        //     ),
-        // );
-    }
-
-    #onAliasChange(event: UUIInputEvent) {
-        event.stopPropagation();
-        // const target = event.composedPath()[0] as UUIInputElement;
-        // this.#workspaceContext?.handleCommand(
-        //     new UcNameWithAliasUpdateCommand(
-        //         this._model?.name,
-        //         target.value.toString(),
-        //         this._aliasLocked,
-        //     ),
-        // );
-    }
-
-    #onAliasLockToggle(event: UUIInputEvent) {
-        event.stopPropagation();
-        // const target = event.composedPath()[0] as UcInputLockElement;
-        // this._aliasLocked = target.locked;
+        const target = event.composedPath()[0] as UUIInputElement;
+        this.#workspaceContext?.setModel({
+            ...this._model,
+            feedRelativePath: '',
+            feedName: target.value,
+        } as FeProductFeedSettingWriteModel);
     }
 
     render() {
@@ -107,14 +87,13 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
                         .value=${this._model?.feedName ?? ''}
                         @input="${this.#onNameChange}"
                         label=${this.localize.term('ucGeneral_name')}
-                        placeholder=${this.localize.term('ucPlaceholders_enterName')}>
+                        placeholder=${this.localize.term('ucPlaceholders_enterName')}
+                        required>
                     </uui-input>
 				</div>
 	            ${!this._isNew && this._model
-                ? html`<umb-workspace-entity-action-menu
-                            slot="action-menu"
-                        ></umb-workspace-entity-action-menu>`
-                : ''}
+                ? html`<umb-workspace-entity-action-menu slot="action-menu"></umb-workspace-entity-action-menu>`
+                : nothing}
                 <div slot="footer-info" id="footer">
                     <a href=${storeRoute(this._store!.id)}>${this._store?.name}</a> /
 	                <a href=${listRoute(this._store!.id)}>

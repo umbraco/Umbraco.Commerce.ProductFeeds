@@ -13,7 +13,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
         /// Save product feed settings.
         /// </summary>
         /// <param name="input"></param>
-        /// <returns>Read id of the record that this method has just saved. Returns null if no record is saved.</returns>
+        /// <returns>id of the record that this method has just saved. Returns null if no record is saved.</returns>
         Task<Guid?> SaveSettingAsync(ProductFeedSettingWriteModel input);
     }
 }

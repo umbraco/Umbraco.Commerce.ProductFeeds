@@ -1,4 +1,4 @@
-import { css, customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, property, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { FePropertyAndNodeMapDetails } from '../types';
 import { UUIEvent } from '@umbraco-cms/backoffice/external/uui';
@@ -13,15 +13,14 @@ export class UcpfPropNodeMapper extends UmbLitElement {
     @property({ type: Array })
     mapItems: FePropertyAndNodeMapDetails[] = [];
 
-    @state()
-    private _propertyValueExtractors: Option[] = [];
+    @property({ type: Array })
+    propertyValueExtractorOptions: Option[] = [];
 
     /**
      *
      */
     constructor() {
         super();
-        console.log('UcpfPropNodeMapper ctor');
     }
 
     #onMapItemChange(evt: UUIEvent, itemId: string) {
@@ -41,13 +40,6 @@ export class UcpfPropNodeMapper extends UmbLitElement {
             this.dispatchEvent(new CustomEvent<FePropertyAndNodeMapDetails[]>('change', {
                 detail: mapItems,
             }));
-
-            // this.dispatchEvent(new CustomEvent('item-change', {
-            //     detail: {
-            //         itemId,
-            //         value: element.value?.ToString() ?? '',
-            //     },
-            // }));
         }
     }
 
@@ -61,8 +53,6 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                 valueExtractorName: 'DefaultSingleValuePropertyExtractor',
             },
         ];
-
-        // this.dispatchEvent(new CustomEvent('item-add'));
 
         this.dispatchEvent(new CustomEvent<FePropertyAndNodeMapDetails[]>('change', {
             detail: mapItems,
@@ -94,7 +84,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
             </div>
         </div>
         
-        ${this.mapItems.map(mapItem => html`
+        ${repeat(this.mapItems, item => item.uiId, mapItem => html`
             <div
                 class="ucpf-prop-mapping-row"
                 ng-repeat="item in vm.propertyAndNodeMappingVm track by item.uiId"
@@ -104,12 +94,12 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
-                        label=${this.localize.term('ucProductFeed_propNodeMapper_nodeName')}
+                        label=${this.localize.term('ucProductFeed_propNodeMapper:nodeName')}
                         placeholder="Feed Node Name"
                         required
                         name='nodeName'
                         value=${mapItem.nodeName}
-                        @change=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}></uui-input>
+                        @input=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}></uui-input>
                 </div>
                 
                 <div class="ucpf-prop-mapping-col"
@@ -117,11 +107,11 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
-                        label=${this.localize.term('ucProductFeed_propNodeMapper_propertyAlias')}
+                        label=${this.localize.term('ucProductFeed_propNodeMapper:propertyAlias')}
                         placeholder="Property Alias"
                         value=${mapItem.propertyAlias}
                         name='propertyAlias'
-                        @change=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}
+                        @input=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}
                         required></uui-input>
                 </div>
                 
@@ -129,41 +119,41 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-select
                         placeholder=${`-- ${this.localize.term('ucPlaceholders_selectAnItem')} --`}
                         name='valueExtractorName'
-                        label=${this.localize.term('ucProductFeed_propNodeMapper_valueExtractorName')}
-                        placeholder=${this.localize.term('ucProductFeed_propNodeMapper_valueExtractorName')}
-                        .options=${this._propertyValueExtractors.map(extractor => {
-            return {
-                ...extractor,
-                selected: mapItem.valueExtractorName === extractor.value,
-            };
-        })}
-                        @change=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}>
+                        label=${this.localize.term('ucProductFeed_propNodeMapper:valueExtractorName')}
+                        placeholder=${this.localize.term('ucProductFeed_propNodeMapper:valueExtractorName')}
+                        .options=${this
+                .propertyValueExtractorOptions
+                .map(extractor => {
+                    return {
+                        ...extractor,
+                        selected: mapItem.valueExtractorName === extractor.value,
+                    };
+                })}
+                        .title=${mapItem.valueExtractorName ?? ''}
+                        @change = ${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}>
                     </uui-select>
                     <uui-button
-                        type="button"
                         @click=${() => this.#onRemoveItemClick(mapItem.uiId)}
                         label=${this.localize.term('general_remove')}
-                        style="font-size: 1.2em; margin-left: 0.5em;">
-                        <uui-icon name='trash'></uui-icon>
-                        ${this.localize.term('general_remove')}
+                        title=${this.localize.term('general_remove')}>
+                        <uui-icon name='icon-trash'></uui-icon>
                     </uui-button>
                 </div>
             </div>
         `)
             }
         
-        <div class="ucpf-prop-mapping-row">
-            <div class="ucpf-prop-mapping-col">
-                <uui-button
-                    type="button"
-                    class="ucpf-add-map-item-btn"
-                    @click=${this.#onAddMapItemClick}
-                    look='placeholder'
-                    label=${this.localize.term('general_add')}>
-                    ${this.localize.term('general_add')}
-                </uui-button>
-            </div>
-        </div>`;
+        <div class="ucpf-prop-mapping-row" >
+    <div class="ucpf-prop-mapping-col" >
+        <uui-button
+class='ucpf-add-map-item-btn'
+@click=${this.#onAddMapItemClick}
+look = 'placeholder'
+label = ${this.localize.term('general_add')}>
+    ${this.localize.term('general_add')}
+</uui-button>
+    </div>
+    </div>`;
     }
 
     static styles = css`
@@ -183,7 +173,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
             display: flex;
         }
 
-        .ucpf-add-map -item-btn {
+        .ucpf-add-map-item-btn {
             width: 100%;
         }
     `;

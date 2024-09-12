@@ -9,13 +9,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public ProductFeedSettingWriteModelValidator()
         {
-            RuleFor(x => x.FeedRelativePath).NotEmpty();
-            RuleFor(x => x.FeedName).NotEmpty();
-            RuleFor(x => x.FeedDescription).MaximumLength(MaximumStringLength);
-            RuleFor(x => x.StoreId).NotEmpty();
-            RuleFor(x => x.ProductRootId).NotEmpty();
-            RuleFor(x => x.ProductDocumentTypeIds).NotEmpty();
-            RuleFor(x => x.PropertyNameMappings).NotEmpty();
+            RuleFor(x => x.FeedRelativePath).NotEmpty().WithName("Feed Relative Path");
+            RuleFor(x => x.FeedName).NotEmpty().WithName("Feed Name");
+            RuleFor(x => x.FeedDescription).MaximumLength(MaximumStringLength).WithName("Feed Description");
+            RuleFor(x => x.StoreId).NotEmpty().WithName("Umbraco Commerce Store");
+            RuleFor(x => x.ProductRootId).NotEmpty().WithName("Product Root");
+            RuleFor(x => x.ProductDocumentTypeIds).NotEmpty().WithName("Product Document Types");
+            RuleFor(x => x.PropertyNameMappings).NotEmpty().WithName("Product Property And Feed Node Mapping");
         }
     }
 }
