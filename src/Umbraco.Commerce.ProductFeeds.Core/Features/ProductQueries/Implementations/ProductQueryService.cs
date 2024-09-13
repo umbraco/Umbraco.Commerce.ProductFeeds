@@ -42,9 +42,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
                 .CreateQuery("content")
                 .Field("__Path", productRoot.Path.MultipleCharacterWildcard());
 
-            if (parameters.ProductDocumentTypeAliases.Any())
+            if (parameters.ProductDocumentTypeIds.Any())
             {
-                _ = baseQuery.And(nestedQuery => nestedQuery.GroupedOr(new[] { ExamineFieldNames.ItemTypeFieldName }, parameters.ProductDocumentTypeAliases.ToArray()));
+                _ = baseQuery.And(nestedQuery => nestedQuery.GroupedOr(new[] { ExamineFieldNames.ItemTypeFieldName }, parameters.ProductDocumentTypeIds.ToArray()));
             }
 
             IEnumerable<string> ids = baseQuery

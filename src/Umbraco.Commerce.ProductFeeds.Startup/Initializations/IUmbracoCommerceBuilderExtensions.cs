@@ -30,12 +30,6 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
         public static IUmbracoCommerceBuilder AddCommerceProductFeeds(this IUmbracoCommerceBuilder ucBuilder)
         {
             ArgumentNullException.ThrowIfNull(ucBuilder, "umbracoCommerceBuilder");
-            IUmbracoBuilder umbBuilder = ucBuilder.WithUmbracoBuilder();
-
-            //TODO: DInh - review
-            //umbBuilder.AddNotificationHandler<TreeNodesRenderingNotification, TreeNodesRenderingNotificationHandler>();
-            //umbBuilder.ManifestFilters().Append<UmbracoCommerceProductFeedsManifestFilter>();
-
             ucBuilder.AddSwagger();
             ucBuilder.AddServices();
             ucBuilder.AddDbMigrations();
