@@ -28,8 +28,6 @@ const allManifests = [
 ];
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
-    console.log('UC Product Feeds v14 loaded.');
-
     extensionRegistry.registerMany(allManifests);
     host.consumeContext(UMB_AUTH_CONTEXT, async (instance) => {
         if (!instance) return;

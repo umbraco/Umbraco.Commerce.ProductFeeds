@@ -68,7 +68,6 @@ export class UcpfPropNodeMapper extends UmbLitElement {
     }
 
     render() {
-        console.log('ucpf-prop-mapping');
         return html`
         <div class="ucpf-prop-mapping-row" style="font-weight: 600;">
             <div class="ucpf-prop-mapping-col"

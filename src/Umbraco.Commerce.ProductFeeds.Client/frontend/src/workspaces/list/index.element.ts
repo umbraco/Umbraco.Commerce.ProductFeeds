@@ -15,9 +15,6 @@ import { listingWorkspaceCollectionManifest } from './manifests.js';
 const elementName = 'uc-product-feeds-workspace-collection';
 @customElement(elementName)
 export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
-
-    // #workspaceContext?: typeof LISTING_WORKSPACE_CONTEXT.TYPE;
-
     @state()
     private _config?: UcpfListCollectionConfiguration;
 
@@ -33,10 +30,6 @@ export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
                 this.#constructConfig();
             });
         });
-
-        // this.consumeContext(LISTING_WORKSPACE_CONTEXT, (ctx) => {
-        //     this.#workspaceContext = ctx;
-        // });
     }
 
     #constructConfig() {

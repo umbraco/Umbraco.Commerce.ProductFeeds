@@ -125,19 +125,19 @@ export class UcpfDetailsWorkspaceContext
                     uiId: nanoid(),
                     nodeName: 'g:availability',
                     propertyAlias: 'stock',
-                    'valueExtractorName': 'DefaultGoogleAvailabilityValueExtractor',
+                    valueExtractorName: 'DefaultGoogleAvailabilityValueExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:image_link',
                     propertyAlias: 'image',
-                    'valueExtractorName': 'DefaultMediaPickerPropertyValueExtractor',
+                    valueExtractorName: 'DefaultMediaPickerPropertyValueExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:image_link',
                     propertyAlias: 'images',
-                    'valueExtractorName': 'DefaultMultipleMediaPickerPropertyValueExtractor',
+                    valueExtractorName: 'DefaultMultipleMediaPickerPropertyValueExtractor',
                 },
             ],
         } as FeProductFeedSettingWriteModel);
@@ -191,7 +191,6 @@ export class UcpfDetailsWorkspaceContext
     }
 
     protected async submit(): Promise<void> {
-        console.log('saving model', this.#model.value);
         if (!this.#model.value) {
             return;
         }
@@ -201,7 +200,7 @@ export class UcpfDetailsWorkspaceContext
         if (validationErrors && validationErrors.length) {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    message: 'Save failed.',
+                    message: this.#localize?.term('ucProductFeeds_message:saveFailed') ?? 'Save failed',
                     structuredList: {
                         Errors: validationErrors.map(x => x.errorMessage),
                     },
@@ -210,7 +209,7 @@ export class UcpfDetailsWorkspaceContext
         } else if (error) {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    headline: 'Save failed',
+                    headline: this.#localize?.term('ucProductFeeds_message:saveFailed') ?? 'Save failed',
                     message: JSON.stringify(error),
                 },
             });
@@ -234,7 +233,7 @@ export class UcpfDetailsWorkspaceContext
         } else {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    headline: 'Delete failed',
+                    headline: this.#localize?.term('ucProductFeeds_message:deleteFailed') ?? 'Delete failed',
                     message: JSON.stringify(error),
                 },
             });

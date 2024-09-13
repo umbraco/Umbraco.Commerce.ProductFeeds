@@ -126,7 +126,6 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
     }
 
     render() {
-        console.log('render');
         return html`
 			<umb-table
                 .config=${this._tableConfig}

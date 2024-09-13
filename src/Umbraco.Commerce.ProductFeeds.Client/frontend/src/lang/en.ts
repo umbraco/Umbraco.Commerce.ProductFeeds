@@ -30,12 +30,16 @@ export default {
         'propNodeMapper:propertyAlias': 'Property Alias',
         'propNodeMapper:valueExtractorName': 'Property Value Extractor',
 
-        // legacy prop
+        // BEGIN legacy props
         'prop:productDocumentTypeAliasesLabel': '[OBSOLETE] Product Document Type',
         'prop:productDocumentTypeAliasesDescription': 'This property will be removed in the future. Migrate to "Product Document Type" property as soon as you can.',
 
         'prop:productChildVariantTypeAliasLabel': '[OBSOLETE] Product Child Variant Type',
         'prop:productChildVariantTypeAliasDescription': 'This property will be removed in the future. Migrate to "Product Child Variant Type" property as soon as you can.',
+        // END legacy props
+
+        'message:saveFailed': 'Save failed',
+        'message:deleteFailed': 'Delete failed',
 
     },
 } as UmbLocalizationDictionary;

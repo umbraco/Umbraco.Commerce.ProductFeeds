@@ -86,7 +86,6 @@ export class UcpfDetailsWorkspaceViewElement
                 ...this._model!,
                 [inputEl.name]: inputEl.value,
             });
-            console.log(this._model);
         }
     }
 
@@ -145,12 +144,9 @@ export class UcpfDetailsWorkspaceViewElement
             ...this._model!,
             propertyNameMappings: mapItems,
         });
-
-        console.log('prop node map changing', mapItems);
     }
 
     #renderLeftColumn() {
-        console.log(this._model?.productRootId ? [this._model.productRootId] : []);
         return html`
             <uui-box headline=${this.localize.term('ucGeneral_general')}>
                 <uc-stack look="loose" .divide=${true}>

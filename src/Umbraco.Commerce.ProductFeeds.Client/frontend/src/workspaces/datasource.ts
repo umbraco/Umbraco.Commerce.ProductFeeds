@@ -83,8 +83,6 @@ export class UcpfListDataSource {
             body: model as ProductFeedSettingWriteModel,
         });
 
-        console.log(data, error);
-
         if (data) {
             return { id: data };
         }
@@ -98,8 +96,6 @@ export class UcpfListDataSource {
         const { data, error } = await delete_({
             body: { id },
         });
-
-        console.log(data, error);
 
         if (data) {
             return { isSuccess: data };
