@@ -37,7 +37,7 @@ export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
 
         this._config = {
             storeId: this._store.id,
-            pageSize: 200, // Currently have to set a page size otherwise it doesn't load initial data
+            pageSize: 400, // Currently have to set a page size otherwise it doesn't load initial data
         };
     }
 

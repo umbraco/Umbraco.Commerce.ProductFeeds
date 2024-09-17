@@ -27,5 +27,9 @@ export class UcpfListListingWorkspaceContext
             },
         ]);
     }
+
+    override getEntityType(): string {
+        return listingWorkspaceManifest.meta.entityType;
+    }
 }
 

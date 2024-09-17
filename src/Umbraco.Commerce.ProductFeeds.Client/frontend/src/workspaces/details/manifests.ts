@@ -7,7 +7,8 @@ import type {
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import { UcpfDetailsWorkspaceContext } from './context.js';
 import UcpfDetailsWorkspaceViewElement from './views/details.element.js';
-import { ProductFeedEntityActionDelete } from './actions/action.delete.js';
+import { ProductFeedEntityActionDelete } from './actions/entity-action.delete.js';
+import { UcpfWorkspaceActionOpenFeed } from './actions/workspace-action.open-feed.js';
 
 export const detailsWorkspaceManifest: ManifestWorkspace = {
     type: 'workspace',
@@ -45,11 +46,29 @@ const workspaceActions: Array<ManifestWorkspaceAction> = [
     {
         type: 'workspaceAction',
         kind: 'default',
+        alias: `${detailsWorkspaceManifest.alias}:action:openFeed`,
+        name: 'Open Product Feed',
+        api: UcpfWorkspaceActionOpenFeed,
+        meta: {
+            label: '#ucProductFeeds_buttonOpenFeed',
+            look: 'secondary',
+        },
+        conditions: [
+            {
+                alias: 'Umb.Condition.WorkspaceAlias',
+                match: detailsWorkspaceManifest.alias,
+            },
+        ],
+        weight: 901,
+    },
+    {
+        type: 'workspaceAction',
+        kind: 'default',
         alias: `${detailsWorkspaceManifest.alias}:action:save`,
         name: 'Save Product Feed Details Action',
         api: UmbSubmitWorkspaceAction,
         meta: {
-            label: '#general_save',
+            label: '#buttons_save',
             look: 'primary',
             color: 'positive',
         },
@@ -59,6 +78,7 @@ const workspaceActions: Array<ManifestWorkspaceAction> = [
                 match: detailsWorkspaceManifest.alias,
             },
         ],
+        weight: 900,
     },
 ];
 

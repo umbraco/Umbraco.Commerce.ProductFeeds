@@ -2,6 +2,7 @@ using Examine;
 using Examine.Search;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
@@ -13,15 +14,18 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
         private readonly IExamineManager _examineManager;
         private readonly UmbracoHelper _umbracoHelper;
         private readonly ILogger<ProductQueryService> _logger;
+        private readonly IContentTypeService _contentTypeService;
 
         public ProductQueryService(
             IExamineManager examineManager,
             UmbracoHelper umbracoHelper,
-            ILogger<ProductQueryService> logger)
+            ILogger<ProductQueryService> logger,
+            IContentTypeService contentTypeService)
         {
             _examineManager = examineManager;
             _umbracoHelper = umbracoHelper;
             _logger = logger;
+            _contentTypeService = contentTypeService;
         }
 
         /// <inheritdoc/>
@@ -37,6 +41,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
             IPublishedContent? productRoot = _umbracoHelper.Content(parameters.ProductRootKey)
                     ?? throw new ContentNotFoundException(string.Format(null, "Unable to find product root with key = '{0}'", parameters.ProductRootKey));
 
+            IEnumerable<string> productTypeAliases = _contentTypeService
+                .GetAll(parameters.ProductDocumentTypeIds.Select(idString => new Guid(idString)))
+                .Select(x => x.Alias);
+
             IBooleanOperation baseQuery = index
                 .Searcher
                 .CreateQuery("content")
@@ -44,7 +52,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
 
             if (parameters.ProductDocumentTypeIds.Any())
             {
-                _ = baseQuery.And(nestedQuery => nestedQuery.GroupedOr(new[] { ExamineFieldNames.ItemTypeFieldName }, parameters.ProductDocumentTypeIds.ToArray()));
+                _ = baseQuery.And(nestedQuery => nestedQuery.GroupedOr(new[] { ExamineFieldNames.ItemTypeFieldName }, productTypeAliases.ToArray()));
             }
 
             IEnumerable<string> ids = baseQuery

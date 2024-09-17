@@ -1,7 +1,7 @@
 const localizationManifests = [
     {
         type: 'localization',
-        alias: 'UcPproductFeeds.Localization.En',
+        alias: 'UcProductFeeds.Localization.En',
         weight: -100,
         name: 'English',
         meta: {

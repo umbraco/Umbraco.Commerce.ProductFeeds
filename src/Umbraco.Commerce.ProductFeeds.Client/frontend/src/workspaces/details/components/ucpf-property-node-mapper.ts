@@ -93,7 +93,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
-                        label=${this.localize.term('ucProductFeed_propNodeMapper:nodeName')}
+                        label=${this.localize.term('ucProductFeed_propNodeMapperNodeName')}
                         placeholder="Feed Node Name"
                         required
                         name='nodeName'
@@ -106,7 +106,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
-                        label=${this.localize.term('ucProductFeed_propNodeMapper:propertyAlias')}
+                        label=${this.localize.term('ucProductFeed_propNodeMapperPropertyAlias')}
                         placeholder="Property Alias"
                         value=${mapItem.propertyAlias}
                         name='propertyAlias'
@@ -118,8 +118,8 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                     <uui-select
                         placeholder=${`-- ${this.localize.term('ucPlaceholders_selectAnItem')} --`}
                         name='valueExtractorName'
-                        label=${this.localize.term('ucProductFeed_propNodeMapper:valueExtractorName')}
-                        placeholder=${this.localize.term('ucProductFeed_propNodeMapper:valueExtractorName')}
+                        label=${this.localize.term('ucProductFeed_propNodeMapperValueExtractorName')}
+                        placeholder=${this.localize.term('ucProductFeed_propNodeMapperValueExtractorName')}
                         .options=${this
                 .propertyValueExtractorOptions
                 .map(extractor => {

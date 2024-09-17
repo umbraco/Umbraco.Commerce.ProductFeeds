@@ -200,7 +200,7 @@ export class UcpfDetailsWorkspaceContext
         if (validationErrors && validationErrors.length) {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    message: this.#localize?.term('ucProductFeeds_message:saveFailed') ?? 'Save failed',
+                    message: this.#localize?.term('ucProductFeeds_messageSaveFailed') ?? 'Save failed',
                     structuredList: {
                         Errors: validationErrors.map(x => x.errorMessage),
                     },
@@ -209,7 +209,7 @@ export class UcpfDetailsWorkspaceContext
         } else if (error) {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    headline: this.#localize?.term('ucProductFeeds_message:saveFailed') ?? 'Save failed',
+                    headline: this.#localize?.term('ucProductFeeds_messageSaveFailed') ?? 'Save failed',
                     message: JSON.stringify(error),
                 },
             });
@@ -227,13 +227,19 @@ export class UcpfDetailsWorkspaceContext
 
     async deleteAsync() {
         const entityId = this.#unique.getValue()!;
-        const { isSuccess, error } = await this.#repository.deleteAsync(entityId);
+        const { isSuccess, error } = await this.#repository.deleteAsync([entityId]);
         if (isSuccess) {
+            this.#notificationContext?.peek('positive', {
+                data: {
+                    headline: this.#localize?.term('ucProductFeeds_messageDeleteSuccess') ?? 'Delete successfully',
+                    message: JSON.stringify(error),
+                },
+            });
             window.history.pushState({}, '', listRoute(this.#store!.id));
         } else {
             this.#notificationContext?.peek('danger', {
                 data: {
-                    headline: this.#localize?.term('ucProductFeeds_message:deleteFailed') ?? 'Delete failed',
+                    headline: this.#localize?.term('ucProductFeeds_messageDeleteFailed') ?? 'Delete failed',
                     message: JSON.stringify(error),
                 },
             });

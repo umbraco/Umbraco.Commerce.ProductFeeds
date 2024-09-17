@@ -66,7 +66,7 @@ export type PropertyAndNodeMapItem = {
 
 export type DeleteData = {
     body?: {
-        id?: string;
+        ids?: Array<(string)>;
     };
 };
 

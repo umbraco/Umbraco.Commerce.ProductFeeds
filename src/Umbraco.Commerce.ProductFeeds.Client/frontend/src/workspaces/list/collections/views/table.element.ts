@@ -12,7 +12,6 @@ import { ProductFeedsCollectionModel } from '../../types';
 const elementName = 'uc-product-feeds-collection-view-table';
 @customElement(elementName)
 export class UcpfListCollectionViewTableElement extends UmbLitElement {
-
     @state()
     private _storeId?: string;
 
@@ -29,11 +28,11 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
         },
         {
             alias: 'feedTypeName',
-            name: this.localize.term('ucProductFeeds_prop:feedTypeNameLabel'),
+            name: this.localize.term('ucProductFeeds_propFeedTypeLabel'),
         },
         {
             alias: 'feedRelativePath',
-            name: this.localize.term('ucProductFeeds_prop:feedRelativePathLabel'),
+            name: this.localize.term('ucProductFeeds_propFeedRelativePathLabel'),
         },
         {
             alias: 'openFeed',
@@ -67,6 +66,7 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
         this.observe(
             this.#collectionContext.items,
             (collectionItems) => {
+                console.log('collectionItems', collectionItems);
                 this.#createTableItems(collectionItems);
             },
             'umbCollectionItemsObserver',
@@ -116,7 +116,6 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
         const selection = table.selection;
         this.#collectionContext?.selection.setSelection(selection);
     }
-
 
     #handleDeselect(event: UmbTableDeselectedEvent) {
         event.stopPropagation();

@@ -25,4 +25,8 @@ export class UcpfListCollectionRepository
     async requestCollection() {
         return this.#dataSource.fetchListAsync(this.#store!.id);
     }
+
+    async deleteAsync(ids: string[]) {
+        return this.#dataSource.deleteAsync(ids);
+    }
 }

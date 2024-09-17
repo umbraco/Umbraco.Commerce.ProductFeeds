@@ -29,7 +29,7 @@ export class UcpfReadWriteRepository
         return this.#dataSource.saveAsync(data);
     }
 
-    async deleteAsync(id: string) {
-        return this.#dataSource.deleteAsync(id);
+    async deleteAsync(ids: string[]) {
+        return this.#dataSource.deleteAsync(ids);
     }
 }

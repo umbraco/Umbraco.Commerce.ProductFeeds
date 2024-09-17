@@ -141,12 +141,15 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpPost]
         [ProducesResponseType<bool>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete([FromForm] Guid id)
+        public async Task<IActionResult> Delete([FromForm] ICollection<Guid> ids)
         {
-            bool success = await _feedSettingsService.DeleteSettingAsync(id).ConfigureAwait(true);
+            IEnumerable<Task<bool>> deleteTasks = ids.Select(id => _feedSettingsService.DeleteSettingAsync(id));
+
+            bool[] results = await Task.WhenAll(deleteTasks);
+            bool success = results.All(success => success);
             if (!success)
             {
-                return Problem("Delete failed.", statusCode: (int)HttpStatusCode.InternalServerError);
+                return Problem("Some errors occurred, the data may not be deleted properly. Please check the server log.", statusCode: (int)HttpStatusCode.InternalServerError);
             }
 
             return Ok(success);

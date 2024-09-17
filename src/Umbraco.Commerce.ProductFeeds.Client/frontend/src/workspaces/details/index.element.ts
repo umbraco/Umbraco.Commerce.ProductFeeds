@@ -66,7 +66,6 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
         const target = event.composedPath()[0] as UUIInputElement;
         this.#workspaceContext?.setModel({
             ...this._model,
-            feedRelativePath: '',
             feedName: target.value,
         } as FeProductFeedSettingWriteModel);
     }

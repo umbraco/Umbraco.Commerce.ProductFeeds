@@ -9,7 +9,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 
         public required string FeedRelativePath { get; set; }
 
-        public ProductFeedType FeedType { get; set; }
+        public ProductFeedType? FeedType { get; set; }
 
         public required string FeedName { get; set; }
 

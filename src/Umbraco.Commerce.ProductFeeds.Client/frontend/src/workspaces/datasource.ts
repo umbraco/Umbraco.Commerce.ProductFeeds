@@ -39,42 +39,42 @@ export class UcpfListDataSource {
     }
 
     async fetchFeedSettingDetailsAsync(id: string) {
-        const { data, error } = await tryExecuteAndNotify(this.#host, getDetails({
+        const { data, error } = await getDetails({
             path: {
                 id,
             },
-        }));
+        });
 
-        if (data?.data) {
-            return { data: data.data as ProductFeedSettingReadModel };
+        if (data) {
+            return { data: data as ProductFeedSettingReadModel };
         }
 
         return {
-            error: data?.error ?? error,
+            error,
         };
     }
 
     async fetchFeedTypesAsync() {
-        const { data, error } = await tryExecuteAndNotify(this.#host, getFeedTypes());
+        const { data, error } = await getFeedTypes();
 
-        if (data?.data) {
-            return { data: data.data as Array<LookupReadModel> };
+        if (data) {
+            return { data: data as Array<LookupReadModel> };
         }
 
         return {
-            error: data?.error ?? error,
+            error,
         };
     }
 
     async fetchPropertyValueExtractorsAsync() {
-        const { data, error } = await tryExecuteAndNotify(this.#host, getPropertyValueExtractors());
+        const { data, error } = await getPropertyValueExtractors();
 
-        if (data?.data) {
-            return { data: data.data as Array<LookupReadModel> };
+        if (data) {
+            return { data: data as Array<LookupReadModel> };
         }
 
         return {
-            error: data?.error ?? error,
+            error,
         };
     }
 
@@ -88,13 +88,17 @@ export class UcpfListDataSource {
         }
 
         return {
-            error: error,
+            error,
         };
     }
 
-    async deleteAsync(id: string) {
+    async deleteAsync(ids: string[]) {
+        if (!ids || !ids.length) {
+            throw 'no id to delete';
+        }
+
         const { data, error } = await delete_({
-            body: { id },
+            body: { ids },
         });
 
         if (data) {
@@ -102,7 +106,7 @@ export class UcpfListDataSource {
         }
 
         return {
-            error: error,
+            error,
         };
     }
 }

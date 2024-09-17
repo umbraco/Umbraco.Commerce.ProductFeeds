@@ -150,33 +150,35 @@ export class UcpfDetailsWorkspaceViewElement
         return html`
             <uui-box headline=${this.localize.term('ucGeneral_general')}>
                 <uc-stack look="loose" .divide=${true}>
-                    <umb-property-layout label=${this.localize.term('ucProductFeeds_prop:feedRelativePathLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:feedRelativePathDescription')}>
+                    <umb-property-layout label=${this.localize.term('ucProductFeeds_propFeedRelativePathLabel')}
+                        description=${this.localize.term('ucProductFeeds_propFeedRelativePathDescription')}
+                        mandatory>
                         <uui-input
                             slot="editor"
                             name="feedRelativePath"
-                            label=${this.localize.term('ucProductFeeds_prop:feedRelativePathLabel')}
+                            label=${this.localize.term('ucProductFeeds_propFeedRelativePathLabel')}
                             value=${this._model?.feedRelativePath ?? ''}
                             @input=${this.#onInputChange}
                         ></uui-input>
                     </umb-property-layout>
                     
                     <umb-property-layout
-                        label=${this.localize.term('ucProductFeeds_prop:feedDescriptionLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:feedDescriptionDescription')}>
+                        label=${this.localize.term('ucProductFeeds_propFeedDescriptionLabel')}
+                        description=${this.localize.term('ucProductFeeds_propFeedDescriptionDescription')}>
                         <uui-input
                             slot="editor"
                             name="feedDescription"
-                            label=${this.localize.term('ucProductFeeds_prop:feedDescriptionLabel')}
+                            label=${this.localize.term('ucProductFeeds_propFeedDescriptionLabel')}
                             value=${this._model?.feedDescription ?? ''}
                             @input="${this.#onInputChange}"
                         ></uui-input>
                     </umb-property-layout>
 
-                    <umb-property-layout label=${this.localize.term('ucProductFeeds_prop:feedTypeLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:feedTypeDescription')}>
+                    <umb-property-layout label=${this.localize.term('ucProductFeeds_propFeedTypeLabel')}
+                        description=${this.localize.term('ucProductFeeds_propFeedTypeDescription')}
+                        mandatory>
                         <uui-select
-                            label=${this.localize.term('ucProductFeeds_prop:feedTypeLabel')}
+                            label=${this.localize.term('ucProductFeeds_propFeedTypeLabel')}
                             placeholder=${`-- ${this.localize.term('ucPlaceholders_selectAnItem')} --`}
                             slot='editor'
                             name='feedType'
@@ -187,13 +189,13 @@ export class UcpfDetailsWorkspaceViewElement
 
                     ${this._model?.productDocumentTypeAliases.length ? html`
                         <umb-property-layout
-                            label=${this.localize.term('ucProductFeeds_prop:productDocumentTypeAliasesLabel')}
-                            description=${this.localize.term('ucProductFeeds_prop:productDocumentTypeAliasesDescription')}
+                            label=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesLabel')}
+                            description=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesDescription')}
                         >
                             <uui-input
                                 slot="editor"
                                 name="productDocumentTypeAliases"
-                                label=${this.localize.term('ucProductFeeds_prop:productDocumentTypeAliasesLabel')}
+                                label=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesLabel')}
                                 value=${this._model?.productDocumentTypeAliases?.join(';')}
                                 @input="${this.#onInputChange}"
                                 disabled
@@ -202,8 +204,8 @@ export class UcpfDetailsWorkspaceViewElement
                     ` : nothing}
 
                     <umb-property-layout
-                            label=${this.localize.term('ucProductFeeds_prop:productDocumentTypeIdsLabel')}
-                            description=${this.localize.term('ucProductFeeds_prop:productDocumentTypeIdsDescription')}
+                            label=${this.localize.term('ucProductFeeds_propProductDocumentTypeIdsLabel')}
+                            description=${this.localize.term('ucProductFeeds_propProductDocumentTypeIdsDescription')}
                             ?mandatory=${true}
                         >
                         <umb-input-document-type
@@ -216,13 +218,13 @@ export class UcpfDetailsWorkspaceViewElement
 
                     ${this._model?.productChildVariantTypeAlias && html`
                         <umb-property-layout
-                            label=${this.localize.term('ucProductFeeds_prop:productChildVariantTypeAliasLabel')}
-                            description=${this.localize.term('ucProductFeeds_prop:productChildVariantTypeAliasDescription')}
+                            label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAliasLabel')}
+                            description=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAliasDescription')}
                         >
                             <uui-input
                                 slot="editor"
                                 name="productChildVariantTypeAlias"
-                                label=${this.localize.term('ucProductFeeds_prop:productChildVariantTypeAlias')}
+                                label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAlias')}
                                 value=${this._model?.productChildVariantTypeAlias ?? ''}
                                 disabled
                             ></uui-input>
@@ -231,8 +233,8 @@ export class UcpfDetailsWorkspaceViewElement
                     `}
 
                     <umb-property-layout
-                        label=${this.localize.term('ucProductFeeds_prop:productChildVariantTypeIdsLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:productChildVariantTypeIdsDescription')}
+                        label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeIdsLabel')}
+                        description=${this.localize.term('ucProductFeeds_propProductChildVariantTypeIdsDescription')}
                     >
                         <umb-input-document-type
                             slot='editor'
@@ -242,8 +244,8 @@ export class UcpfDetailsWorkspaceViewElement
                     </umb-property-layout>
 
                     <umb-property-layout
-                        label=${this.localize.term('ucProductFeeds_prop:productRootIdLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:productRootIdDescription')}
+                        label=${this.localize.term('ucProductFeeds_propProductRootIdLabel')}
+                        description=${this.localize.term('ucProductFeeds_propProductRootIdDescription')}
                         ?mandatory=${true}
                     >
                         <umb-input-document
@@ -258,8 +260,8 @@ export class UcpfDetailsWorkspaceViewElement
                     </umb-property-layout>
 
                     <umb-property-layout
-                        label=${this.localize.term('ucProductFeeds_prop:propNodeMappingLabel')}
-                        description=${this.localize.term('ucProductFeeds_prop:propNodeMappingDescription')}
+                        label=${this.localize.term('ucProductFeeds_propPropNodeMappingLabel')}
+                        description=${this.localize.term('ucProductFeeds_propPropNodeMappingDescription')}
                         ?mandatory=${true}
                     >
 
