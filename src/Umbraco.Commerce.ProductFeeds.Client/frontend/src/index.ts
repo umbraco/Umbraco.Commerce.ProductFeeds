@@ -3,24 +3,10 @@ import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { manifests as workspacesManifests } from './workspaces/manifests.ts';
 import { manifests as localizationManifests } from './lang/manifests.ts';
 import { client as apiClient } from './generated/apis/services.gen';
-import { listingWorkspaceManifest } from './workspaces/list/manifests.ts';
-import { UcManifestStoreMenuItem } from '@umbraco-commerce/backoffice';
 import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
+import { storeMenuManifests } from './uc-menu-manifest.ts';
 
 export * from './workspaces/details/components/ucpf-property-node-mapper.ts';
-
-const storeMenuManifests: UcManifestStoreMenuItem = {
-    type: 'ucStoreMenuItem',
-    alias: 'product-feeds',
-    name: 'Product Feeds',
-    meta: {
-        label: '#ucProductFeeds_sectionMenuLabel',
-        menus: ['Uc.Menu.StoreSettings'],
-        entityType: listingWorkspaceManifest.meta.entityType,
-        icon: 'icon-rss',
-    },
-    weight: -1,
-};
 
 const allManifests = [
     storeMenuManifests,
