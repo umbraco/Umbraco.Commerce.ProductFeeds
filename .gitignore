@@ -476,3 +476,4 @@ $RECYCLE.BIN/
 ## Umbraco Commerce Product Feed
 **/wwwroot/**
 src/**/packages.lock.json
+tests/**/packages.lock.json
