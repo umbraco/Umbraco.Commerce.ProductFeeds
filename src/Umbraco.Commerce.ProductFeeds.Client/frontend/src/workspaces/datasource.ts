@@ -33,7 +33,7 @@ export class UcpfListDataSource {
         return {
             data: {
                 items: data.data,
-                total: 0,
+                total: data.data.length,
             },
         };
     }
