@@ -9,22 +9,22 @@ export default {
         'propFeedRelativePathDescription': 'Enter a url-friendly string. Value must be unique among the feeds.',
 
         'propFeedDescriptionLabel': 'Feed Description',
-        'propFeedDescriptionDescription': 'A brief description about this feed. It will be used in <description>.',
+        'propFeedDescriptionDescription': 'A brief description about this feed. It will be used in \\<description\\>.',
 
         'propFeedTypeLabel': 'Feed Type',
         'propFeedTypeDescription': 'Choose the type that suits the consumer of this feed. Each type has a different template.',
 
         'propProductDocumentTypeIdsLabel': 'Product Document Types',
-        'propProductDocumentTypeIdsDescription': 'The published content of this document type will be included in the feed',
+        'propProductDocumentTypeIdsDescription': 'The published content of this document type will be included in the feed.',
 
         'propProductChildVariantTypeIdsLabel': 'Product Child Variant Types',
-        'propProductChildVariantTypeIdsDescription': 'Use this property when you use child variants implementation for Umbraco Commerce',
+        'propProductChildVariantTypeIdsDescription': 'Use this property when you use child variants implementation for Umbraco Commerce.',
 
         'propProductRootIdLabel': 'Product Root',
         'propProductRootIdDescription': 'Select the root for products. Only products under this root will be included in the feed.',
 
         'propPropNodeMappingLabel': 'Product Property And Feed Node Mapping',
-        'propPropNodeMappingDescription': 'Map between product property alias and the feed node under <item>',
+        'propPropNodeMappingDescription': 'Map between product property alias and the feed node under \\<item\\>.',
 
         'propNodeMapperNodeName': 'Feed Node Name',
         'propNodeMapperPropertyAlias': 'Property Alias',
