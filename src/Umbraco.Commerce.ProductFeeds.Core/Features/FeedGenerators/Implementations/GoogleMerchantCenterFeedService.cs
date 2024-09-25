@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Xml;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Commerce.Cms.Models;
+using Umbraco.Commerce.Common.Models;
 using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Core.Services;
@@ -27,7 +29,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
         private readonly ILogger<GoogleMerchantCenterFeedService> _logger;
         private readonly ICurrencyService _currencyService;
-        private readonly IProductQueryService _productQueryService;        
+        private readonly IProductQueryService _productQueryService;
         private readonly IUmbracoCommerceApi _commerceApi;
         private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
         private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
@@ -75,15 +77,15 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
             {
-                ProductRootKey = feedSetting.ProductRootKey,
-                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
+                ProductRootKey = feedSetting.ProductRootId,
+                ProductDocumentTypeIds = feedSetting.ProductDocumentTypeIds,
             });
 
             // render doc/channel/item nodes
             foreach (IPublishedContent product in products)
             {
                 IEnumerable<IPublishedContent> childVariants = product.Children
-                    .Where(x => x.ContentType.Alias == feedSetting.ProductChildVariantTypeAlias)
+                    .Where(x => feedSetting.ProductChildVariantTypeIds.Contains(x.ContentType.Key.ToString()))
                     .ToList();
                 if (childVariants.Any())
                 {
@@ -98,7 +100,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                         AddPriceNode(itemNode, feedSetting.StoreId, childVariant, null);
 
                         // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
                         AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
 
                         channel.AppendChild(itemNode);
@@ -119,7 +121,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                         AddPriceNode(itemNode, feedSetting.StoreId, product, complexVariant.Content);
 
                         // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
                         AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
 
                         channel.AppendChild(itemNode);
@@ -141,7 +143,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             XmlElement itemNode = channel.OwnerDocument.CreateElement("item");
 
             // add custom properties
-            foreach (PropertyValueMapping map in feedSetting.PropertyNameMappings)
+            foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
                 if (map.ValueExtractorName == nameof(DefaultMultipleMediaPickerPropertyValueExtractor))
                 {
@@ -196,8 +198,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             }
 
             XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
-            Price calculatedPrice = productSnapshot.CalculatePrice();
-            priceNode.InnerText = $"{calculatedPrice.WithTax.ToString("0.00")} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
+            Attempt<Price> calculatePriceAttempt = productSnapshot.TryCalculatePrice();
+            Price calculatedPrice = calculatePriceAttempt.Success ? calculatePriceAttempt.Result! : throw new NotImplementedException("Failed to calculate the price");
+            priceNode.InnerText = $"{calculatedPrice.WithTax.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
             itemNode.AppendChild(priceNode);
         }
 
