@@ -9,6 +9,13 @@ With the Umbraco.Commerce.ProductFeeds installed you will be able to configure p
 
 ## Documentation
 - [Getting started [↗]](https://docs.umbraco.com/umbraco-commerce-packages/product-feeds/installation).
+- [Release Notes](https://github.com/umbraco/Umbraco.Commerce.ProductFeeds/releases)
+
+
+## Migrate from v13 and v0.5.5 to v14
+- Due to the change in schema of Product Document Type and Product Child Variant Types, you will need to manually edit your feed settings. Please go the the feed settings and find the [obsolete] properties and migrate them to the newer one
+![image](https://github.com/user-attachments/assets/36d48973-11dc-49f2-b744-432152458419)
+
 
 ## Working locally
 ### Frontend
