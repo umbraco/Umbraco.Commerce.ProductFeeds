@@ -11,5 +11,5 @@ export const storeMenuManifests: UcManifestStoreMenuItem = {
         entityType: listingWorkspaceManifest.meta.entityType,
         icon: 'icon-rss',
     },
-    weight: 9999,
+    weight: -1000,
 };
