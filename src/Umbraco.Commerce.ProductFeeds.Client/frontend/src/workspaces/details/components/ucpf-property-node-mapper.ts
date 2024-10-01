@@ -128,8 +128,8 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                         selected: mapItem.valueExtractorName === extractor.value,
                     };
                 })}
-                        .title=${mapItem.valueExtractorName ?? ''}
-                        @change = ${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}>
+                        @change=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}
+                        title=${mapItem.valueExtractorName ?? ''}>
                     </uui-select>
                     <uui-button
                         @click=${() => this.#onRemoveItemClick(mapItem.uiId)}
