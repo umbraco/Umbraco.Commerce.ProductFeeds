@@ -202,6 +202,15 @@
                                 </umb-control-group>
 
                                 <umb-control-group
+                                    label="Include Tax In Price"
+                                    description="For countries like US and Canada, you need to show price without tax, for most other countries, you should show price with tax.">
+                                    <input
+                                        type="checkbox"
+                                        class="umb-property-editor umb-textstring textstring"
+                                        ng-model="vm.content.includeTaxInPrice" />
+                                </umb-control-group>
+
+                                <umb-control-group
                                     label="Property And Node Mapping"
                                     description="Map between property alias and the node under <item>"
                                     class="required"

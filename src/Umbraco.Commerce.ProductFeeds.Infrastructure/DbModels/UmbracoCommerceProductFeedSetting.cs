@@ -31,5 +31,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
         public Guid StoreId { get; set; }
 
         public string ProductPropertyNameMappings { get; set; } = string.Empty;
+
+        public bool IncludeTaxInPrice { get; set; }
     }
 }
