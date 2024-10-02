@@ -33,6 +33,7 @@ export type ProductFeedSettingReadModel = {
     productChildVariantTypeIds: Array<(string)>;
     feedRelativePath: string;
     propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
+    includeTaxInPrice: boolean;
 };
 
 export type ProductFeedSettingWriteModel = {
@@ -54,6 +55,7 @@ export type ProductFeedSettingWriteModel = {
     propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
     productChildVariantTypeIds: Array<(string)>;
     productDocumentTypeIds: Array<(string)>;
+    includeTaxInPrice: boolean;
 };
 
 export type ProductFeedType = 'GoogleMerchantCenter';

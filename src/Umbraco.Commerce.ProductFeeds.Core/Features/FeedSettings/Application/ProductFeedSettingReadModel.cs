@@ -3,7 +3,6 @@ using Umbraco.Commerce.Extensions;
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
 
-#pragma warning disable CA2227 // Collection properties should be read only
     public class ProductFeedSettingReadModel
     {
         public Guid Id { get; set; }
@@ -30,7 +29,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required string FeedRelativePath { get; set; }
 
-        public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; set; } = [];
+        public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; init; } = [];
+
+        public bool IncludeTaxInPrice { get; set; }
     }
-#pragma warning restore CA2227 // Collection properties should be read only
 }

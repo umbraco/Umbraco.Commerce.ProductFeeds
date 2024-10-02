@@ -1,5 +1,5 @@
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
-import type { UUIEvent, UUIInputElement, UUISelectElement } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIBooleanInputElement, UUIEvent, UUIInputElement, UUISelectElement } from '@umbraco-cms/backoffice/external/uui';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import {
     customElement,
@@ -89,6 +89,16 @@ export class UcpfDetailsWorkspaceViewElement
         }
     }
 
+    #onCheckboxChange(evt: UUIEvent) {
+        const checkboxEl = evt.target as UUIBooleanInputElement;
+        if (checkboxEl) {
+            this.#workspaceContext?.setModel({
+                ...this._model!,
+                [checkboxEl.name]: checkboxEl.checked,
+            });
+        }
+    }
+
     #onSelectElementChange(evt: UUIEvent) {
         const selectEl = evt.target as UUISelectElement;
         if (selectEl) {
@@ -103,7 +113,7 @@ export class UcpfDetailsWorkspaceViewElement
         const selections = event.target.selection ?? [];
         this.#workspaceContext?.setModel({
             ...this._model!,
-            productRootId: selections.join(','),
+            productRootId: selections.join(',') || undefined,
         });
 
         // this.#validateForm(); // TODO Dinh
@@ -111,7 +121,7 @@ export class UcpfDetailsWorkspaceViewElement
 
     #onProductDocumentTypeIdsChange(event: Event) {
         const element = event.target as UmbInputDocumentTypeElement;
-        if (element.value) {
+        if (element) {
             this.#workspaceContext?.setModel({
                 ...this._model!,
                 productDocumentTypeIds: element.selection,
@@ -121,7 +131,7 @@ export class UcpfDetailsWorkspaceViewElement
 
     #onProductChildVariantTypeIdsChange(event: Event) {
         const element = event.target as UmbInputDocumentTypeElement;
-        if (element.value) {
+        if (element) {
             this.#workspaceContext?.setModel({
                 ...this._model!,
                 productChildVariantTypeIds: element.selection,
@@ -133,7 +143,7 @@ export class UcpfDetailsWorkspaceViewElement
         return () => {
             this.#workspaceContext?.setModel({
                 ...this._model!,
-                [propName]: '',
+                [propName]: undefined,
             });
         };
     }
@@ -212,6 +222,7 @@ export class UcpfDetailsWorkspaceViewElement
                             name='productDocumentTypeIds'
                             slot='editor'
                             @change=${this.#onProductDocumentTypeIdsChange}
+                            ?documentTypesOnly=${true}
                             .selection=${this._model?.productDocumentTypeIds ?? []}
                         ></umb-input-document-type>
                     </umb-property-layout>
@@ -260,18 +271,29 @@ export class UcpfDetailsWorkspaceViewElement
                     </umb-property-layout>
 
                     <umb-property-layout
+                        label=${this.localize.term('ucProductFeeds_propIncludeTaxInPriceLabel')}
+                        description=${this.localize.term('ucProductFeeds_propIncludeTaxInPriceDescription')}
+                    >
+                        <uui-toggle
+                            slot="editor"
+                            label=""
+                            name="includeTaxInPrice"
+                            @change=${this.#onCheckboxChange}
+                            ?checked=${!!this._model?.includeTaxInPrice}
+                        ></uui-toggle>
+                    </umb-property-layout>
+
+                    <umb-property-layout
                         label=${this.localize.term('ucProductFeeds_propPropNodeMappingLabel')}
                         description=${this.localize.term('ucProductFeeds_propPropNodeMappingDescription')}
                         ?mandatory=${true}
                     >
-
                         <ucpf-property-node-mapper
                             slot='editor'
                             .mapItems=${this._model?.propertyNameMappings ?? []}
                             .propertyValueExtractorOptions=${this._propertyValueExtractorOptions}
                             @change=${this.#onPropNodeMapperChange}
                         ></ucpf-property-node-mapper>
-
                     </umb-property-layout>
                 </uc-stack>
             </uui-box>
