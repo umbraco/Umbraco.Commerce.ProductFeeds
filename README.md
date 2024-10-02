@@ -13,6 +13,7 @@ With the Umbraco.Commerce.ProductFeeds installed you will be able to configure p
 
 
 ## Migrate from v13 and v0.5.5 to v14
+- Migrate directly to v14.1.0 instead of v14.0.0. There's a bug that prevents you from changing property value extractor in the feed settings.
 - Due to the change in schema of Product Document Type and Product Child Variant Types, you will need to manually edit your feed settings. Please go the the feed settings and find the [obsolete] properties and migrate them to the newer one
 ![image](https://github.com/user-attachments/assets/36d48973-11dc-49f2-b744-432152458419)
 

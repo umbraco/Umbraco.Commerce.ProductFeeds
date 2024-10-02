@@ -2,7 +2,6 @@ using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
 {
-#pragma warning disable CA2227 // Collection properties should be read only
     public class ProductFeedSettingWriteModel
     {
         public Guid? Id { get; set; }
@@ -25,12 +24,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
         [Obsolete("Will be removed in v15. Use ProductChildVariantTypeIds instead")]
         public string? ProductChildVariantTypeAlias { get; set; }
 
-        public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; set; } = [];
+        public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; init; } = [];
 
         public IEnumerable<Guid> ProductChildVariantTypeIds { get; set; } = [];
 
-        public ICollection<Guid> ProductDocumentTypeIds { get; set; } = [];
+        public ICollection<Guid> ProductDocumentTypeIds { get; init; } = [];
 
+        public bool IncludeTaxInPrice { get; set; }
     }
-#pragma warning restore CA2227 // Collection properties should be read only
 }

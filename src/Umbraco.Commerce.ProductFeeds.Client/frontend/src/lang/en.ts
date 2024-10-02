@@ -23,6 +23,9 @@ export default {
         'propProductRootIdLabel': 'Product Root',
         'propProductRootIdDescription': 'Select the root for products. Only products under this root will be included in the feed.',
 
+        'propIncludeTaxInPriceLabel': 'Include Tax In Price',
+        'propIncludeTaxInPriceDescription': 'For countries like US and Canada, you need to show price without tax, for most other countries, you should show price with tax.',
+
         'propPropNodeMappingLabel': 'Product Property And Feed Node Mapping',
         'propPropNodeMappingDescription': 'Map between product property alias and the feed node under \\<item\\>.',
 

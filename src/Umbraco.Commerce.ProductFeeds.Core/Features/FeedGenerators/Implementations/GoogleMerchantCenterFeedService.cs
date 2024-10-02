@@ -97,7 +97,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                         // add url to the main product
                         AddUrlNode(itemNode, product);
 
-                        AddPriceNode(itemNode, feedSetting.StoreId, childVariant, null);
+                        AddPriceNode(itemNode, feedSetting, childVariant, null);
 
                         // group variant into the same parent id
                         PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
@@ -115,12 +115,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     {
                         XmlElement itemNode = NewItemNode(feedSetting, channel, complexVariant.Content, product);
 
-                        // add url to the main product
+                        // add a url to the main product
                         AddUrlNode(itemNode, product);
 
-                        AddPriceNode(itemNode, feedSetting.StoreId, product, complexVariant.Content);
+                        AddPriceNode(itemNode, feedSetting, product, complexVariant.Content);
 
-                        // group variant into the same parent id
+                        // group variant under the main product id
                         PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
                         AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
 
@@ -138,6 +138,14 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             return doc;
         }
 
+        /// <summary>
+        /// Create a new node for the one, in this case, each product/variant is one &lt;item&gt; node.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <param name="channel"></param>
+        /// <param name="variant"></param>
+        /// <param name="mainProduct"></param>
+        /// <returns></returns>
         private XmlElement NewItemNode(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedElement variant, IPublishedElement? mainProduct)
         {
             XmlElement itemNode = channel.OwnerDocument.CreateElement("item");
@@ -165,7 +173,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             if (mainProduct == null) // when the variant is the main product itself
             {
                 AddUrlNode(itemNode, (IPublishedContent)variant);
-                AddPriceNode(itemNode, feedSetting.StoreId, variant, null);
+                AddPriceNode(itemNode, feedSetting, variant, null);
             }
 
             return itemNode;
@@ -178,6 +186,11 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             itemNode.AppendChild(availabilityNode);
         }
 
+        /// <summary>
+        /// Add a &lt;url&gt; node under the provided &lt;item&gt; node.
+        /// </summary>
+        /// <param name="itemNode"></param>
+        /// <param name="product"></param>
         private static void AddUrlNode(XmlElement itemNode, IPublishedContent product)
         {
             XmlElement linkNode = itemNode.OwnerDocument.CreateElement("g:link", GoogleXmlNamespaceUri);
@@ -185,8 +198,17 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             itemNode.AppendChild(linkNode);
         }
 
-        private void AddPriceNode(XmlElement itemNode, Guid storeId, IPublishedElement product, IPublishedElement? complexVariant)
+        /// <summary>
+        /// Add a &lt;price&gt; node under the provided &lt;item&gt; node.
+        /// </summary>
+        /// <param name="itemNode"></param>
+        /// <param name="feedSetting"></param>
+        /// <param name="product"></param>
+        /// <param name="complexVariant"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void AddPriceNode(XmlElement itemNode, ProductFeedSettingReadModel feedSetting, IPublishedElement product, IPublishedElement? complexVariant)
         {
+            Guid storeId = feedSetting.StoreId;
             IProductSnapshot? productSnapshot = complexVariant == null ?
                 _commerceApi.GetProduct(storeId, product.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name)
                 : _commerceApi.GetProduct(storeId, product.Key.ToString(), complexVariant.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name);
@@ -200,10 +222,19 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
             Attempt<Price> calculatePriceAttempt = productSnapshot.TryCalculatePrice();
             Price calculatedPrice = calculatePriceAttempt.Success ? calculatePriceAttempt.Result! : throw new NotImplementedException("Failed to calculate the price");
-            priceNode.InnerText = $"{calculatedPrice.WithTax.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
+            decimal priceForShow = feedSetting.IncludeTaxInPrice ? calculatedPrice.WithTax : calculatedPrice.WithoutTax;
+            priceNode.InnerText = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
             itemNode.AppendChild(priceNode);
         }
 
+        /// <summary>
+        /// Add image nodes under the provided &lt;item&gt; node.
+        /// </summary>
+        /// <param name="itemNode"></param>
+        /// <param name="valueExtractorName"></param>
+        /// <param name="propertyAlias"></param>
+        /// <param name="product"></param>
+        /// <param name="mainProduct"></param>
         private void AddImageNodes(XmlElement itemNode, string valueExtractorName, string propertyAlias, IPublishedElement product, IPublishedElement? mainProduct)
         {
             IMultipleValuePropertyExtractor multipleValuePropertyExtractor = _multipleValuePropertyExtractorFactory.GetExtractor(valueExtractorName);

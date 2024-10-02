@@ -66,7 +66,6 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
         this.observe(
             this.#collectionContext.items,
             (collectionItems) => {
-                console.log('collectionItems', collectionItems);
                 this.#createTableItems(collectionItems);
             },
             'umbCollectionItemsObserver',

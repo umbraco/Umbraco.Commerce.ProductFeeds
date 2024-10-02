@@ -4,7 +4,7 @@ export default defineConfig({
     client: '@hey-api/client-axios',
     // client: '@hey-api/client-fetch',
     // client: 'legacy/fetch',
-    input: 'http://localhost:43252/umbraco/swagger/ucproductfeeds/swagger.json',
+    input: 'http://localhost:44321/umbraco/swagger/ucproductfeeds/swagger.json',
     output: {
         path: 'src/generated/apis',
         lint: 'eslint',
