@@ -20,7 +20,7 @@
     <PackageVersion Include="Umbraco.Cms" Version="[14.0.0, 15)" />
     <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[14.0.0, 15)" />
     <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[14.0.0, 15)" />
-    <PackageVersion Include="Umbraco.Commerce" Version="[14.0.0-rc3, 15)" />
+    <PackageVersion Include="Umbraco.Commerce" Version="[14.0.0, 15)" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="xunit" Version="2.6.6" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />
