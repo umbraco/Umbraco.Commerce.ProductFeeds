@@ -56,7 +56,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
             }
 
             IEnumerable<string> ids = baseQuery
-                .Execute()
+                .Execute(QueryOptions.SkipTake(0, int.MaxValue))
                 .Select(x => x.Id);
 
             List<IPublishedContent> result = new();
