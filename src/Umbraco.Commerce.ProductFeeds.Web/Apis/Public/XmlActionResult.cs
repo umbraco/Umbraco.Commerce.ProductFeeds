@@ -13,19 +13,13 @@ public sealed class XmlActionResult : IActionResult
 
     private readonly XmlDocument _document;
 
-    public Formatting Formatting { get; set; }
-    public string MimeType { get; set; }
+    public Formatting Formatting { get; set; } = Formatting.None;
+    public string MimeType { get; set; } = "text/xml";
 
     public XmlActionResult(XmlDocument document)
     {
-        if (document == null)
-            throw new ArgumentNullException("document");
-
+        ArgumentNullException.ThrowIfNull(document);
         _document = document;
-
-        // Default values
-        MimeType = "text/xml";
-        Formatting = Formatting.None;
     }
 
     public async Task ExecuteResultAsync(ActionContext context)
@@ -39,7 +33,7 @@ public sealed class XmlActionResult : IActionResult
             {
                 writer.Formatting = Formatting;
                 _document.WriteContentTo(writer);
-                writer.Flush();
+                await writer.FlushAsync();
             }
         }
         catch (Exception ex)
