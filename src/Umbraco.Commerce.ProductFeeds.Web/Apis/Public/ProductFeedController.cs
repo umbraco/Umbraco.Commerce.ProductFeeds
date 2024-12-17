@@ -23,7 +23,7 @@ namespace Umbraco.Commerce.ProductFeeds.Apis.Public
         public async Task<IActionResult> Xml(string path)
         {
             ProductFeedSettingReadModel? feedSettings = await _feedConfigService
-                .FindSettingAsync(new FindSettingParams {FeedRelativePath = path})
+                .FindSettingAsync(new FindSettingParams { FeedRelativePath = path })
                 .ConfigureAwait(true);
             if (feedSettings == null)
             {
@@ -33,7 +33,7 @@ namespace Umbraco.Commerce.ProductFeeds.Apis.Public
             IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedType);
             XmlDocument feed = feedGenerator.GenerateFeed(feedSettings);
 
-            var result = new XmlActionResult(feed) {Formatting = Formatting.Indented};
+            var result = new XmlActionResult(feed) { Formatting = Formatting.Indented };
             return result;
         }
     }

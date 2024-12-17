@@ -18,10 +18,7 @@ public sealed class XmlActionResult : IActionResult
 
     public XmlActionResult(XmlDocument document)
     {
-        if (document == null)
-            throw new ArgumentNullException("document");
-
-        _document = document;
+        _document = document ?? throw new ArgumentNullException(nameof(document));
 
         // Default values
         MimeType = "text/xml";
@@ -30,6 +27,8 @@ public sealed class XmlActionResult : IActionResult
 
     public async Task ExecuteResultAsync(ActionContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         context.HttpContext.Response.Clear();
         context.HttpContext.Response.ContentType = MimeType;
 
@@ -39,7 +38,7 @@ public sealed class XmlActionResult : IActionResult
             {
                 writer.Formatting = Formatting;
                 _document.WriteContentTo(writer);
-                writer.Flush();
+                await writer.FlushAsync();
             }
         }
         catch (Exception ex)
