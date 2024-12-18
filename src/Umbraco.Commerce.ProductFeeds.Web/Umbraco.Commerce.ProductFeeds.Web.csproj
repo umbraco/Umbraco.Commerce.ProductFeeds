@@ -4,7 +4,7 @@
     <Title>Umbraco Commerce Product Feeds Web</Title>
     <Description>Contains apis</Description>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0007,CA2007</NoWarn>
+    <NoWarn>IDE0007;CA2007</NoWarn>
     <StaticWebAssetBasePath>App_Plugins/umbracocommerceproductfeeds</StaticWebAssetBasePath>
   </PropertyGroup>
 
