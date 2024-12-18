@@ -33,7 +33,7 @@ public sealed class XmlActionResult : IActionResult
             {
                 writer.Formatting = Formatting;
                 _document.WriteContentTo(writer);
-                await writer.FlushAsync();
+                writer.Flush();
             }
         }
         catch (Exception ex)
