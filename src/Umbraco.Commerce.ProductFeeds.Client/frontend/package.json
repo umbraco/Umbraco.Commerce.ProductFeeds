@@ -32,6 +32,6 @@
     "license": "ISC",
     "dependencies": {
         "@hey-api/client-axios": "^0.2.3",
-        "nanoid": "^5.0.7"
+        "nanoid": "^5.0.9"
     }
 }
