@@ -19,7 +19,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
                 throw new ArgumentNullException(nameof(uniqueExtractorName));
             }
 
-
             IMultipleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Id == uniqueExtractorName)
                 ?? throw new InvalidOperationException($"Can't find property extractor with name '{uniqueExtractorName}'");
 

@@ -152,20 +152,26 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             // add custom properties
             foreach (PropertyValueMapping map in feedSetting.PropertyNameMappings)
             {
-                if (map.ValueExtractorName == nameof(DefaultMultipleMediaPickerPropertyValueExtractor))
+                if (map.NodeName == "g:image_link")
                 {
-                    AddImageNodes(itemNode, map.ValueExtractorName, map.PropertyAlias, variant, mainProduct);
-                }
-                else
-                {
-                    ISingleValuePropertyExtractor valueExtractor = _singleValuePropertyExtractorFactory.GetExtractor(map.ValueExtractorName);
-                    string propValue = valueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
-                    if (!string.IsNullOrWhiteSpace(propValue))
+                    try
                     {
-                        XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
-                        propertyNode.InnerText = propValue;
-                        itemNode.AppendChild(propertyNode);
+                        AddImageNodes(itemNode, map.ValueExtractorName, map.PropertyAlias, variant, mainProduct);
+                        continue;
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Unable to get value for {NodeName} using {ValueExtractor}", map.NodeName, map.ValueExtractorName);
+                    }
+                }
+
+                ISingleValuePropertyExtractor valueExtractor = _singleValuePropertyExtractorFactory.GetExtractor(map.ValueExtractorName);
+                string propValue = valueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
+                if (!string.IsNullOrWhiteSpace(propValue))
+                {
+                    XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
+                    propertyNode.InnerText = propValue;
+                    itemNode.AppendChild(propertyNode);
                 }
             }
 
