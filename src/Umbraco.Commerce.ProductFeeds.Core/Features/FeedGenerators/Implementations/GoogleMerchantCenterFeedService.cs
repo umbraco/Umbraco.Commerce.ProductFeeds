@@ -152,7 +152,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             // add custom properties
             foreach (PropertyValueMapping map in feedSetting.PropertyNameMappings)
             {
-                if (map.NodeName == "g:image_link")
+                if (map.NodeName == "g:image_link" && map.ValueExtractorName != nameof(DefaultMediaPickerPropertyValueExtractor))
                 {
                     try
                     {
