@@ -17,6 +17,9 @@ using Umbraco.Commerce.ProductFeeds.Extensions;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 {
+    /// <summary>
+    /// This is the feed generator that follows Google Merchant Center's standard.
+    /// </summary>
     public class GoogleMerchantCenterFeedService : IProductFeedGeneratorService
     {
         private const string GoogleXmlNamespaceUri = "http://base.google.com/ns/1.0";
@@ -49,6 +52,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             _multipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
 
+        /// <summary>
+        /// Generate the product feed following the inputted settings.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <returns></returns>
+        /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
         public XmlDocument GenerateFeed(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
@@ -188,7 +197,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <summary>
         /// Add a &lt;url&gt; node under the provided &lt;item&gt; node.
         /// </summary>
-        /// <param name="itemNode"></param>
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
         /// <param name="product"></param>
         private static void AddUrlNode(XmlElement itemNode, IPublishedContent product)
         {
@@ -197,9 +206,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             itemNode.AppendChild(linkNode);
         }
 
+        /// <summary>
         /// Add a &lt;price&gt; node under the provided &lt;item&gt; node.
         /// </summary>
-        /// <param name="itemNode"></param>
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
         /// <param name="feedSetting"></param>
         /// <param name="product"></param>
         /// <param name="complexVariant"></param>
@@ -226,14 +236,14 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <summary>
         /// Add image nodes under the provided &lt;item&gt; node.
         /// </summary>
-        /// <param name="itemNode"></param>
-        /// <param name="valueExtractorName"></param>
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
+        /// <param name="valueExtractorId"></param>
         /// <param name="propertyAlias"></param>
         /// <param name="product"></param>
         /// <param name="mainProduct"></param>
-        private void AddImageNodes(XmlElement itemNode, string valueExtractorName, string propertyAlias, IPublishedElement product, IPublishedElement? mainProduct)
+        private void AddImageNodes(XmlElement itemNode, string valueExtractorId, string propertyAlias, IPublishedElement product, IPublishedElement? mainProduct)
         {
-            IMultipleValuePropertyExtractor multipleValuePropertyExtractor = _multipleValuePropertyExtractorFactory.GetExtractor(valueExtractorName);
+            IMultipleValuePropertyExtractor multipleValuePropertyExtractor = _multipleValuePropertyExtractorFactory.GetExtractor(valueExtractorId);
             var imageUrls = multipleValuePropertyExtractor.Extract(product, propertyAlias, mainProduct).ToList();
             if (imageUrls.Count <= 0)
             {

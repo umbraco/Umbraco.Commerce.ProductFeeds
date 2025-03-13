@@ -5,8 +5,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
         /// <summary>
         /// Get the property extractor.
         /// </summary>
-        /// <param name="uniqueExtractorName"></param>
+        /// <param name="valueExtractorId"></param>
         /// <returns></returns>
-        IMultipleValuePropertyExtractor GetExtractor(string uniqueExtractorName);
+        IMultipleValuePropertyExtractor GetExtractor(string valueExtractorId);
     }
 }
