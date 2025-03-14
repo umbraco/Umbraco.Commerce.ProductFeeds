@@ -7,6 +7,7 @@ using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Core.Services;
 using Umbraco.Commerce.Extensions;
+using Umbraco.Commerce.ProductFeeds.Core.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
@@ -72,14 +73,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             XmlElement channel = doc.CreateElement("channel");
 
             // doc/channel/title
-            XmlElement titleNode = channel.OwnerDocument.CreateElement("title");
-            titleNode.InnerText = feedSetting.FeedName;
-            channel.AppendChild(titleNode);
+            channel.AddChild("title", feedSetting.FeedName);
 
             // doc/channel/description
-            XmlElement descriptionNode = channel.OwnerDocument.CreateElement("description");
-            descriptionNode.InnerText = feedSetting.FeedDescription;
-            channel.AppendChild(descriptionNode);
+            channel.AddChild("description", feedSetting.FeedDescription);
             root.AppendChild(channel);
 
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
@@ -164,12 +161,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     && singleValueExtractor != null)
                 {
                     string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
-                    if (!string.IsNullOrWhiteSpace(propValue))
-                    {
-                        XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
-                        propertyNode.InnerText = propValue;
-                        itemNode.AppendChild(propertyNode);
-                    }
+                    itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
                 }
                 else if (_multipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
                     && multipleValueExtractor != null)
@@ -181,11 +173,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     }
                     else
                     {
-                        for (int i = 0; i < values.Count; i++)
+                        foreach (string value in values)
                         {
-                            XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
-                            propertyNode.InnerText = values[i];
-                            itemNode.AppendChild(propertyNode);
+                            itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);
                         }
                     }
                 }
@@ -206,9 +196,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
         private static void AddItemGroupNode(XmlElement itemNode, string groupId)
         {
-            XmlElement availabilityNode = itemNode.OwnerDocument.CreateElement("g:item_group_id", GoogleXmlNamespaceUri);
-            availabilityNode.InnerText = groupId;
-            itemNode.AppendChild(availabilityNode);
+            itemNode.AddChild("g:item_group_id", groupId, GoogleXmlNamespaceUri);
         }
 
         /// <summary>
@@ -218,9 +206,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <param name="product"></param>
         private static void AddUrlNode(XmlElement itemNode, IPublishedContent product)
         {
-            XmlElement linkNode = itemNode.OwnerDocument.CreateElement("g:link", GoogleXmlNamespaceUri);
-            linkNode.InnerText = product.Url(mode: UrlMode.Absolute);
-            itemNode.AppendChild(linkNode);
+            itemNode.AddChild("g:link", product.Url(mode: UrlMode.Absolute), GoogleXmlNamespaceUri);
         }
 
         /// <summary>
@@ -243,11 +229,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 return;
             }
 
-            XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
             Price calculatedPrice = productSnapshot.CalculatePrice();
             decimal priceForShow = feedSetting.IncludeTaxInPrice ? calculatedPrice.WithTax : calculatedPrice.WithoutTax;
-            priceNode.InnerText = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
-            itemNode.AppendChild(priceNode);
+            string formattedPrice = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
+            itemNode.AddChild("g:price", formattedPrice, GoogleXmlNamespaceUri);
         }
 
         /// <summary>
@@ -262,17 +247,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 return;
             }
 
-            XmlElement imageNode = itemNode.OwnerDocument.CreateElement("g:image_link", GoogleXmlNamespaceUri);
-            imageNode.InnerText = imageUrls.First();
-            itemNode.AppendChild(imageNode);
-
+            itemNode.AddChild("g:image_link", imageUrls.First(), GoogleXmlNamespaceUri);
             if (imageUrls.Count > 1)
             {
                 for (int i = 1; i < imageUrls.Count; i++)
                 {
-                    XmlElement additionalImageNode = itemNode.OwnerDocument.CreateElement("g:additional_image_link", GoogleXmlNamespaceUri);
-                    additionalImageNode.InnerText = imageUrls[i];
-                    itemNode.AppendChild(additionalImageNode);
+                    itemNode.AddChild("g:additional_image_link", imageUrls[i], GoogleXmlNamespaceUri);
                 }
             }
         }
