@@ -8,9 +8,9 @@ using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Core.Services;
 using Umbraco.Commerce.Extensions;
+using Umbraco.Commerce.ProductFeeds.Core.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
@@ -18,6 +18,9 @@ using Umbraco.Commerce.ProductFeeds.Extensions;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 {
+    /// <summary>
+    /// This is the feed generator that follows Google Merchant Center's standard.
+    /// </summary>
     public class GoogleMerchantCenterFeedService : IProductFeedGeneratorService
     {
         private const string GoogleXmlNamespaceUri = "http://base.google.com/ns/1.0";
@@ -50,6 +53,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             _multipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
 
+        /// <summary>
+        /// Generate the product feed following the inputted settings.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <returns></returns>
+        /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
         public XmlDocument GenerateFeed(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
@@ -65,14 +74,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             XmlElement channel = doc.CreateElement("channel");
 
             // doc/channel/title
-            XmlElement titleNode = channel.OwnerDocument.CreateElement("title");
-            titleNode.InnerText = feedSetting.FeedName;
-            channel.AppendChild(titleNode);
+            channel.AddChild("title", feedSetting.FeedName);
 
             // doc/channel/description
-            XmlElement descriptionNode = channel.OwnerDocument.CreateElement("description");
-            descriptionNode.InnerText = feedSetting.FeedDescription;
-            channel.AppendChild(descriptionNode);
+            channel.AddChild("description", feedSetting.FeedDescription);
             root.AppendChild(channel);
 
             ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
@@ -142,9 +147,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// Create a new node for the one, in this case, each product/variant is one &lt;item&gt; node.
         /// </summary>
         /// <param name="feedSetting"></param>
-        /// <param name="channel"></param>
-        /// <param name="variant"></param>
-        /// <param name="mainProduct"></param>
+        /// <param name="channel">The XML &lt;channel&gt; node that holds the &lt;item&gt; node.</param>
+        /// <param name="variant">Product variant.</param>
+        /// <param name="mainProduct">Main product which may have multiple variants. Some common properties can only be found in the main product, not in a variant.</param>
         /// <returns></returns>
         private XmlElement NewItemNode(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedElement variant, IPublishedElement? mainProduct)
         {
@@ -153,20 +158,31 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             // add custom properties
             foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
-                if (map.ValueExtractorName == nameof(DefaultMultipleMediaPickerPropertyValueExtractor))
+                if (_singleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
+                    && singleValueExtractor != null)
                 {
-                    AddImageNodes(itemNode, map.ValueExtractorName, map.PropertyAlias, variant, mainProduct);
+                    string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
+                    itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
+                }
+                else if (_multipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
+                    && multipleValueExtractor != null)
+                {
+                    var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
+                    if (map.NodeName.Equals("g:image_link", StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddImageNodes(itemNode, values);
+                    }
+                    else
+                    {
+                        foreach (string value in values)
+                        {
+                            itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);
+                        }
+                    }
                 }
                 else
                 {
-                    ISingleValuePropertyExtractor valueExtractor = _singleValuePropertyExtractorFactory.GetExtractor(map.ValueExtractorName);
-                    string propValue = valueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
-                    if (!string.IsNullOrWhiteSpace(propValue))
-                    {
-                        XmlElement propertyNode = itemNode.OwnerDocument.CreateElement(map.NodeName, GoogleXmlNamespaceUri);
-                        propertyNode.InnerText = propValue;
-                        itemNode.AppendChild(propertyNode);
-                    }
+                    throw new InvalidOperationException($"Unable to locate property value extractor with id = '{map.ValueExtractorId}'");
                 }
             }
 
@@ -181,27 +197,23 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
 
         private static void AddItemGroupNode(XmlElement itemNode, string groupId)
         {
-            XmlElement availabilityNode = itemNode.OwnerDocument.CreateElement("g:item_group_id", GoogleXmlNamespaceUri);
-            availabilityNode.InnerText = groupId;
-            itemNode.AppendChild(availabilityNode);
+            itemNode.AddChild("g:item_group_id", groupId, GoogleXmlNamespaceUri);
         }
 
         /// <summary>
         /// Add a &lt;url&gt; node under the provided &lt;item&gt; node.
         /// </summary>
-        /// <param name="itemNode"></param>
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
         /// <param name="product"></param>
         private static void AddUrlNode(XmlElement itemNode, IPublishedContent product)
         {
-            XmlElement linkNode = itemNode.OwnerDocument.CreateElement("g:link", GoogleXmlNamespaceUri);
-            linkNode.InnerText = product.Url(mode: UrlMode.Absolute);
-            itemNode.AppendChild(linkNode);
+            itemNode.AddChild("g:link", product.Url(mode: UrlMode.Absolute), GoogleXmlNamespaceUri);
         }
 
         /// <summary>
         /// Add a &lt;price&gt; node under the provided &lt;item&gt; node.
         /// </summary>
-        /// <param name="itemNode"></param>
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
         /// <param name="feedSetting"></param>
         /// <param name="product"></param>
         /// <param name="complexVariant"></param>
@@ -223,38 +235,28 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             Attempt<Price> calculatePriceAttempt = productSnapshot.TryCalculatePrice();
             Price calculatedPrice = calculatePriceAttempt.Success ? calculatePriceAttempt.Result! : throw new NotImplementedException("Failed to calculate the price");
             decimal priceForShow = feedSetting.IncludeTaxInPrice ? calculatedPrice.WithTax : calculatedPrice.WithoutTax;
-            priceNode.InnerText = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
-            itemNode.AppendChild(priceNode);
+            string formattedPrice = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
+            itemNode.AddChild("g:price", formattedPrice, GoogleXmlNamespaceUri);
         }
 
         /// <summary>
-        /// Add image nodes under the provided &lt;item&gt; node.
+        /// This method adds appropriate image nodes under the provided &lt;item&gt; node. It exists because Google Merchant Center treats multiple product images abnormally.
         /// </summary>
-        /// <param name="itemNode"></param>
-        /// <param name="valueExtractorName"></param>
-        /// <param name="propertyAlias"></param>
-        /// <param name="product"></param>
-        /// <param name="mainProduct"></param>
-        private void AddImageNodes(XmlElement itemNode, string valueExtractorName, string propertyAlias, IPublishedElement product, IPublishedElement? mainProduct)
+        /// <param name="itemNode">The XML item node that represents the current product.</param>
+        /// <param name="imageUrls"></param>
+        private static void AddImageNodes(XmlElement itemNode, List<string> imageUrls)
         {
-            IMultipleValuePropertyExtractor multipleValuePropertyExtractor = _multipleValuePropertyExtractorFactory.GetExtractor(valueExtractorName);
-            var imageUrls = multipleValuePropertyExtractor.Extract(product, propertyAlias, mainProduct).ToList();
-            if (imageUrls.Count <= 0)
+            if (imageUrls.Count == 0)
             {
                 return;
             }
 
-            XmlElement imageNode = itemNode.OwnerDocument.CreateElement("g:image_link", GoogleXmlNamespaceUri);
-            imageNode.InnerText = imageUrls.First();
-            itemNode.AppendChild(imageNode);
-
+            itemNode.AddChild("g:image_link", imageUrls.First(), GoogleXmlNamespaceUri);
             if (imageUrls.Count > 1)
             {
                 for (int i = 1; i < imageUrls.Count; i++)
                 {
-                    XmlElement additionalImageNode = itemNode.OwnerDocument.CreateElement("g:additional_image_link", GoogleXmlNamespaceUri);
-                    additionalImageNode.InnerText = imageUrls[i];
-                    itemNode.AppendChild(additionalImageNode);
+                    itemNode.AddChild("g:additional_image_link", imageUrls[i], GoogleXmlNamespaceUri);
                 }
             }
         }

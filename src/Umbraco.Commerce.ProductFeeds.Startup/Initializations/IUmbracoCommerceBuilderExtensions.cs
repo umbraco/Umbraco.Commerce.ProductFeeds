@@ -20,6 +20,7 @@ using Umbraco.Commerce.ProductFeeds.Startup.Swaggers;
 
 namespace Umbraco.Commerce.ProductFeeds.Extensions
 {
+    [Obsolete("Will be moved to Umbraco.Commerce.Extensions namespace in v15.")]
     public static class IUmbracoCommerceBuilderExtensions
     {
         /// <summary>
@@ -27,6 +28,7 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
         /// </summary>
         /// <param name="ucBuilder"></param>
         /// <returns></returns>
+        [Obsolete("Will be moved to Umbraco.Commerce.Extensions namespace in v15.")]
         public static IUmbracoCommerceBuilder AddCommerceProductFeeds(this IUmbracoCommerceBuilder ucBuilder)
         {
             ArgumentNullException.ThrowIfNull(ucBuilder, "umbracoCommerceBuilder");
