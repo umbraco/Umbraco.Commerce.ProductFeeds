@@ -33,7 +33,9 @@ public sealed class XmlActionResult : IActionResult
             {
                 writer.Formatting = Formatting;
                 _document.WriteContentTo(writer);
+#pragma warning disable CA1849 // The FlushAsync is not implemented
                 writer.Flush();
+#pragma warning restore CA1849 // The FlushAsync is not implemented
             }
         }
         catch (Exception ex)
