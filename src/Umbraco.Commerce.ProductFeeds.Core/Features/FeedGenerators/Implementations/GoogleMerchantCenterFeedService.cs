@@ -231,7 +231,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 return;
             }
 
-            XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
             Attempt<Price> calculatePriceAttempt = productSnapshot.TryCalculatePrice();
             Price calculatedPrice = calculatePriceAttempt.Success ? calculatePriceAttempt.Result! : throw new NotImplementedException("Failed to calculate the price");
             decimal priceForShow = feedSetting.IncludeTaxInPrice ? calculatedPrice.WithTax : calculatedPrice.WithoutTax;
