@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <Title>Umbraco Commerce Product Feeds Startup</Title>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains code which run when app starts and method to register the plugin to your site</Description>
     <Nullable>enable</Nullable>
+    <NoWarn>IDE0058;IDE0053;</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

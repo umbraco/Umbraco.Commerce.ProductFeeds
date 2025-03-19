@@ -5,9 +5,9 @@ using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Commerce.Core;
 using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
-using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations;
@@ -18,9 +18,10 @@ using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 using Umbraco.Commerce.ProductFeeds.Startup.Initializations;
 using Umbraco.Commerce.ProductFeeds.Startup.Swaggers;
 
-namespace Umbraco.Commerce.ProductFeeds.Extensions
+#pragma warning disable IDE0130 // Namespace does not match folder structure
+namespace Umbraco.Commerce.Extensions
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    [Obsolete("Will be moved to Umbraco.Commerce.Extensions namespace in v15.")]
     public static class IUmbracoCommerceBuilderExtensions
     {
         /// <summary>
@@ -28,7 +29,6 @@ namespace Umbraco.Commerce.ProductFeeds.Extensions
         /// </summary>
         /// <param name="ucBuilder"></param>
         /// <returns></returns>
-        [Obsolete("Will be moved to Umbraco.Commerce.Extensions namespace in v15.")]
         public static IUmbracoCommerceBuilder AddCommerceProductFeeds(this IUmbracoCommerceBuilder ucBuilder)
         {
             ArgumentNullException.ThrowIfNull(ucBuilder, "umbracoCommerceBuilder");

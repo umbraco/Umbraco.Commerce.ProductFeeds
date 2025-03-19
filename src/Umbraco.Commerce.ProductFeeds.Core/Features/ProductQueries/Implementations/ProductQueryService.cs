@@ -42,7 +42,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
                     ?? throw new ContentNotFoundException(string.Format(null, "Unable to find product root with key = '{0}'", parameters.ProductRootKey));
 
             IEnumerable<string> productTypeAliases = _contentTypeService
-                .GetAll(parameters.ProductDocumentTypeIds.Select(idString => new Guid(idString)))
+                .GetMany(parameters.ProductDocumentTypeIds.Select(idString => new Guid(idString)))
                 .Select(x => x.Alias);
 
             IBooleanOperation baseQuery = index

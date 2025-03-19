@@ -9,14 +9,13 @@ using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Core.Services;
 using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Extensions;
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 using Umbraco.Commerce.ProductFeeds.Extensions;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations
 {
     /// <summary>
     /// This is the feed generator that follows Google Merchant Center's standard.
@@ -59,7 +58,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <param name="feedSetting"></param>
         /// <returns></returns>
         /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
-        public XmlDocument GenerateFeed(ProductFeedSettingReadModel feedSetting)
+        public async Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
@@ -97,12 +96,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     // handle products with child variants
                     foreach (IPublishedContent childVariant in childVariants)
                     {
-                        XmlElement itemNode = NewItemNode(feedSetting, channel, childVariant, product);
+                        XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, childVariant, product);
 
                         // add url to the main product
                         AddUrlNode(itemNode, product);
 
-                        AddPriceNode(itemNode, feedSetting, childVariant, null);
+                        await AddPriceNodeAsync(itemNode, feedSetting, childVariant, null);
 
                         // group variant into the same parent id
                         PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
@@ -118,12 +117,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
                     foreach (ProductVariantItem complexVariant in variantItems)
                     {
-                        XmlElement itemNode = NewItemNode(feedSetting, channel, complexVariant.Content, product);
+                        XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, complexVariant.Content, product);
 
                         // add a url to the main product
                         AddUrlNode(itemNode, product);
 
-                        AddPriceNode(itemNode, feedSetting, product, complexVariant.Content);
+                        await AddPriceNodeAsync(itemNode, feedSetting, product, complexVariant.Content);
 
                         // group variant under the main product id
                         PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
@@ -135,7 +134,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 else
                 {
                     // handle product with no variants
-                    XmlElement itemNode = NewItemNode(feedSetting, channel, product, null);
+                    XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, product, null);
                     channel.AppendChild(itemNode);
                 }
             }
@@ -151,7 +150,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <param name="variant">Product variant.</param>
         /// <param name="mainProduct">Main product which may have multiple variants. Some common properties can only be found in the main product, not in a variant.</param>
         /// <returns></returns>
-        private XmlElement NewItemNode(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedElement variant, IPublishedElement? mainProduct)
+        private async Task<XmlElement> NewItemNodeAsync(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedElement variant, IPublishedElement? mainProduct)
         {
             XmlElement itemNode = channel.OwnerDocument.CreateElement("item");
 
@@ -189,7 +188,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             if (mainProduct == null) // when the variant is the main product itself
             {
                 AddUrlNode(itemNode, (IPublishedContent)variant);
-                AddPriceNode(itemNode, feedSetting, variant, null);
+                await AddPriceNodeAsync(itemNode, feedSetting, variant, null);
             }
 
             return itemNode;
@@ -218,12 +217,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         /// <param name="product"></param>
         /// <param name="complexVariant"></param>
         /// <exception cref="NotImplementedException"></exception>
-        private void AddPriceNode(XmlElement itemNode, ProductFeedSettingReadModel feedSetting, IPublishedElement product, IPublishedElement? complexVariant)
+        private async Task AddPriceNodeAsync(XmlElement itemNode, ProductFeedSettingReadModel feedSetting, IPublishedElement product, IPublishedElement? complexVariant)
         {
             Guid storeId = feedSetting.StoreId;
             IProductSnapshot? productSnapshot = complexVariant == null ?
-                _commerceApi.GetProduct(storeId, product.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name)
-                : _commerceApi.GetProduct(storeId, product.Key.ToString(), complexVariant.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name);
+                await _commerceApi.GetProductAsync(storeId, product.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name)
+                : await _commerceApi.GetProductAsync(storeId, product.Key.ToString(), complexVariant.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name);
 
             if (productSnapshot == null)
             {
@@ -231,11 +230,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                 return;
             }
 
-            XmlElement priceNode = itemNode.OwnerDocument.CreateElement("g:price", GoogleXmlNamespaceUri);
-            Attempt<Price> calculatePriceAttempt = productSnapshot.TryCalculatePrice();
+            Attempt<Price> calculatePriceAttempt = await productSnapshot.TryCalculatePriceAsync();
             Price calculatedPrice = calculatePriceAttempt.Success ? calculatePriceAttempt.Result! : throw new NotImplementedException("Failed to calculate the price");
             decimal priceForShow = feedSetting.IncludeTaxInPrice ? calculatedPrice.WithTax : calculatedPrice.WithoutTax;
-            string formattedPrice = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {_currencyService.GetCurrency(calculatedPrice.CurrencyId).Code}";
+            string formattedPrice = $"{priceForShow.ToString("0.00", CultureInfo.InvariantCulture)} {(await _currencyService.GetCurrencyAsync(calculatedPrice.CurrencyId)).Code}";
             itemNode.AddChild("g:price", formattedPrice, GoogleXmlNamespaceUri);
         }
 

@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Commerce.ProductFeeds.Apis.Public;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Apis.Public
+namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
 {
     public class ProductFeedController : ControllerBase
     {
@@ -31,7 +32,7 @@ namespace Umbraco.Commerce.ProductFeeds.Apis.Public
             }
 
             IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedType);
-            XmlDocument feed = feedGenerator.GenerateFeed(feedSettings);
+            XmlDocument feed = await feedGenerator.GenerateFeedAsync(feedSettings);
 
             var result = new XmlActionResult(feed) { Formatting = Formatting.Indented };
             return result;
