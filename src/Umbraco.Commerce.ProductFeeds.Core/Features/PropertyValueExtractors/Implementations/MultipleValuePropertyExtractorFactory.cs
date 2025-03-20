@@ -1,4 +1,4 @@
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
@@ -12,21 +12,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
         }
 
         /// <inheritdoc/>
-        [Obsolete("Will be removed in v15. Use TryGetExtractor instead.")]
-        public IMultipleValuePropertyExtractor GetExtractor(string valueExtractorId)
-        {
-            if (string.IsNullOrWhiteSpace(valueExtractorId))
-            {
-                throw new ArgumentNullException(nameof(valueExtractorId));
-            }
-
-            IMultipleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Id == valueExtractorId)
-                ?? throw new InvalidOperationException($"Can't find property extractor with id '{valueExtractorId}'");
-
-            return valueExtractor;
-        }
-
-        /// <inheritdoc/>
         public bool TryGetExtractor(string valueExtractorId, out IMultipleValuePropertyExtractor? valueExtractor)
         {
             if (string.IsNullOrWhiteSpace(valueExtractorId))
@@ -35,7 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
             }
 
             valueExtractor = _valueExtractors.FirstOrDefault(x => x.Id == valueExtractorId);
-            return valueExtractor != null ? true : false;
+            return valueExtractor != null;
         }
     }
 }

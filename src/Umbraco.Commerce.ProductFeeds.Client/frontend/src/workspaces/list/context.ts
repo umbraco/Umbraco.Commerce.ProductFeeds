@@ -1,24 +1,25 @@
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbDefaultWorkspaceContext, UmbEntityWorkspaceContext, UmbRoutableWorkspaceContext, UmbWorkspaceContext, UmbWorkspaceRouteManager, UmbWorkspaceUniqueType } from '@umbraco-cms/backoffice/workspace';
+import { UmbEntityWorkspaceContext, UmbRoutableWorkspaceContext, UmbWorkspaceContext, UmbWorkspaceRouteManager, UmbWorkspaceUniqueType } from '@umbraco-cms/backoffice/workspace';
 import UcpfListWorkspaceElement from './index.element.js';
 import { listingWorkspaceManifest } from './manifests.js';
 import { UmbBasicState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
+import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 
 export const LISTING_WORKSPACE_CONTEXT = new UmbContextToken<
     UmbWorkspaceContext,
-    UcpfListListingWorkspaceContext
+    UcpfListingWorkspaceContext
 >(
     'UmbWorkspaceContext',
-    undefined,
-    (context): context is UcpfListListingWorkspaceContext => context.getEntityType() === listingWorkspaceManifest.meta.entityType,
+    'UcpfListingWorkspaceContext',
 );
 
-export class UcpfListListingWorkspaceContext
-    extends UmbDefaultWorkspaceContext
+export class UcpfListingWorkspaceContext
+    extends UmbContextBase<UcpfListingWorkspaceContext>
     implements UmbWorkspaceContext, UmbRoutableWorkspaceContext, UmbEntityWorkspaceContext {
     readonly routes = new UmbWorkspaceRouteManager(this);
+    readonly workspaceAlias = listingWorkspaceManifest.alias;
 
     #entityContext: UmbEntityContext = new UmbEntityContext(this);
 
@@ -29,9 +30,13 @@ export class UcpfListListingWorkspaceContext
     readonly unique = this.#unique.asObservable();
 
     constructor(host: UmbControllerHost) {
-        super(host);
+        super(host, listingWorkspaceManifest.alias);
         this.observe(this.entityType, (entityType) => this.#entityContext!.setEntityType(entityType));
+        this.#entityType.setValue(listingWorkspaceManifest.meta.entityType);
+
         this.observe(this.unique, (unique) => this.#entityContext.setUnique(unique ?? null));
+        this.#unique.setValue(this.workspaceAlias);
+
         this.routes.setRoutes([
             {
                 path: '',
@@ -40,8 +45,12 @@ export class UcpfListListingWorkspaceContext
         ]);
     }
 
-    override getEntityType(): string {
-        return listingWorkspaceManifest.meta.entityType;
+    getUnique(): UmbWorkspaceUniqueType | undefined {
+        return this.#entityContext.getUnique();
+    }
+
+    getEntityType(): string {
+        return this.#entityContext.getEntityType()!;
     }
 }
 

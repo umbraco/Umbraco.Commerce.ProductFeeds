@@ -1,6 +1,4 @@
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-
-namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
     public class ProductFeedSettingWriteModel
     {
@@ -17,12 +15,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
         public required Guid StoreId { get; set; }
 
         public Guid ProductRootId { get; set; }
-
-        [Obsolete("Will be removed in v15. Use ProductDocumentTypeIds instead")]
-        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; }
-
-        [Obsolete("Will be removed in v15. Use ProductChildVariantTypeIds instead")]
-        public string? ProductChildVariantTypeAlias { get; set; }
 
         public ICollection<PropertyAndNodeMapItem> PropertyNameMappings { get; init; } = [];
 

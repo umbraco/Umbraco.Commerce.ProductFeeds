@@ -1,5 +1,5 @@
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbSubmittableWorkspaceContext, UmbSubmittableWorkspaceContextBase, UmbWorkspaceIsNewRedirectController, UmbWorkspaceRouteManager } from '@umbraco-cms/backoffice/workspace';
+import { UmbRoutableWorkspaceContext, UmbSubmittableWorkspaceContext, UmbSubmittableWorkspaceContextBase, UmbWorkspaceIsNewRedirectController, UmbWorkspaceRouteManager } from '@umbraco-cms/backoffice/workspace';
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbBasicState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { UcpfWorkspaceEditorElement as UcpfWorkspaceElement } from './index.element';
@@ -20,7 +20,7 @@ export const DETAILS_WORKSPACE_CONTEXT = new UmbContextToken<UmbSubmittableWorks
 
 export class UcpfDetailsWorkspaceContext
     extends UmbSubmittableWorkspaceContextBase<FeProductFeedSettingWriteModel>
-    implements UmbSubmittableWorkspaceContext {
+    implements UmbSubmittableWorkspaceContext, UmbRoutableWorkspaceContext {
     #repository: UcpfReadWriteRepository = new UcpfReadWriteRepository(this);
 
     #unique = new UmbBasicState<string | undefined>(undefined);
@@ -105,39 +105,39 @@ export class UcpfDetailsWorkspaceContext
             storeId: this.#store!.id,
             feedName: '',
             feedRelativePath: '',
-            productDocumentTypeAliases: [],
             productChildVariantTypeIds: [],
             productDocumentTypeIds: [],
+            includeTaxInPrice: true,
             propertyNameMappings: [
                 {
                     uiId: nanoid(),
                     nodeName: 'g:id',
                     propertyAlias: 'sku',
-                    valueExtractorName: 'DefaultSingleValuePropertyExtractor',
+                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:title',
                     propertyAlias: 'Name',
-                    valueExtractorName: 'DefaultSingleValuePropertyExtractor',
+                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:availability',
                     propertyAlias: 'stock',
-                    valueExtractorName: 'DefaultGoogleAvailabilityValueExtractor',
+                    valueExtractorId: 'DefaultGoogleAvailabilityValueExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:image_link',
                     propertyAlias: 'image',
-                    valueExtractorName: 'DefaultMediaPickerPropertyValueExtractor',
+                    valueExtractorId: 'DefaultMediaPickerPropertyValueExtractor',
                 },
                 {
                     uiId: nanoid(),
                     nodeName: 'g:image_link',
                     propertyAlias: 'images',
-                    valueExtractorName: 'DefaultMultipleMediaPickerPropertyValueExtractor',
+                    valueExtractorId: 'DefaultMultipleMediaPickerPropertyValueExtractor',
                 },
             ],
         } as FeProductFeedSettingWriteModel);
@@ -215,6 +215,13 @@ export class UcpfDetailsWorkspaceContext
             });
         }
         else {
+            // succeeded
+            this.#notificationContext?.peek('positive', {
+                data: {
+                    headline: this.#localize?.term('ucProductFeeds_messageSaveSuccess') ?? 'Saved',
+                    message: '',
+                },
+            });
             this.#unique.setValue(id);
             this.#model.setValue({
                 ...this.#model.value,

@@ -19,16 +19,10 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
 
         public string FeedDescription { get; set; } = string.Empty;
 
-        [Obsolete("Will be removed in v15. Use ProductDocumentTypeIds instead")]
-        public string? ProductDocumentTypeAliases { get; set; }
-
         /// <summary>
         /// Values are separated by ';'.
         /// </summary>
         public string ProductDocumentTypeIds { get; set; } = string.Empty;
-
-        [Obsolete("Will be removed in v15. Use ProductChildVariantTypeIds instead")]
-        public string? ProductChildVariantTypeAlias { get; set; }
 
         /// <summary>
         /// Values are separated by ';'.

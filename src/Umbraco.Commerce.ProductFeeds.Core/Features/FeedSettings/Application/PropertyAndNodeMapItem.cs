@@ -15,12 +15,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
         /// <summary>
         /// Property value extractor id.
         /// </summary>
-        [Obsolete("Will be removed in v15. Use ValueExtractorId instead.")]
-        public string? ValueExtractorName { get; set; }
-
-        /// <summary>
-        /// Property value extractor id.
-        /// </summary>
-        public string? ValueExtractorId => ValueExtractorName;
+        public string? ValueExtractorId { get; set; }
     }
 }

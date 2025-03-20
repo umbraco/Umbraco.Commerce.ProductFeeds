@@ -21,15 +21,7 @@ export type ProductFeedSettingReadModel = {
     feedDescription: string;
     storeId: string;
     productRootId: string;
-    /**
-     * @deprecated
-     */
-    productDocumentTypeAliases: Array<(string)>;
     productDocumentTypeIds: Array<(string)>;
-    /**
-     * @deprecated
-     */
-    productChildVariantTypeAlias?: (string) | null;
     productChildVariantTypeIds: Array<(string)>;
     feedRelativePath: string;
     propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
@@ -44,14 +36,6 @@ export type ProductFeedSettingWriteModel = {
     feedDescription: string;
     storeId: string;
     productRootId: string;
-    /**
-     * @deprecated
-     */
-    productDocumentTypeAliases: Array<(string)>;
-    /**
-     * @deprecated
-     */
-    productChildVariantTypeAlias?: (string) | null;
     propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
     productChildVariantTypeIds: Array<(string)>;
     productDocumentTypeIds: Array<(string)>;
@@ -63,7 +47,7 @@ export type ProductFeedType = 'GoogleMerchantCenter';
 export type PropertyAndNodeMapItem = {
     propertyAlias: string;
     nodeName: string;
-    valueExtractorName?: (string) | null;
+    valueExtractorId?: (string) | null;
 };
 
 export type DeleteData = {

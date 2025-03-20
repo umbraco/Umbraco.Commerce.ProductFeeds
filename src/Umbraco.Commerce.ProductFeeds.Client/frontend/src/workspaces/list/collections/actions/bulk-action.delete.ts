@@ -19,12 +19,12 @@ export class UcpfListBulkDeleteAction extends UmbEntityBulkActionBase<MetaEntity
         this.consumeContext(UMB_COLLECTION_CONTEXT, ctx => {
             this.#collectionContext = ctx;
         });
+
         this.#repository = new UcpfListCollectionRepository(host);
     }
     async execute(): Promise<void> {
         const selectedIds = this.#collectionContext?.selection.getSelection() ?? [];
         if (selectedIds.length > 0) {
-
             try {
                 await umbConfirmModal(this._host, {
                     headline: 'Delete item',
@@ -45,12 +45,13 @@ export class UcpfListBulkDeleteAction extends UmbEntityBulkActionBase<MetaEntity
 
                 const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
                 if (!eventContext) throw new Error('Event Context is not available');
+
                 const event = new UmbRequestReloadChildrenOfEntityEvent({
                     entityType: entityContext.getEntityType()!,
-                    unique: null,
+                    unique: entityContext.getUnique(),
                 });
-
                 eventContext.dispatchEvent(event);
+
                 notificationContext.peek('positive', {
                     data: {
                         message: localize.term('ucProductFeeds_messageDeleteSuccess') ?? 'Delete successfully',

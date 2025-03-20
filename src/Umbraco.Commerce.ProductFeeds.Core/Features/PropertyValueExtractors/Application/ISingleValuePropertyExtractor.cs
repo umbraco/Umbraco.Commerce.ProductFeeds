@@ -1,6 +1,6 @@
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application
 {
     /// <summary>
     /// Use to extract value of property that contains single value only.

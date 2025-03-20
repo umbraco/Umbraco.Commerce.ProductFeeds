@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains code which connects to external resources like database actions</Description>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0007;CA1848</NoWarn>
+    <NoWarn>IDE0007;CA1848;IDE0058;CA2007;IDE0022;IDE0021;IDE0290;</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

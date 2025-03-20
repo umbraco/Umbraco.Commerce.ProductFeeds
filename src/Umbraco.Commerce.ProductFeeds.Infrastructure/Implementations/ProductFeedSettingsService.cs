@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
 
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations

@@ -5,9 +5,8 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
-using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementations
 {
     public class ProductQueryService : IProductQueryService
     {
@@ -42,7 +41,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
                     ?? throw new ContentNotFoundException(string.Format(null, "Unable to find product root with key = '{0}'", parameters.ProductRootKey));
 
             IEnumerable<string> productTypeAliases = _contentTypeService
-                .GetAll(parameters.ProductDocumentTypeIds.Select(idString => new Guid(idString)))
+                .GetMany(parameters.ProductDocumentTypeIds.Select(idString => new Guid(idString)))
                 .Select(x => x.Alias);
 
             IBooleanOperation baseQuery = index

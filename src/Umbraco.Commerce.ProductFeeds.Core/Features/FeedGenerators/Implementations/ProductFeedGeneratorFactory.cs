@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations
 {
     public class ProductFeedGeneratorFactory : IProductFeedGeneratorFactory
     {

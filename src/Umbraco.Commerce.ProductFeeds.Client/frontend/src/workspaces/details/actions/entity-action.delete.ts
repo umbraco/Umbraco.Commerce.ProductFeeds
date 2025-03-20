@@ -1,6 +1,6 @@
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbEntityActionArgs, UmbEntityActionBase } from '@umbraco-cms/backoffice/entity-action';
-import { MetaEntityActionDefaultKind } from '@umbraco-cms/backoffice/extension-registry';
+import { MetaEntityActionDefaultKind } from '@umbraco-cms/backoffice/entity-action';
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 import { DETAILS_WORKSPACE_CONTEXT, UcpfDetailsWorkspaceContext } from '../context';
 

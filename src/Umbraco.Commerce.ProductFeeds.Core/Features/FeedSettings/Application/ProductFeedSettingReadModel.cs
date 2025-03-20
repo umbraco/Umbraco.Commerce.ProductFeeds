@@ -19,12 +19,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public Guid ProductRootId { get; set; }
 
-        [Obsolete("Will be removed in v15. Use ProductDocumentTypeIds instead")]
-        public required IEnumerable<string> ProductDocumentTypeAliases { get; set; }
         public IEnumerable<string> ProductDocumentTypeIds { get; set; } = [];
 
-        [Obsolete("Will be removed in v15. Use ProductChildVariantTypeIds instead")]
-        public string? ProductChildVariantTypeAlias { get; set; }
         public IEnumerable<string> ProductChildVariantTypeIds { get; set; } = [];
 
         public required string FeedRelativePath { get; set; }

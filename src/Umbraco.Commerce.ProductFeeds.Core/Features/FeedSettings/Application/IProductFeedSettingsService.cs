@@ -1,6 +1,4 @@
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-
-namespace Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
     public interface IProductFeedSettingsService
     {

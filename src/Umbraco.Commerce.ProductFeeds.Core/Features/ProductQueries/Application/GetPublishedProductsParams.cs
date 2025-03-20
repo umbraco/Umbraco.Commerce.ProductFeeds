@@ -1,4 +1,4 @@
-namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application
 {
     public class GetPublishedProductsParams
     {
