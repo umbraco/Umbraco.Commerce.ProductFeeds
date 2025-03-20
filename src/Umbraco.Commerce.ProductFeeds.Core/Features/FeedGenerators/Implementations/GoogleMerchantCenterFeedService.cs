@@ -88,7 +88,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             // render doc/channel/item nodes
             foreach (IPublishedContent product in products)
             {
-                IEnumerable<IPublishedContent> childVariants = product.Children
+                IEnumerable<IPublishedContent> childVariants = product.Children()
                     .Where(x => feedSetting.ProductChildVariantTypeIds.Contains(x.ContentType.Key.ToString()))
                     .ToList();
                 if (childVariants.Any())
@@ -113,7 +113,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
                 else if (product.Properties.Any(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)))
                 {
                     // handle products with complex variants
-                    IPublishedProperty complexVariantProp = product.Properties.Where(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)).First();
+                    IPublishedProperty complexVariantProp = product.Properties.First(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal));
                     ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
                     foreach (ProductVariantItem complexVariant in variantItems)
                     {

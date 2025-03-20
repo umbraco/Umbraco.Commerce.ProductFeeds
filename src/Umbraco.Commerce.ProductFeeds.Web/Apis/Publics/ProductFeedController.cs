@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Commerce.ProductFeeds.Apis.Public;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
+namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
 {
     public class ProductFeedController : ControllerBase
     {
