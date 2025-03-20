@@ -5,9 +5,8 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
-using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Implementations
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementations
 {
     public class ProductQueryService : IProductQueryService
     {

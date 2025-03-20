@@ -1,4 +1,4 @@
-namespace Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application
 {
     public interface IMultipleValuePropertyExtractorFactory
     {

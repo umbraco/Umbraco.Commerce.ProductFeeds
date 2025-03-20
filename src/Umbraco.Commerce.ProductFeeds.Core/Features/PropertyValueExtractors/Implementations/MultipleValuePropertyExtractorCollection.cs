@@ -1,5 +1,5 @@
 using Umbraco.Cms.Core.Composing;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {

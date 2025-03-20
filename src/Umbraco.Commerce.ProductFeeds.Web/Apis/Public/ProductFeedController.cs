@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Umbraco.Commerce.ProductFeeds.Apis.Public;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Public
 {

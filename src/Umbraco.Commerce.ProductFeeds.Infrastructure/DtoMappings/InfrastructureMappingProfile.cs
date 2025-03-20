@@ -1,7 +1,6 @@
 using System.Text.Json;
 using AutoMapper;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
 
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings

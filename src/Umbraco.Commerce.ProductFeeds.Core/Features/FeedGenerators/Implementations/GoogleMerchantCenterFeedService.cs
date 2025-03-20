@@ -11,8 +11,8 @@ using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
-using Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application;
 using Umbraco.Commerce.ProductFeeds.Extensions;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations
