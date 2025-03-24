@@ -36,7 +36,18 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
                 Logger.LogDebug("Running migration for SQLServer db");
 
                 Execute
-                    .Sql("ALTER TABLE umbracoCommerceProductFeedSetting ADD includeTaxInPrice bit NOT NULL CONSTRAINT DF_includeTaxInPrice DEFAULT (1)")
+                    .Sql(@"
+                        IF NOT EXISTS (
+                            SELECT 1 
+                            FROM INFORMATION_SCHEMA.COLUMNS 
+                            WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting'
+                            AND COLUMN_NAME = 'includeTaxInPrice'
+                        )
+                        BEGIN
+                            ALTER TABLE umbracoCommerceProductFeedSetting 
+                            ADD includeTaxInPrice bit NOT NULL 
+                            CONSTRAINT DF_includeTaxInPrice DEFAULT (1);
+                        END")
                     .Do();
             }
         }
