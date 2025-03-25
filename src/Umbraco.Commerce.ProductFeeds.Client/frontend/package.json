@@ -24,7 +24,7 @@
         "ts-loader": "^9.5.1",
         "typescript": "^5.4.5",
         "typescript-eslint": "^7.13.1",
-        "vite": "^6.2.2",
+        "vite": "^6.2.3",
         "vite-plugin-static-copy": "^2.3.0",
         "vite-tsconfig-paths": "^4.3.2"
     },
