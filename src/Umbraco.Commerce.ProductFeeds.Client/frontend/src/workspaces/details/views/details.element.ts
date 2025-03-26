@@ -1,4 +1,4 @@
-import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
 import type { UUIBooleanInputElement, UUIEvent, UUIInputElement, UUISelectElement } from '@umbraco-cms/backoffice/external/uui';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import {
@@ -6,7 +6,6 @@ import {
     html,
     css,
     state,
-    nothing,
 } from '@umbraco-cms/backoffice/external/lit';
 
 import { DETAILS_WORKSPACE_CONTEXT } from '../context.js';
@@ -115,8 +114,6 @@ export class UcpfDetailsWorkspaceViewElement
             ...this._model!,
             productRootId: selections.join(',') || undefined,
         });
-
-        // this.#validateForm(); // TODO Dinh
     }
 
     #onProductDocumentTypeIdsChange(event: Event) {
@@ -197,22 +194,6 @@ export class UcpfDetailsWorkspaceViewElement
                         </uui-select>
                     </umb-property-layout>
 
-                    ${this._model?.productDocumentTypeAliases.length ? html`
-                        <umb-property-layout
-                            label=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesLabel')}
-                            description=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesDescription')}
-                        >
-                            <uui-input
-                                slot="editor"
-                                name="productDocumentTypeAliases"
-                                label=${this.localize.term('ucProductFeeds_propProductDocumentTypeAliasesLabel')}
-                                value=${this._model?.productDocumentTypeAliases?.join(';')}
-                                @input="${this.#onInputChange}"
-                                disabled
-                            ></uui-input>
-                        </umb-property-layout>
-                    ` : nothing}
-
                     <umb-property-layout
                             label=${this.localize.term('ucProductFeeds_propProductDocumentTypeIdsLabel')}
                             description=${this.localize.term('ucProductFeeds_propProductDocumentTypeIdsDescription')}
@@ -226,22 +207,6 @@ export class UcpfDetailsWorkspaceViewElement
                             .selection=${this._model?.productDocumentTypeIds ?? []}
                         ></umb-input-document-type>
                     </umb-property-layout>
-
-                    ${this._model?.productChildVariantTypeAlias && html`
-                        <umb-property-layout
-                            label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAliasLabel')}
-                            description=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAliasDescription')}
-                        >
-                            <uui-input
-                                slot="editor"
-                                name="productChildVariantTypeAlias"
-                                label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeAlias')}
-                                value=${this._model?.productChildVariantTypeAlias ?? ''}
-                                disabled
-                            ></uui-input>
-                            ${this._model?.productChildVariantTypeAlias && html`<uui-button slot='editor' class='ucpf-clearPropButton' look='secondary' @click=${this.#onClearInputClick('productChildVariantTypeAlias')} label=${this.localize.term('general_remove')}></uui-button>`}
-                        </umb-property-layout>
-                    `}
 
                     <umb-property-layout
                         label=${this.localize.term('ucProductFeeds_propProductChildVariantTypeIdsLabel')}

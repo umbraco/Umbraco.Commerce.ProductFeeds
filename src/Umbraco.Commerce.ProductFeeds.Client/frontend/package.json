@@ -1,12 +1,13 @@
 {
     "name": "umbraco-commerce-product-feeds",
-    "version": "14.0.0",
+    "version": "15.0.0",
     "description": "A product feeds generator for Umbraco Commerce",
     "main": "./src/index.ts",
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "watch": "vite build --watch --mode development",
+        "copy-statics": "copyfiles -u 1 \"./src/umbraco-package.json\" \"../../Umbraco.Commerce.ProductFeeds.Web/wwwroot/\"",
+        "build": "vite build && npm run copy-statics",
+        "watch": "npm run copy-statics && vite build --watch --mode development",
         "lint": "eslint . --fix",
         "gen-api": "openapi-ts"
     },
@@ -14,9 +15,8 @@
         "@eslint/js": "^9.5.0",
         "@hey-api/openapi-ts": "^0.52.9",
         "@types/eslint__js": "^8.42.3",
-        "@umbraco-cms/backoffice": "^14.3.2",
-        "@umbraco-commerce/backoffice": "^14.0.0-rc3",
         "autoprefixer": "^10.4.19",
+        "copyfiles": "^2.4.1",
         "eslint": "^8.57.0",
         "globals": "^15.6.0",
         "postcss": "^8.4.39",
@@ -25,13 +25,14 @@
         "typescript": "^5.4.5",
         "typescript-eslint": "^7.13.1",
         "vite": "^6.2.3",
-        "vite-plugin-static-copy": "^2.3.0",
         "vite-tsconfig-paths": "^4.3.2"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
         "@hey-api/client-axios": "^0.2.3",
+        "@umbraco-cms/backoffice": "^15.0.0",
+        "@umbraco-commerce/backoffice": "^15.0.0",
         "nanoid": "^5.0.9"
     }
 }

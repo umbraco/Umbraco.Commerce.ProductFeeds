@@ -1,4 +1,4 @@
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations
 {
@@ -15,22 +15,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
         }
 
         /// <inheritdoc/>
-        [Obsolete("Will be removed in v15. Use TryGetExtractor instead.")]
-        public ISingleValuePropertyExtractor GetExtractor(string? extractorId = null)
-        {
-            if (string.IsNullOrWhiteSpace(extractorId))
-            {
-                extractorId = nameof(DefaultSingleValuePropertyExtractor);
-            }
-
-            ISingleValuePropertyExtractor? valueExtractor = _valueExtractors.FirstOrDefault(x => x.Id == extractorId)
-                ?? throw new InvalidOperationException($"Can't find property extractor with id '{extractorId}'");
-
-            return valueExtractor;
-        }
-
-
-        /// <inheritdoc/>
         public bool TryGetExtractor(string? extractorId, out ISingleValuePropertyExtractor? extractor)
         {
             if (string.IsNullOrWhiteSpace(extractorId))
@@ -39,7 +23,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Im
             }
 
             extractor = _valueExtractors.FirstOrDefault(x => x.Id == extractorId);
-            return extractor != null ? true : false;
+            return extractor != null;
         }
     }
 }

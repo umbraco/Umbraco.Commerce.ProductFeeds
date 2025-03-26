@@ -53,7 +53,8 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
         this.observe(this.#workspaceContext.model, (model) => (this._model = model));
         this.observe(this.#workspaceContext.isNew, (isNew) => {
             this._isNew = isNew;
-            if (isNew) {                    // TODO: Would be good with a more general way to bring focus to the name input.
+            if (isNew) {
+                // TODO: Would be good with a more general way to bring focus to the name input.
                 (
                     this.shadowRoot?.querySelector('#name') as HTMLElement
                 )?.focus();
