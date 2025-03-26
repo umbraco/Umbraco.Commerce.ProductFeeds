@@ -50,7 +50,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                 uiId: nanoid(),
                 propertyAlias: '',
                 nodeName: '',
-                valueExtractorName: 'DefaultSingleValuePropertyExtractor',
+                valueExtractorId: 'DefaultSingleValuePropertyExtractor',
             },
         ];
 
@@ -87,7 +87,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
             <div
                 class="ucpf-prop-mapping-row"
                 ng-repeat="item in vm.propertyAndNodeMappingVm track by item.uiId"
-                ng-model="item.valueExtractorName">
+                ng-model="item.valueExtractorId">
                 <div class="ucpf-prop-mapping-col"
                     style="max-width: 200px;">
                     <uui-input
@@ -117,19 +117,18 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                 <div class="ucpf-prop-mapping-col">
                     <uui-select
                         placeholder=${`-- ${this.localize.term('ucPlaceholders_selectAnItem')} --`}
-                        name='valueExtractorName'
-                        label=${this.localize.term('ucProductFeed_propNodeMapperValueExtractorName')}
-                        placeholder=${this.localize.term('ucProductFeed_propNodeMapperValueExtractorName')}
+                        name='valueExtractorId'
+                        label=${this.localize.term('ucProductFeed_propNodeMapperValueExtractorId')}
                         .options=${this
                 .propertyValueExtractorOptions
                 .map(extractor => {
                     return {
                         ...extractor,
-                        selected: mapItem.valueExtractorName === extractor.value,
+                        selected: mapItem.valueExtractorId === extractor.value,
                     };
                 })}
                         @change=${(e: CustomEvent) => this.#onMapItemChange(e, mapItem.uiId)}
-                        title=${mapItem.valueExtractorName ?? ''}>
+                        title=${this.propertyValueExtractorOptions.find(x => x.value === mapItem.valueExtractorId)?.name ?? ''}>
                     </uui-select>
                     <uui-button
                         @click=${() => this.#onRemoveItemClick(mapItem.uiId)}

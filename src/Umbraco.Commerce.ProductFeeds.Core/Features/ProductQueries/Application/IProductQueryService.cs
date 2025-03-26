@@ -1,6 +1,6 @@
 using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application
+namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application
 {
     public interface IProductQueryService
     {
@@ -8,7 +8,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.ProductQueries.Application
         /// Get published products filtered by input parameters.
         /// </summary>
         /// <param name="parameters"></param>
-        /// <exception cref="Features.ProductQueries.Application.ContentNotFoundException"></exception>
+        /// <exception cref="ContentNotFoundException"></exception>
         /// <returns></returns>
         ICollection<IPublishedContent> GetPublishedProducts(GetPublishedProductsParams parameters);
     }

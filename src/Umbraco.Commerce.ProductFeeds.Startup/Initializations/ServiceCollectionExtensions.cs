@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
-using Umbraco.Commerce.ProductFeeds.Core.PropertyValueExtractors.Application;
 
-namespace Umbraco.Commerce.ProductFeeds.Extensions
+namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
 {
     public static class ServiceCollectionExtensions
     {

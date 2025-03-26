@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Contains the main logic of the plugin</Description>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0007</NoWarn>
+    <NoWarn>IDE0007;IDE0058;CA2007;IDE0022;IDE0021;IDE0290;</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
