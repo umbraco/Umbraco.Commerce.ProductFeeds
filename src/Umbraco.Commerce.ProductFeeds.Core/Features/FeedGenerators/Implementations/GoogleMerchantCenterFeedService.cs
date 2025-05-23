@@ -40,6 +40,8 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
 
         public string DisplayName => "Google Merchant Center Feed";
 
+        public FeedFormat Format => FeedFormat.Xml;
+
         public GoogleMerchantCenterFeedService(
             ILogger<GoogleMerchantCenterFeedService> logger,
             ICurrencyService currencyService,
@@ -62,7 +64,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         /// <param name="feedSetting"></param>
         /// <returns></returns>
         /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
-        public async Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting)
+        public async Task<XmlDocument> GenerateXmlFeedAsync(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
