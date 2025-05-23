@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
     public class ProductFeedSettingWriteModel
@@ -6,7 +8,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required string FeedRelativePath { get; set; }
 
-        public ProductFeedType? FeedType { get; set; }
+        public required string FeedGeneratorId { get; set; }
 
         public required string FeedName { get; set; }
 

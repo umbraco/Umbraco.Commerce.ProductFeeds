@@ -1,29 +1,26 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations
 {
     public class ProductFeedGeneratorFactory : IProductFeedGeneratorFactory
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly FeedGeneratorCollection _feedGenerators;
 
-        public ProductFeedGeneratorFactory(IServiceProvider serviceProvider)
+        public ProductFeedGeneratorFactory(FeedGeneratorCollection feedGenerators)
         {
-            _serviceProvider = serviceProvider;
+            _feedGenerators = feedGenerators;
         }
 
-        public IProductFeedGeneratorService GetGenerator(ProductFeedType feedType)
+        public IProductFeedGeneratorService GetGenerator(string feedGeneratorId)
         {
-            switch (feedType)
+            IProductFeedGeneratorService? feedGenerator = _feedGenerators.FirstOrDefault(p => p.Id == feedGeneratorId);
+
+            if (feedGenerator == null)
             {
-                case ProductFeedType.GoogleMerchantCenter:
-                    return _serviceProvider.GetRequiredService<GoogleMerchantCenterFeedService>();
-
-                default:
-                    throw new InvalidOperationException($"Invalid feed type: {feedType}");
+                throw new InvalidOperationException($"Invalid feed id: {feedGeneratorId}");
             }
-
+            return feedGenerator;
         }
     }
 }
