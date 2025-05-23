@@ -29,7 +29,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                 return NotFound("Unknown feed type.");
             }
 
-            IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedType);
+            IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedGeneratorId);
             XmlDocument feed = await feedGenerator.GenerateFeedAsync(feedSettings);
 
             var result = new XmlActionResult(feed) { Formatting = Formatting.Indented };

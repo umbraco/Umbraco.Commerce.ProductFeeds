@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Web.Common;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
 
@@ -15,17 +16,20 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations
         private readonly IMapper _mapper;
         private readonly ILogger<ProductFeedSettingsService> _logger;
         private readonly UmbracoHelper _umbracoHelper;
+        private readonly FeedGeneratorCollection _feedGenerators;
 
         public ProductFeedSettingsService(
             IScopeProvider scopeProvider,
             IMapper mapper,
             ILogger<ProductFeedSettingsService> logger,
-            UmbracoHelper umbracoHelper)
+            UmbracoHelper umbracoHelper,
+            FeedGeneratorCollection feedGenerators)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;
             _logger = logger;
             _umbracoHelper = umbracoHelper;
+            _feedGenerators = feedGenerators;
         }
 
         /// <inheritdoc/>
@@ -53,7 +57,7 @@ AND (@1 IS NULL OR id = @1)",
                     return null;
                 }
 
-                if (!Enum.TryParse(feedSetting.FeedType, true, out ProductFeedType feedType))
+                if(_feedGenerators.Where(p=>p.Id == feedSetting.FeedType).Any() == false)
                 {
                     throw new InvalidOperationException($"Unknown feed type: '{feedSetting.FeedType}'.");
                 }

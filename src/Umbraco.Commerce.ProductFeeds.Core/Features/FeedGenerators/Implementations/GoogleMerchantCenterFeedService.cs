@@ -36,6 +36,10 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
         private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
 
+        public string Id => "GoogleMerchantCenter";
+
+        public string DisplayName => "Google Merchant Center Feed";
+
         public GoogleMerchantCenterFeedService(
             ILogger<GoogleMerchantCenterFeedService> logger,
             ICurrencyService currencyService,
