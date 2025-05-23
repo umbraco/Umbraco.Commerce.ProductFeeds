@@ -15,8 +15,7 @@ export type NotificationHeaderModel = {
 
 export type ProductFeedSettingReadModelReadable = {
     id: string;
-    feedType: ProductFeedType;
-    readonly feedTypeName: string;
+    feedGeneratorId: string;
     feedName: string;
     feedDescription: string;
     storeId: string;
@@ -45,7 +44,7 @@ export type ProductFeedSettingReadModelWritable = {
 export type ProductFeedSettingWriteModel = {
     id?: string | null;
     feedRelativePath: string;
-    feedType: ProductFeedType;
+    feedGeneratorId: string;
     feedName: string;
     feedDescription: string;
     storeId: string;
@@ -55,8 +54,6 @@ export type ProductFeedSettingWriteModel = {
     productDocumentTypeIds: Array<string>;
     includeTaxInPrice: boolean;
 };
-
-export type ProductFeedType = 'GoogleMerchantCenter';
 
 export type PropertyAndNodeMapItem = {
     propertyAlias: string;
