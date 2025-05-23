@@ -4,7 +4,7 @@ export type FeProductFeedSettingWriteModel = Omit<ProductFeedSettingWriteModel, 
     id?: string
     propertyNameMappings: Array<FePropertyAndNodeMapDetails>
     productRootId?: string,
-    feedType?: 'GoogleMerchantCenter'
+    feedGeneratorId?: string
 }
 
 export type FePropertyAndNodeMapDetails = PropertyAndNodeMapItem & {
