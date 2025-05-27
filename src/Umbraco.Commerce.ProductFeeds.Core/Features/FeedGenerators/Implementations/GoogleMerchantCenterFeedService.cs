@@ -20,7 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
     /// <summary>
     /// This is the feed generator that follows Google Merchant Center's standard.
     /// </summary>
-    public class GoogleMerchantCenterFeedService : IProductFeedGeneratorService
+    public class GoogleMerchantCenterFeedService : FeedGeneratorServiceBase
     {
         private const string GoogleXmlNamespaceUri = "http://base.google.com/ns/1.0";
 
@@ -33,29 +33,26 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         private readonly ICurrencyService _currencyService;
         private readonly IProductQueryService _productQueryService;
         private readonly IUmbracoCommerceApi _commerceApi;
-        private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
-        private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
 
-        public string Id => "GoogleMerchantCenter";
+        public override string Id => "GoogleMerchantCenter";
 
-        public string DisplayName => "Google Merchant Center Feed";
+        public override string DisplayName => "Google Merchant Center Feed";
 
-        public FeedFormat Format => FeedFormat.Xml;
+        public override FeedFormat Format => FeedFormat.Xml;
 
         public GoogleMerchantCenterFeedService(
             ILogger<GoogleMerchantCenterFeedService> logger,
             ICurrencyService currencyService,
             IProductQueryService productQueryService,
             IUmbracoCommerceApi commerceApi,
-            ISingleValuePropertyExtractorFactory singleValuePropertyExtractor,
+            ISingleValuePropertyExtractorFactory singleValuePropertyExtractorFactory,
             IMultipleValuePropertyExtractorFactory multipleValuePropertyExtractorFactory)
+            : base(singleValuePropertyExtractorFactory, multipleValuePropertyExtractorFactory)
         {
             _logger = logger;
             _currencyService = currencyService;
             _productQueryService = productQueryService;
             _commerceApi = commerceApi;
-            _singleValuePropertyExtractorFactory = singleValuePropertyExtractor;
-            _multipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
 
         /// <summary>
@@ -64,7 +61,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         /// <param name="feedSetting"></param>
         /// <returns></returns>
         /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
-        public async Task<XmlDocument> GenerateXmlFeedAsync(ProductFeedSettingReadModel feedSetting)
+        public override async Task<XmlDocument> GenerateXmlFeedAsync(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
@@ -163,13 +160,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             // add custom properties
             foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
-                if (_singleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
+                if (SingleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
                     && singleValueExtractor != null)
                 {
                     string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
                     itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
                 }
-                else if (_multipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
+                else if (MultipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
                     && multipleValueExtractor != null)
                 {
                     var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
