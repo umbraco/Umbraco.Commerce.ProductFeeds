@@ -97,7 +97,7 @@ export class UcpfDetailsWorkspaceContext
         return this.#model.getValue();
     }
 
-    protected resetState(): void {
+    protected resetState(): void {        
         super.resetState();
 
         const availableFeedTypes = this.#feedTypes.getValue();
@@ -112,38 +112,7 @@ export class UcpfDetailsWorkspaceContext
             productChildVariantTypeIds: [],
             productDocumentTypeIds: [],
             includeTaxInPrice: true,
-            propertyNameMappings: [
-                {
-                    uiId: nanoid(),
-                    nodeName: 'g:id',
-                    propertyAlias: 'sku',
-                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
-                },
-                {
-                    uiId: nanoid(),
-                    nodeName: 'g:title',
-                    propertyAlias: 'Name',
-                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
-                },
-                {
-                    uiId: nanoid(),
-                    nodeName: 'g:availability',
-                    propertyAlias: 'stock',
-                    valueExtractorId: 'DefaultGoogleAvailabilityValueExtractor',
-                },
-                {
-                    uiId: nanoid(),
-                    nodeName: 'g:image_link',
-                    propertyAlias: 'image',
-                    valueExtractorId: 'DefaultMediaPickerPropertyValueExtractor',
-                },
-                {
-                    uiId: nanoid(),
-                    nodeName: 'g:image_link',
-                    propertyAlias: 'images',
-                    valueExtractorId: 'DefaultMultipleMediaPickerPropertyValueExtractor',
-                },
-            ],
+            propertyNameMappings: [],
         } as FeProductFeedSettingWriteModel);
     }
 
