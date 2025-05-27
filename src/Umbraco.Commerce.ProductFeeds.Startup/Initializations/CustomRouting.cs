@@ -27,7 +27,7 @@ namespace Umbraco.Commerce.ProductFeeds.Startup.Initializations
                 new
                 {
                     controller = "ProductFeed",
-                    Action = "Xml",
+                    Action = "Generate",
                 });
         }
     }

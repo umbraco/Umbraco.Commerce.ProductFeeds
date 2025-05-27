@@ -15,6 +15,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Commerce.Cms.Authorization;
 using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice;
@@ -33,17 +34,20 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         private readonly IContentTypeService _contentTypeService;
         private readonly SingleValuePropertyExtractorCollection _singleValuePropertyExtractors;
         private readonly MultipleValuePropertyExtractorCollection _multipleValuePropertyExtractors;
+        private readonly FeedGeneratorCollection _feedGenerators;
 
         public ProductFeedSettingController(
             IProductFeedSettingsService feedConfigService,
             IContentTypeService contentTypeService,
             SingleValuePropertyExtractorCollection singleValuePropertyExtractors,
-            MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors)
+            MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors,
+            FeedGeneratorCollection feedGenerators)
         {
             _feedSettingsService = feedConfigService;
             _contentTypeService = contentTypeService;
             _singleValuePropertyExtractors = singleValuePropertyExtractors;
             _multipleValuePropertyExtractors = multipleValuePropertyExtractors;
+            _feedGenerators = feedGenerators;
         }
 
         [HttpPost("save")]
@@ -126,14 +130,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
         [HttpGet("feedtypes")]
         public ActionResult<IEnumerable<LookupReadModel>> GetFeedTypes()
         {
-            return Ok(new LookupReadModel[]
-            {
-                new LookupReadModel
-                {
-                    Value = ProductFeedType.GoogleMerchantCenter.ToString(),
-                    Label = ProductFeedType.GoogleMerchantCenter.GetDescription(),
-                },
-            });
+            return Ok(_feedGenerators.Select(x => new LookupReadModel { Value = x.Id, Label = x.DisplayName }));
         }
 
         [Route("[action]")]
