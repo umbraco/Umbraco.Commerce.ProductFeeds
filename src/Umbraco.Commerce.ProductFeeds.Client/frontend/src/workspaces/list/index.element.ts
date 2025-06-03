@@ -25,7 +25,7 @@ export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
         super();
 
         this.consumeContext(UC_STORE_CONTEXT, (ctx) => {
-            this.observe(ctx.store, (store) => {
+            this.observe(ctx?.store, (store) => {
                 this._store = store;
                 this.#constructConfig();
             });
@@ -42,6 +42,8 @@ export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
     }
 
     render() {
+        if (!this._store) return;
+
         return this._config
             ? html`<umb-body-layout main-no-padding headline=${this.localize.term('ucProductFeeds_collectionLabel')}>
                   <umb-workspace-entity-action-menu
@@ -52,7 +54,7 @@ export class UcpfListWorkspaceElement extends UmbElementMixin(LitElement) {
                       .config=${this._config}
                   ></umb-collection>
                   <div slot="footer-info" id="footer">
-                      <a href=${storeRoute(this._store!.id)} >${this._store?.name}</a>
+                      <a href=${storeRoute(this._store.id)} >${this._store?.name}</a>
                       / ${this.localize.term('ucProductFeeds_collectionLabel')}
                   </div>
               </umb-body-layout>`

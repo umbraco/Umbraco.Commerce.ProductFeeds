@@ -2,7 +2,7 @@ import type { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api'
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { manifests as workspacesManifests } from './workspaces/manifests.ts';
 import { manifests as localizationManifests } from './lang/manifests.ts';
-import { client as apiClient } from './generated/apis/services.gen';
+import { client as apiClient } from './generated/apis/client.gen.ts';
 import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { storeMenuManifests } from './uc-menu-manifest.ts';
 
@@ -18,6 +18,11 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     extensionRegistry.registerMany(allManifests);
     host.consumeContext(UMB_AUTH_CONTEXT, async (instance) => {
         if (!instance) return;
+
+        const config = instance?.getOpenApiConfiguration();
+        apiClient.setConfig({
+            baseURL: config?.base ?? "",
+        });
 
         apiClient.instance.interceptors.request.use(async (request) => {
             const token = await instance.getLatestToken();

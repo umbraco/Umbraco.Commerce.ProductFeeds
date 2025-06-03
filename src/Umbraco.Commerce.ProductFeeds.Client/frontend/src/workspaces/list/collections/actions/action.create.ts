@@ -9,8 +9,8 @@ export class CollectionCreateAction extends UmbCollectionActionBase {
     constructor(host: UmbControllerHost) {
         super(host);
         this.consumeContext(UC_STORE_CONTEXT, ctx => {
-            this.observe(ctx.store, (store) => {
-                this.#storeId = store!.id;
+            this.observe(ctx?.store, (store) => {
+                this.#storeId = store?.id;
             });
         });
     }

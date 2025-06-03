@@ -1,5 +1,5 @@
-import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
-import { delete_, getByStore, getDetails, getFeedTypes, getPropertyValueExtractors, LookupReadModel, ProductFeedSettingReadModel, ProductFeedSettingWriteModel, save } from '../generated/apis';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
+import { delete_, getByStore, getDetails, getFeedTypes, getPropertyValueExtractors, LookupReadModel, ProductFeedSettingReadModelReadable, ProductFeedSettingWriteModel, save } from '../generated/apis';
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbPagedModel, UmbRepositoryResponse } from '@umbraco-cms/backoffice/repository';
 import { FeProductFeedSettingWriteModel } from './details/types';
@@ -11,8 +11,8 @@ export class UcpfListDataSource {
         this.#host = host;
     }
 
-    async fetchListAsync(storeId: string): Promise<UmbRepositoryResponse<UmbPagedModel<ProductFeedSettingReadModel>>> {
-        const { data, error } = await tryExecuteAndNotify(this.#host, getByStore({
+    async fetchListAsync(storeId: string): Promise<UmbRepositoryResponse<UmbPagedModel<ProductFeedSettingReadModelReadable>>> {
+        const { data, error } = await tryExecute(this.#host, getByStore({
             query: {
                 storeId,
             },
@@ -21,19 +21,10 @@ export class UcpfListDataSource {
             return { error };
         }
 
-        if (!data || !data.data) {
-            return {
-                data: {
-                    items: [],
-                    total: 0,
-                },
-            };
-        }
-
         return {
             data: {
-                items: data.data,
-                total: data.data.length,
+                items: data ?? [],
+                total: data?.length ?? 0,
             },
         };
     }
@@ -46,7 +37,7 @@ export class UcpfListDataSource {
         });
 
         if (data) {
-            return { data: data as ProductFeedSettingReadModel };
+            return { data: data as ProductFeedSettingReadModelReadable };
         }
 
         return {

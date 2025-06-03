@@ -42,7 +42,7 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
         });
 
         this.consumeContext(UC_STORE_CONTEXT, (ctx) => {
-            this.observe(ctx.store, (store) => {
+            this.observe(ctx?.store, (store) => {
                 this._store = store;
             });
         });
@@ -72,12 +72,13 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
     }
 
     render() {
-        if (!this._model) return;
+        if (!this._model || !this._store) return;
+
         return html`
             <umb-workspace-editor alias=${detailsWorkspaceManifest.alias}>
                 <div id="header" slot="header">
                     <uui-button
-                        href=${listRoute(this._store!.id)}
+                        href=${listRoute(this._store.id)}
                         label=${this.localize.term('general_backToOverview')}
                         compact>
                         <uui-icon name="icon-arrow-left"></uui-icon>
@@ -95,8 +96,8 @@ export class UcpfWorkspaceEditorElement extends UmbLitElement {
                 ? html`<umb-workspace-entity-action-menu slot="action-menu"></umb-workspace-entity-action-menu>`
                 : nothing}
                 <div slot="footer-info" id="footer">
-                    <a href=${storeRoute(this._store!.id)}>${this._store?.name}</a> /
-	                <a href=${listRoute(this._store!.id)}>
+                    <a href=${storeRoute(this._store.id)}>${this._store?.name}</a> /
+	                <a href=${listRoute(this._store.id)}>
                     ${this.localize.term('ucProductFeeds_collectionLabel')}</a> /
 	                ${this._model?.feedName ?? this.localize.term('ucGeneral_untitled')}
 	            </div>

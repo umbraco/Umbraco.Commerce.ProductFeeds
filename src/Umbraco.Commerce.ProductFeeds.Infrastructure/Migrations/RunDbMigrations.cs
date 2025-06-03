@@ -9,7 +9,7 @@ using Umbraco.Cms.Infrastructure.Migrations.Upgrade;
 
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
 {
-    public class RunDbMigrations : INotificationHandler<UmbracoApplicationStartingNotification>
+    public class RunDbMigrations : INotificationAsyncHandler<UmbracoApplicationStartingNotification>
     {
         private readonly IMigrationPlanExecutor _migrationPlanExecutor;
         private readonly ICoreScopeProvider _coreScopeProvider;
@@ -28,7 +28,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             _runtimeState = runtimeState;
         }
 
-        public void Handle(UmbracoApplicationStartingNotification notification)
+        public async Task HandleAsync(UmbracoApplicationStartingNotification notification, CancellationToken cancellationToken)
         {
             if (_runtimeState.Level < RuntimeLevel.Run)
             {
@@ -55,7 +55,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             // Go and upgrade our site (Will check if it needs to do the work or not)
             // Based on the current/latest step
             Upgrader upgrader = new(migrationPlan);
-            upgrader.Execute(
+            await upgrader.ExecuteAsync(
                 _migrationPlanExecutor,
                 _coreScopeProvider,
                 _keyValueService);
