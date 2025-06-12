@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -29,14 +30,23 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
 
             try
             {
-                using (var writer = new XmlTextWriter(context.HttpContext.Response.Body, Encoding.UTF8))
+                // Create a StreamWriter over the response body with async encoding support
+                await using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, Encoding.UTF8, leaveOpen: true);
+
+                // Use XmlWriter with async settings
+                var settings = new XmlWriterSettings
                 {
-                    writer.Formatting = Formatting;
-                    _document.WriteContentTo(writer);
-#pragma warning disable CA1849 // The FlushAsync is not implemented
-                    writer.Flush();
-#pragma warning restore CA1849 // The FlushAsync is not implemented
-                }
+                    Async = true,
+                    Indent = Formatting == Formatting.Indented,
+                };
+
+                await using var xmlWriter = XmlWriter.Create(streamWriter, settings);
+
+                // Write the document content
+                _document.WriteContentTo(xmlWriter);
+
+                // Async flush
+                await xmlWriter.FlushAsync();
             }
             catch (Exception ex)
             {

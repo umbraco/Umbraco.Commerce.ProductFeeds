@@ -7,14 +7,14 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "<Pending>")]
-    internal class AddIncludeTaxInPrice_14_1_0 : MigrationBase
+    internal class AddIncludeTaxInPrice_14_1_0 : AsyncMigrationBase
     {
         public AddIncludeTaxInPrice_14_1_0(IMigrationContext context)
             : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             const string tableName = "umbracoCommerceProductFeedSetting";
 
@@ -50,6 +50,8 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
                         END")
                     .Do();
             }
+
+            return Task.CompletedTask;
         }
 
         [TableName("umbracoCommerceProductFeedSetting")]

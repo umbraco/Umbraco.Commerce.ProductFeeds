@@ -44,7 +44,7 @@ namespace Umbraco.Commerce.Extensions
 
         private static IUmbracoCommerceBuilder AddDbMigrations(this IUmbracoCommerceBuilder builder)
         {
-            builder.WithUmbracoBuilder().AddNotificationHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
+            builder.WithUmbracoBuilder().AddNotificationAsyncHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
             return builder;
         }
 

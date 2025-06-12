@@ -44,7 +44,7 @@ export class UcpfDetailsWorkspaceViewElement
         });
 
         this.consumeContext(UC_STORE_CONTEXT, (ctx) => {
-            this.observe(ctx.store, (store) => {
+            this.observe(ctx?.store, (store) => {
                 this._store = store;
             });
         });

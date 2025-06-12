@@ -16,14 +16,21 @@ export class UcpfListCollectionRepository
         super(host);
         this.#dataSource = new UcpfListDataSource(host);
         this.consumeContext(UC_STORE_CONTEXT, (ctx) => {
-            this.observe(ctx.store, (store) => {
+            this.observe(ctx?.store, (store) => {
                 this.#store = store;
             });
         });
     }
 
     async requestCollection() {
-        return this.#dataSource.fetchListAsync(this.#store!.id);
+        if (!this.#store) return {
+            data: {
+                items: [],
+                total: 0,
+            },
+        };
+
+        return this.#dataSource.fetchListAsync(this.#store.id);
     }
 
     async deleteAsync(ids: string[]) {

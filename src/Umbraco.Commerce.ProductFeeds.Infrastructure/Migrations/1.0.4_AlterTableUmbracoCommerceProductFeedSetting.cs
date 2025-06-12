@@ -7,14 +7,14 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "<Pending>")]
-    internal class AlterTableUmbracoCommerceProductFeedSetting : MigrationBase
+    internal class AlterTableUmbracoCommerceProductFeedSetting : AsyncMigrationBase
     {
         public AlterTableUmbracoCommerceProductFeedSetting(IMigrationContext context)
             : base(context)
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             const string tableName = "umbracoCommerceProductFeedSetting";
 
@@ -35,6 +35,8 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
                     .Column("feedRelativePath")
                     .Do();
             }
+
+            return Task.CompletedTask;
         }
 
         [TableName("umbracoCommerceProductFeedSetting")]

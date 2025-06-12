@@ -1,10 +1,10 @@
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbEntityWorkspaceContext, UmbRoutableWorkspaceContext, UmbWorkspaceContext, UmbWorkspaceRouteManager, UmbWorkspaceUniqueType } from '@umbraco-cms/backoffice/workspace';
+import { UmbEntityWorkspaceContext, UmbRoutableWorkspaceContext, UmbWorkspaceContext, UmbWorkspaceRouteManager } from '@umbraco-cms/backoffice/workspace';
 import UcpfListWorkspaceElement from './index.element.js';
 import { listingWorkspaceManifest } from './manifests.js';
 import { UmbBasicState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
+import { UmbEntityContext, UmbEntityUnique } from '@umbraco-cms/backoffice/entity';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 
 export const LISTING_WORKSPACE_CONTEXT = new UmbContextToken<
@@ -16,7 +16,7 @@ export const LISTING_WORKSPACE_CONTEXT = new UmbContextToken<
 );
 
 export class UcpfListingWorkspaceContext
-    extends UmbContextBase<UcpfListingWorkspaceContext>
+    extends UmbContextBase
     implements UmbWorkspaceContext, UmbRoutableWorkspaceContext, UmbEntityWorkspaceContext {
     readonly routes = new UmbWorkspaceRouteManager(this);
     readonly workspaceAlias = listingWorkspaceManifest.alias;
@@ -26,7 +26,7 @@ export class UcpfListingWorkspaceContext
     #entityType: UmbBasicState<string | undefined> = new UmbBasicState<string | undefined>(undefined);
     readonly entityType = this.#entityType.asObservable();
 
-    #unique: UmbBasicState<UmbWorkspaceUniqueType | undefined> = new UmbBasicState<UmbWorkspaceUniqueType | undefined>(undefined);
+    #unique: UmbBasicState<UmbEntityUnique | undefined> = new UmbBasicState<UmbEntityUnique | undefined>(undefined);
     readonly unique = this.#unique.asObservable();
 
     constructor(host: UmbControllerHost) {
@@ -45,7 +45,7 @@ export class UcpfListingWorkspaceContext
         ]);
     }
 
-    getUnique(): UmbWorkspaceUniqueType | undefined {
+    getUnique(): UmbEntityUnique | undefined {
         return this.#entityContext.getUnique();
     }
 

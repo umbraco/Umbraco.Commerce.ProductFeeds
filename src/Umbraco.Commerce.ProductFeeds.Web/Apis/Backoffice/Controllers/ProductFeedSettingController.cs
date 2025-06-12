@@ -17,10 +17,9 @@ using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
-using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice;
 using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers.Models;
 
-namespace Umbraco.Commerce.ProductFeeds.Controllers
+namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
 {
     [ApiVersion("1.0")]
     [MapToApi(RouteParams.ApiName)]
@@ -58,7 +57,7 @@ namespace Umbraco.Commerce.ProductFeeds.Controllers
                 return BadRequest("Unable to bind posted data to model.");
             }
 
-            ProductFeedSettingWriteModelValidator validator = new ProductFeedSettingWriteModelValidator();
+            var validator = new ProductFeedSettingWriteModelValidator();
             ValidationResult validationResult = await validator.ValidateAsync(model);
 
             if (!validationResult.IsValid)

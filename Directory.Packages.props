@@ -8,7 +8,6 @@
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
-    <GlobalPackageReference Include="Umbraco.Code" Version="2.2.0" />
     <GlobalPackageReference Include="Umbraco.GitVersioning.Extensions" Version="0.2.0" />
   </ItemGroup>
   <ItemGroup>
@@ -17,10 +16,10 @@
     <PackageVersion Include="FluentValidation" Version="11.9.0" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0, 7.0)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageVersion Include="Umbraco.Cms" Version="[15.0.0, 16)" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[15.0.0, 16)" />
-    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[15.0.0, 16)" />
-    <PackageVersion Include="Umbraco.Commerce" Version="[15.0.0, 16)" />
+    <PackageVersion Include="Umbraco.Cms" Version="[16.0.0, 16.999.999)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[16.0.0, 16.999.999)" />
+    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[16.0.0, 16.999.999)" />
+    <PackageVersion Include="Umbraco.Commerce" Version="[16.0.0, 16.999.999)" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="xunit" Version="2.6.6" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />

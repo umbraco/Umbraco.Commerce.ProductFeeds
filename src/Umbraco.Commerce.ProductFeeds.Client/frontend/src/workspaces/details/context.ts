@@ -79,7 +79,7 @@ export class UcpfDetailsWorkspaceContext
 
         this.#localize = new UmbLocalizationController(host);
         this.consumeContext(UC_STORE_CONTEXT, ctx => {
-            this.observe(ctx.store, storeDto => {
+            this.observe(ctx?.store, storeDto => {
                 this.#store = storeDto;
             });
         });

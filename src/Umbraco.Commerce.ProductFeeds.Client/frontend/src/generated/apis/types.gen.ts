@@ -13,7 +13,7 @@ export type NotificationHeaderModel = {
     type: EventMessageTypeModel;
 };
 
-export type ProductFeedSettingReadModel = {
+export type ProductFeedSettingReadModelReadable = {
     id: string;
     feedType: ProductFeedType;
     readonly feedTypeName: string;
@@ -21,24 +21,38 @@ export type ProductFeedSettingReadModel = {
     feedDescription: string;
     storeId: string;
     productRootId: string;
-    productDocumentTypeIds: Array<(string)>;
-    productChildVariantTypeIds: Array<(string)>;
+    productDocumentTypeIds: Array<string>;
+    productChildVariantTypeIds: Array<string>;
     feedRelativePath: string;
-    propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
+    propertyNameMappings: Array<PropertyAndNodeMapItem>;
+    includeTaxInPrice: boolean;
+};
+
+export type ProductFeedSettingReadModelWritable = {
+    id: string;
+    feedType: ProductFeedType;
+    feedName: string;
+    feedDescription: string;
+    storeId: string;
+    productRootId: string;
+    productDocumentTypeIds: Array<string>;
+    productChildVariantTypeIds: Array<string>;
+    feedRelativePath: string;
+    propertyNameMappings: Array<PropertyAndNodeMapItem>;
     includeTaxInPrice: boolean;
 };
 
 export type ProductFeedSettingWriteModel = {
-    id?: (string) | null;
+    id?: string | null;
     feedRelativePath: string;
     feedType: ProductFeedType;
     feedName: string;
     feedDescription: string;
     storeId: string;
     productRootId: string;
-    propertyNameMappings: Array<(PropertyAndNodeMapItem)>;
-    productChildVariantTypeIds: Array<(string)>;
-    productDocumentTypeIds: Array<(string)>;
+    propertyNameMappings: Array<PropertyAndNodeMapItem>;
+    productChildVariantTypeIds: Array<string>;
+    productDocumentTypeIds: Array<string>;
     includeTaxInPrice: boolean;
 };
 
@@ -47,55 +61,224 @@ export type ProductFeedType = 'GoogleMerchantCenter';
 export type PropertyAndNodeMapItem = {
     propertyAlias: string;
     nodeName: string;
-    valueExtractorId?: (string) | null;
+    valueExtractorId?: string | null;
 };
 
 export type DeleteData = {
     body?: {
-        ids?: Array<(string)>;
+        ids?: Array<string>;
     };
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/Delete';
 };
 
-export type DeleteResponse = (boolean);
+export type DeleteErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: unknown;
+};
 
-export type DeleteError = (unknown | string);
+export type DeleteResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
 
-export type GetDocumentTypesResponse = (unknown);
+export type DeleteResponse = DeleteResponses[keyof DeleteResponses];
 
-export type GetDocumentTypesError = (unknown);
+export type GetDocumentTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/documenttypes';
+};
 
-export type GetFeedTypesResponse = (Array<(LookupReadModel)>);
+export type GetDocumentTypesErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
 
-export type GetFeedTypesError = (unknown);
+export type GetDocumentTypesResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetFeedTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/feedtypes';
+};
+
+export type GetFeedTypesErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetFeedTypesResponses = {
+    /**
+     * OK
+     */
+    200: Array<LookupReadModel>;
+};
+
+export type GetFeedTypesResponse = GetFeedTypesResponses[keyof GetFeedTypesResponses];
 
 export type GetDetailsData = {
+    body?: never;
     path: {
         id: string;
     };
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/get/{id}';
 };
 
-export type GetDetailsResponse = ((ProductFeedSettingReadModel));
+export type GetDetailsErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Not Found
+     */
+    404: unknown;
+};
 
-export type GetDetailsError = (unknown);
+export type GetDetailsResponses = {
+    /**
+     * OK
+     */
+    200: ProductFeedSettingReadModelReadable;
+};
+
+export type GetDetailsResponse = GetDetailsResponses[keyof GetDetailsResponses];
 
 export type GetByStoreData = {
+    body?: never;
+    path?: never;
     query: {
         storeId: string;
     };
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/getbystore';
 };
 
-export type GetByStoreResponse = (Array<(ProductFeedSettingReadModel)>);
+export type GetByStoreErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
 
-export type GetByStoreError = (unknown);
+export type GetByStoreResponses = {
+    /**
+     * OK
+     */
+    200: Array<ProductFeedSettingReadModelReadable>;
+};
 
-export type GetPropertyValueExtractorsResponse = (Array<(LookupReadModel)>);
+export type GetByStoreResponse = GetByStoreResponses[keyof GetByStoreResponses];
 
-export type GetPropertyValueExtractorsError = (unknown);
+export type GetPropertyValueExtractorsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/propertyvalueextractors';
+};
+
+export type GetPropertyValueExtractorsErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetPropertyValueExtractorsResponses = {
+    /**
+     * OK
+     */
+    200: Array<LookupReadModel>;
+};
+
+export type GetPropertyValueExtractorsResponse = GetPropertyValueExtractorsResponses[keyof GetPropertyValueExtractorsResponses];
 
 export type SaveData = {
-    body?: (ProductFeedSettingWriteModel);
+    body?: ProductFeedSettingWriteModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v1/setting/save';
 };
 
-export type SaveResponse = (string);
+export type SaveErrors = {
+    /**
+     * Bad Request
+     */
+    400: string;
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: string;
+};
 
-export type SaveError = (string | unknown);
+export type SaveError = SaveErrors[keyof SaveErrors];
+
+export type SaveResponses = {
+    /**
+     * OK
+     */
+    200: string;
+    /**
+     * Created
+     */
+    201: string;
+};
+
+export type SaveResponse = SaveResponses[keyof SaveResponses];
+
+export type ClientOptions = {
+    baseURL: 'https://localhost:44322' | (string & {});
+};
