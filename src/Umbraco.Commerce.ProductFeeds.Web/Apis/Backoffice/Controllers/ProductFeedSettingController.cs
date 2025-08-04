@@ -13,7 +13,6 @@ using Umbraco.Cms.Api.Common.Attributes;
 using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Commerce.Cms.Authorization;
-using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
@@ -138,7 +137,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromForm] ICollection<Guid> ids)
         {
-            IEnumerable<Task<bool>> deleteTasks = ids.Select(id => _feedSettingsService.DeleteSettingAsync(id));
+            IEnumerable<Task<bool>> deleteTasks = ids.Select(_feedSettingsService.DeleteSettingAsync);
 
             bool[] results = await Task.WhenAll(deleteTasks);
             bool success = results.All(success => success);

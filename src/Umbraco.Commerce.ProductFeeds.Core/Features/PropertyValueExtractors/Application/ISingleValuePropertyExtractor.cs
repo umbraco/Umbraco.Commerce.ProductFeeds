@@ -8,7 +8,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Ap
     public interface ISingleValuePropertyExtractor
     {
         /// <summary>
-        /// Returns the value extractor id. Must be unique.
+        /// Returns the value extractor id. Must be unique among the property value extractors.
         /// </summary>
         public string Id { get; }
 
