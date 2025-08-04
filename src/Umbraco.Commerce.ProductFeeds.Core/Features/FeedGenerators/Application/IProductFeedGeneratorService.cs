@@ -19,7 +19,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application
         /// <summary>
         /// Returns the feed format that this generator can generate.
         /// </summary>
-        public FeedFormat Format { get; }
+        public FeedFormat Format { get => FeedFormat.Unknown; } // TODO - v17: remove the default implementation.
 
         [Obsolete("Will be removed in v17. Use GenerateXmlFeedAsync or GenerateJsonFeedAsync instead.")]
         Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateXmlFeedAsync(feedSetting);
