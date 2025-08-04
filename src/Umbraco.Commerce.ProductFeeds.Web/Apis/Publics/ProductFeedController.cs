@@ -38,10 +38,13 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                     XmlDocument xmlFeed = await feedGenerator.GenerateXmlFeedAsync(feedSettings);
                     var result = new XmlActionResult(xmlFeed) { Formatting = Formatting.Indented };
                     return result;
+
                 case FeedFormat.Json:
                     JsonDocument jsonFeed = await feedGenerator.GenerateJsonFeedAsync(feedSettings);
                     var jsonResult = new JsonResult(jsonFeed.RootElement);
                     return jsonResult;
+
+                case FeedFormat.Unknown:
                 default:
                     return Problem("Unknown feed format.");
             }

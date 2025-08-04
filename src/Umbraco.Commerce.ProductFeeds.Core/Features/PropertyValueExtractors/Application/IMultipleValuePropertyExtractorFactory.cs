@@ -3,7 +3,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Ap
     public interface IMultipleValuePropertyExtractorFactory
     {
         /// <summary>
-        /// Try to get the property extractor. Returns the default extractor implementation if no extractor id is provided.
+        /// Try to get the property extractor.
         /// </summary>
         /// <param name="valueExtractorId"></param>
         /// <param name="valueExtractor">The located value extractor. It can be null if no extractor was found.</param>

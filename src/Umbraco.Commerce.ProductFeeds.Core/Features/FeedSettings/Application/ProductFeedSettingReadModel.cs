@@ -1,5 +1,3 @@
-using Umbraco.Commerce.Extensions;
-
 namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 {
 

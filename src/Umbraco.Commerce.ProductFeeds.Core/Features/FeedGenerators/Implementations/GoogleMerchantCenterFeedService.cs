@@ -172,10 +172,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
                     var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
                     if (map.NodeName.Equals("g:image_link", StringComparison.OrdinalIgnoreCase))
                     {
+                        // image nodes are special, they can have multiple values, but Google Merchant Center treats them differently
                         AddImageNodes(itemNode, values);
                     }
                     else
                     {
+                        // handle general multiple value properties
                         foreach (string value in values)
                         {
                             itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);

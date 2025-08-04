@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
@@ -13,7 +8,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
 {
     public abstract class FeedGeneratorServiceBase : IProductFeedGeneratorService
     {
-
         protected FeedGeneratorServiceBase(
             ISingleValuePropertyExtractorFactory singleValuePropertyExtractorFactory,
             IMultipleValuePropertyExtractorFactory multipleValuePropertyExtractorFactory)
@@ -32,6 +26,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         {
             throw new NotImplementedException("XML feed generation is not implemented.");
         }
+
         public virtual Task<JsonDocument> GenerateJsonFeedAsync(ProductFeedSettingReadModel feedSetting)
         {
             throw new NotImplementedException("JSON feed generation is not implemented.");
