@@ -34,6 +34,15 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
         private readonly MultipleValuePropertyExtractorCollection _multipleValuePropertyExtractors;
         private readonly FeedGeneratorCollection _feedGenerators;
 
+        [Obsolete("Will be removed in v17. Use the constructor that takes FeedGeneratorCollection instead.")]
+        public ProductFeedSettingController(
+           IProductFeedSettingsService feedConfigService,
+           IContentTypeService contentTypeService,
+           SingleValuePropertyExtractorCollection singleValuePropertyExtractors,
+           MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors)
+            : this(feedConfigService, contentTypeService, singleValuePropertyExtractors, multipleValuePropertyExtractors, new FeedGeneratorCollection(() => []))
+        { }
+
         public ProductFeedSettingController(
             IProductFeedSettingsService feedConfigService,
             IContentTypeService contentTypeService,

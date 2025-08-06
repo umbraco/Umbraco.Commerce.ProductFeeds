@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
@@ -48,6 +49,12 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                 default:
                     return Problem("Unknown feed format.");
             }
+        }
+
+        [Obsolete("Will be removed in v17. Use the Generate method instead.")]
+        public Task<IActionResult> Xml(string path)
+        {
+            return Generate(path);
         }
     }
 }
