@@ -52,9 +52,9 @@ AND (@1 IS NULL OR id = @1)",
                 return null;
             }
 
-            if (!_feedGenerators.Any(p => p.Id == feedSetting.FeedType))
+            if (!_feedGenerators.Any(p => p.Id == feedSetting.FeedGeneratorId))
             {
-                throw new InvalidOperationException($"Unknown feed type: '{feedSetting.FeedType}'.");
+                throw new InvalidOperationException($"Unknown feed generator detected. Id: '{feedSetting.FeedGeneratorId}'.");
             }
 
             ProductFeedSettingReadModel readModel = _mapper.Map<ProductFeedSettingReadModel>(feedSetting);

@@ -13,14 +13,15 @@ using Umbraco.Cms.Api.Common.Attributes;
 using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Commerce.Cms.Authorization;
+using Umbraco.Commerce.Extensions;
 using Umbraco.Commerce.ProductFeeds.Core.Common.Constants;
-using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
 using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers.Models;
 
 namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
 {
+    [Obsolete("Will be removed in v17. Use single action controllers instead.")]
     [ApiVersion("1.0")]
     [MapToApi(RouteParams.ApiName)]
     [ProductFeedsVersionedApiBackofficeRoute("setting")]
@@ -32,29 +33,17 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
         private readonly IContentTypeService _contentTypeService;
         private readonly SingleValuePropertyExtractorCollection _singleValuePropertyExtractors;
         private readonly MultipleValuePropertyExtractorCollection _multipleValuePropertyExtractors;
-        private readonly FeedGeneratorCollection _feedGenerators;
-
-        [Obsolete("Will be removed in v17. Use the constructor that takes FeedGeneratorCollection instead.")]
-        public ProductFeedSettingController(
-           IProductFeedSettingsService feedConfigService,
-           IContentTypeService contentTypeService,
-           SingleValuePropertyExtractorCollection singleValuePropertyExtractors,
-           MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors)
-            : this(feedConfigService, contentTypeService, singleValuePropertyExtractors, multipleValuePropertyExtractors, new FeedGeneratorCollection(() => []))
-        { }
 
         public ProductFeedSettingController(
             IProductFeedSettingsService feedConfigService,
             IContentTypeService contentTypeService,
             SingleValuePropertyExtractorCollection singleValuePropertyExtractors,
-            MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors,
-            FeedGeneratorCollection feedGenerators)
+            MultipleValuePropertyExtractorCollection multipleValuePropertyExtractors)
         {
             _feedSettingsService = feedConfigService;
             _contentTypeService = contentTypeService;
             _singleValuePropertyExtractors = singleValuePropertyExtractors;
             _multipleValuePropertyExtractors = multipleValuePropertyExtractors;
-            _feedGenerators = feedGenerators;
         }
 
         [HttpPost("save")]
@@ -137,7 +126,14 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
         [HttpGet("feedtypes")]
         public ActionResult<IEnumerable<LookupReadModel>> GetFeedTypes()
         {
-            return Ok(_feedGenerators.Select(x => new LookupReadModel { Value = x.Id, Label = x.DisplayName }));
+            return Ok(new LookupReadModel[]
+            {
+                new LookupReadModel
+                {
+                    Value = ProductFeedType.GoogleMerchantCenter.ToString(),
+                    Label = ProductFeedType.GoogleMerchantCenter.GetDescription(),
+                },
+            });
         }
 
         [Route("[action]")]
@@ -146,7 +142,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromForm] ICollection<Guid> ids)
         {
-            IEnumerable<Task<bool>> deleteTasks = ids.Select(_feedSettingsService.DeleteSettingAsync);
+            IEnumerable<Task<bool>> deleteTasks = ids.Select(id => _feedSettingsService.DeleteSettingAsync(id));
 
             bool[] results = await Task.WhenAll(deleteTasks);
             bool success = results.All(success => success);

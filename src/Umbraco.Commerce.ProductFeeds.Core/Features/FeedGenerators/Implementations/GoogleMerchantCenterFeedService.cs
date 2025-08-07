@@ -34,7 +34,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         private readonly IProductQueryService _productQueryService;
         private readonly IUmbracoCommerceApi _commerceApi;
 
-        public override string Id => "GoogleMerchantCenter";
+        public override Guid Id => new("101AE565-038F-443E-A29E-4FE0C7146C4A");
 
         public override string DisplayName => "Google Merchant Center Feed";
 

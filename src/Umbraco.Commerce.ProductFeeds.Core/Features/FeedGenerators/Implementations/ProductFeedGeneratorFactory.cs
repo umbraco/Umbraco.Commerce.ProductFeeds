@@ -20,14 +20,15 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             _feedGenerators = feedGenerators;
         }
 
-        public IProductFeedGeneratorService GetGenerator(string feedGeneratorId)
+        public IProductFeedGeneratorService GetGenerator(Guid feedGeneratorId)
         {
             IProductFeedGeneratorService feedGenerator = _feedGenerators.FirstOrDefault(p => p.Id == feedGeneratorId)
-                ?? throw new InvalidOperationException($"Invalid generator id: {feedGeneratorId}");
+                ?? throw new InvalidOperationException($"Feed generator not found. id: {feedGeneratorId}");
             return feedGenerator;
         }
 
         [Obsolete("Will be removed in v17. Use feedGeneratorId instead.")]
-        public IProductFeedGeneratorService GetGenerator(ProductFeedType feedType) => GetGenerator(feedType.ToString());
+        public IProductFeedGeneratorService GetGenerator(ProductFeedType feedType)
+            => GetGenerator(new Guid("101AE565-038F-443E-A29E-4FE0C7146C4A")); // Use the Google Merchant Center Feed ID as default
     }
 }

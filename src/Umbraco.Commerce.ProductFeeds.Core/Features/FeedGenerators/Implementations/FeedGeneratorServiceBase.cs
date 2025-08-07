@@ -16,7 +16,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             MultipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
 
-        public abstract string Id { get; }
+        public abstract Guid Id { get; }
         public abstract string DisplayName { get; }
         public abstract FeedFormat Format { get; }
 

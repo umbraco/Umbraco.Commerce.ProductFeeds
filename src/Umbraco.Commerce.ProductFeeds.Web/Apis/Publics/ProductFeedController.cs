@@ -28,7 +28,7 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                 .ConfigureAwait(true);
             if (feedSettings == null)
             {
-                return NotFound("Unknown feed type.");
+                return NotFound("Feed not found. Please make sure that you've entered the correct URL.");
             }
 
             IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedGeneratorId);

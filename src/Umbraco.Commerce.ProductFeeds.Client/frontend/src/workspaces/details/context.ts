@@ -97,22 +97,53 @@ export class UcpfDetailsWorkspaceContext
         return this.#model.getValue();
     }
 
-    protected resetState(): void {        
+    protected resetState(): void {
         super.resetState();
 
         const availableFeedTypes = this.#feedTypes.getValue();
 
         this.#unique.setValue('');
         this.#model.setValue({
+            feedName: '',
             feedDescription: '',
             storeId: this.#store!.id,
-            feedName: '',
             feedGeneratorId: availableFeedTypes.length > 0 ? availableFeedTypes[0] : '',
             feedRelativePath: '',
             productChildVariantTypeIds: [],
             productDocumentTypeIds: [],
             includeTaxInPrice: true,
-            propertyNameMappings: [],
+            propertyNameMappings: [
+                {
+                    uiId: nanoid(),
+                    nodeName: 'g:id',
+                    propertyAlias: 'sku',
+                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
+                },
+                {
+                    uiId: nanoid(),
+                    nodeName: 'g:title',
+                    propertyAlias: 'Name',
+                    valueExtractorId: 'DefaultSingleValuePropertyExtractor',
+                },
+                {
+                    uiId: nanoid(),
+                    nodeName: 'g:availability',
+                    propertyAlias: 'stock',
+                    valueExtractorId: 'DefaultGoogleAvailabilityValueExtractor',
+                },
+                {
+                    uiId: nanoid(),
+                    nodeName: 'g:image_link',
+                    propertyAlias: 'image',
+                    valueExtractorId: 'DefaultMediaPickerPropertyValueExtractor',
+                },
+                {
+                    uiId: nanoid(),
+                    nodeName: 'g:image_link',
+                    propertyAlias: 'images',
+                    valueExtractorId: 'DefaultMultipleMediaPickerPropertyValueExtractor',
+                },
+            ],
         } as FeProductFeedSettingWriteModel);
     }
 

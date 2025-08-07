@@ -3,8 +3,9 @@ import { ProductFeedSettingWriteModel, PropertyAndNodeMapItem } from '../../gene
 export type FeProductFeedSettingWriteModel = Omit<ProductFeedSettingWriteModel, 'id' | 'propertyNameMappings' | 'productRootId' | 'feedType'> & {
     id?: string
     propertyNameMappings: Array<FePropertyAndNodeMapDetails>
-    productRootId?: string,
-    feedGeneratorId: string
+    productRootId?: string | null,
+    feedGeneratorId: string,
+    feedType?: string,
 }
 
 export type FePropertyAndNodeMapDetails = PropertyAndNodeMapItem & {

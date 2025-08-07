@@ -9,7 +9,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Application
         /// <summary>
         /// Returns the feed generator id. Must be unique among the feed generator services.
         /// </summary>
-        public string Id => throw new NotImplementedException(); // TODO - v17: remove the default implementation.
+        public Guid Id => throw new NotImplementedException(); // TODO - v17: remove the default implementation.
 
         /// <summary>
         /// Returns a user friendly name of the value extractor.

@@ -8,7 +8,10 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string FeedType { get; set; } = string.Empty;
+        [Obsolete("Will be removed in v17. Migrate to Feed Generator Id.")]
+        public string? FeedType { get; set; }
+
+        public Guid FeedGeneratorId { get; set; }
 
         /// <summary>
         /// Feed URL segment.

@@ -7,12 +7,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
     {
         public Guid Id { get; set; }
 
-        public required string FeedGeneratorId { get; set; }
+        public required Guid FeedGeneratorId { get; set; }
 
         public required string FeedName { get; set; }
 
         [Obsolete("Will be removed in 17.")]
-        public ProductFeedType FeedType { get; set; }
+        public ProductFeedType? FeedType { get; set; }
 
         [Obsolete("Will be removed in 17.")]
         public string FeedTypeName => FeedType.GetDescription();
