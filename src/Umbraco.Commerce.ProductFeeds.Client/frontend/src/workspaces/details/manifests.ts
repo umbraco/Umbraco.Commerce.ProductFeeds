@@ -1,14 +1,9 @@
-import type {
-    ManifestEntityAction,
-    ManifestWorkspace,
-    ManifestWorkspaceAction,
-    ManifestWorkspaceView,
-} from '@umbraco-cms/backoffice/extension-registry';
-import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
+import { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView, UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import { UcpfDetailsWorkspaceContext } from './context.js';
 import UcpfDetailsWorkspaceViewElement from './views/details.element.js';
 import { ProductFeedEntityActionDelete } from './actions/entity-action.delete.js';
 import { UcpfWorkspaceActionOpenFeed } from './actions/workspace-action.open-feed.js';
+import { ManifestEntityAction } from '@umbraco-cms/backoffice/entity-action';
 
 export const detailsWorkspaceManifest: ManifestWorkspace = {
     type: 'workspace',

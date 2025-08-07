@@ -15,9 +15,13 @@ export type NotificationHeaderModel = {
 
 export type ProductFeedSettingReadModelReadable = {
     id: string;
-    feedType: ProductFeedType;
-    readonly feedTypeName: string;
+    feedGeneratorId: string;
     feedName: string;
+    feedType: ProductFeedType;
+    /**
+     * @deprecated
+     */
+    readonly feedTypeName: string;
     feedDescription: string;
     storeId: string;
     productRootId: string;
@@ -30,8 +34,9 @@ export type ProductFeedSettingReadModelReadable = {
 
 export type ProductFeedSettingReadModelWritable = {
     id: string;
-    feedType: ProductFeedType;
+    feedGeneratorId: string;
     feedName: string;
+    feedType: ProductFeedType;
     feedDescription: string;
     storeId: string;
     productRootId: string;
@@ -45,8 +50,9 @@ export type ProductFeedSettingReadModelWritable = {
 export type ProductFeedSettingWriteModel = {
     id?: string | null;
     feedRelativePath: string;
-    feedType: ProductFeedType;
+    feedGeneratorId: string;
     feedName: string;
+    feedType: ProductFeedType;
     feedDescription: string;
     storeId: string;
     productRootId: string;
@@ -63,6 +69,39 @@ export type PropertyAndNodeMapItem = {
     nodeName: string;
     valueExtractorId?: string | null;
 };
+
+export type DeleteV2Data = {
+    body?: {
+        ids?: Array<string>;
+    };
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/delete';
+};
+
+export type DeleteV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: unknown;
+};
+
+export type DeleteV2Responses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type DeleteV2Response = DeleteV2Responses[keyof DeleteV2Responses];
 
 export type DeleteData = {
     body?: {
@@ -121,6 +160,58 @@ export type GetDocumentTypesResponses = {
      */
     200: unknown;
 };
+
+export type GetDocumentTypesV2Data = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/documenttypes';
+};
+
+export type GetDocumentTypesV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetDocumentTypesV2Responses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetFeedGeneratorsV2Data = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/feedgenerators';
+};
+
+export type GetFeedGeneratorsV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetFeedGeneratorsV2Responses = {
+    /**
+     * OK
+     */
+    200: Array<LookupReadModel>;
+};
+
+export type GetFeedGeneratorsV2Response = GetFeedGeneratorsV2Responses[keyof GetFeedGeneratorsV2Responses];
 
 export type GetFeedTypesData = {
     body?: never;
@@ -182,6 +273,39 @@ export type GetDetailsResponses = {
 
 export type GetDetailsResponse = GetDetailsResponses[keyof GetDetailsResponses];
 
+export type GetDetailsV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/get/{id}';
+};
+
+export type GetDetailsV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Not Found
+     */
+    404: unknown;
+};
+
+export type GetDetailsV2Responses = {
+    /**
+     * OK
+     */
+    200: ProductFeedSettingReadModelReadable;
+};
+
+export type GetDetailsV2Response = GetDetailsV2Responses[keyof GetDetailsV2Responses];
+
 export type GetByStoreData = {
     body?: never;
     path?: never;
@@ -211,6 +335,35 @@ export type GetByStoreResponses = {
 
 export type GetByStoreResponse = GetByStoreResponses[keyof GetByStoreResponses];
 
+export type GetByStoreV2Data = {
+    body?: never;
+    path?: never;
+    query: {
+        storeId: string;
+    };
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/getbystore';
+};
+
+export type GetByStoreV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetByStoreV2Responses = {
+    /**
+     * OK
+     */
+    200: Array<ProductFeedSettingReadModelReadable>;
+};
+
+export type GetByStoreV2Response = GetByStoreV2Responses[keyof GetByStoreV2Responses];
+
 export type GetPropertyValueExtractorsData = {
     body?: never;
     path?: never;
@@ -237,6 +390,33 @@ export type GetPropertyValueExtractorsResponses = {
 };
 
 export type GetPropertyValueExtractorsResponse = GetPropertyValueExtractorsResponses[keyof GetPropertyValueExtractorsResponses];
+
+export type GetPropertyValueExtractorsV2Data = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/propertyvalueextractors';
+};
+
+export type GetPropertyValueExtractorsV2Errors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type GetPropertyValueExtractorsV2Responses = {
+    /**
+     * OK
+     */
+    200: Array<LookupReadModel>;
+};
+
+export type GetPropertyValueExtractorsV2Response = GetPropertyValueExtractorsV2Responses[keyof GetPropertyValueExtractorsV2Responses];
 
 export type SaveData = {
     body?: ProductFeedSettingWriteModel;
@@ -279,6 +459,47 @@ export type SaveResponses = {
 
 export type SaveResponse = SaveResponses[keyof SaveResponses];
 
+export type SaveV2Data = {
+    body?: ProductFeedSettingWriteModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/ucproductfeeds/management/api/v2/setting/save';
+};
+
+export type SaveV2Errors = {
+    /**
+     * Bad Request
+     */
+    400: string;
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: string;
+};
+
+export type SaveV2Error = SaveV2Errors[keyof SaveV2Errors];
+
+export type SaveV2Responses = {
+    /**
+     * OK
+     */
+    200: string;
+    /**
+     * Created
+     */
+    201: string;
+};
+
+export type SaveV2Response = SaveV2Responses[keyof SaveV2Responses];
+
 export type ClientOptions = {
-    baseURL: 'https://localhost:44322' | (string & {});
+    baseURL: 'http://localhost:44321' | (string & {});
 };

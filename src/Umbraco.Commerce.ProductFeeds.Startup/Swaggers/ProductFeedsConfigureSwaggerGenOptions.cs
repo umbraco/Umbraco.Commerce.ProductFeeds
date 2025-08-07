@@ -18,6 +18,7 @@ namespace Umbraco.Commerce.ProductFeeds.Startup.Swaggers
             });
 
             options.OperationFilter<ProductFeedsBackOfficeSecurityRequirementsOperationFilter>();
+            options.OperationFilter<AddApiVersionToOperationIdFilter>();
         }
     }
 }

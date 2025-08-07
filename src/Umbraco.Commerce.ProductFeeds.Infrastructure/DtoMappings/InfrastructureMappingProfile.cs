@@ -16,6 +16,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings
                 .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => string.Join(';', src.ProductDocumentTypeIds)));
 
             CreateMap<UmbracoCommerceProductFeedSetting, ProductFeedSettingReadModel>()
+                .ForMember(dest => dest.FeedType, opt => opt.MapFrom((src, dest) => Enum.Parse<ProductFeedType>(src.FeedType ?? ProductFeedType.GoogleMerchantCenter.ToString()))) // TODO - v17: Remove
                 .ForMember(dest => dest.PropertyNameMappings, opt => opt.MapFrom((src, dest) => JsonSerializer.Deserialize<ICollection<PropertyAndNodeMapItem>>(src.ProductPropertyNameMappings)))
                 .ForMember(dest => dest.ProductChildVariantTypeIds, opt => opt.MapFrom((src, dest) => !string.IsNullOrEmpty(src.ProductChildVariantTypeIds) ? src.ProductChildVariantTypeIds?.Split(';') : []))
                 .ForMember(dest => dest.ProductDocumentTypeIds, opt => opt.MapFrom((src, dest) => !string.IsNullOrEmpty(src.ProductDocumentTypeIds) ? src.ProductDocumentTypeIds.Split(';') : []));

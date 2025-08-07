@@ -1,8 +1,8 @@
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { delete_, getByStore, getDetails, getFeedTypes, getPropertyValueExtractors, LookupReadModel, ProductFeedSettingReadModelReadable, ProductFeedSettingWriteModel, save } from '../generated/apis';
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbPagedModel, UmbRepositoryResponse } from '@umbraco-cms/backoffice/repository';
 import { FeProductFeedSettingWriteModel } from './details/types';
+import { deleteV2, getByStoreV2, getDetailsV2, getFeedGeneratorsV2, getPropertyValueExtractorsV2, LookupReadModel, ProductFeedSettingReadModelReadable, ProductFeedSettingWriteModel, saveV2 } from '../generated/apis';
 
 export class UcpfListDataSource {
     #host: UmbControllerHost;
@@ -12,7 +12,7 @@ export class UcpfListDataSource {
     }
 
     async fetchListAsync(storeId: string): Promise<UmbRepositoryResponse<UmbPagedModel<ProductFeedSettingReadModelReadable>>> {
-        const { data, error } = await tryExecute(this.#host, getByStore({
+        const { data, error } = await tryExecute(this.#host, getByStoreV2({
             query: {
                 storeId,
             },
@@ -30,7 +30,7 @@ export class UcpfListDataSource {
     }
 
     async fetchFeedSettingDetailsAsync(id: string) {
-        const { data, error } = await getDetails({
+        const { data, error } = await getDetailsV2({
             path: {
                 id,
             },
@@ -46,7 +46,7 @@ export class UcpfListDataSource {
     }
 
     async fetchFeedTypesAsync() {
-        const { data, error } = await getFeedTypes();
+        const { data, error } = await getFeedGeneratorsV2();
 
         if (data) {
             return { data: data as Array<LookupReadModel> };
@@ -58,7 +58,7 @@ export class UcpfListDataSource {
     }
 
     async fetchPropertyValueExtractorsAsync() {
-        const { data, error } = await getPropertyValueExtractors();
+        const { data, error } = await getPropertyValueExtractorsV2();
 
         if (data) {
             return { data: data as Array<LookupReadModel> };
@@ -70,7 +70,7 @@ export class UcpfListDataSource {
     }
 
     async saveAsync(model: FeProductFeedSettingWriteModel) {
-        const { data, error } = await save({
+        const { data, error } = await saveV2({
             body: model as ProductFeedSettingWriteModel,
         });
 
@@ -88,7 +88,7 @@ export class UcpfListDataSource {
             throw 'no id to delete';
         }
 
-        const { data, error } = await delete_({
+        const { data, error } = await deleteV2({
             body: { ids },
         });
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Commerce.ProductFeeds.Core.Common.Exceptions;
 
 namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
 {
@@ -48,9 +49,9 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                 // Async flush
                 await xmlWriter.FlushAsync();
             }
-            catch (Exception ex)
+            catch (UmbracoCommerceProductFeedsGeneralException ex)
             {
-                _logger.Error(ex, "Exception generating the XML response");
+                _logger.Error(ex, "An error occurred while generating the XML response.");
             }
         }
     }
