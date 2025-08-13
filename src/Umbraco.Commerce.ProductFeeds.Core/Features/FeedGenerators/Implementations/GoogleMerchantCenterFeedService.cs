@@ -20,7 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
     /// <summary>
     /// This is the feed generator that follows Google Merchant Center's standard.
     /// </summary>
-    public class GoogleMerchantCenterFeedService : IProductFeedGeneratorService
+    public class GoogleMerchantCenterFeedService : FeedGeneratorServiceBase // TODO - v17: Make internal
     {
         private const string GoogleXmlNamespaceUri = "http://base.google.com/ns/1.0";
 
@@ -33,24 +33,30 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         private readonly ICurrencyService _currencyService;
         private readonly IProductQueryService _productQueryService;
         private readonly IUmbracoCommerceApi _commerceApi;
-        private readonly ISingleValuePropertyExtractorFactory _singleValuePropertyExtractorFactory;
-        private readonly IMultipleValuePropertyExtractorFactory _multipleValuePropertyExtractorFactory;
+
+        public override Guid Id => new("101AE565-038F-443E-A29E-4FE0C7146C4A");
+
+        public override string DisplayName => "Google Merchant Center Feed";
+
+        public override FeedFormat Format => FeedFormat.Xml;
 
         public GoogleMerchantCenterFeedService(
             ILogger<GoogleMerchantCenterFeedService> logger,
             ICurrencyService currencyService,
             IProductQueryService productQueryService,
             IUmbracoCommerceApi commerceApi,
-            ISingleValuePropertyExtractorFactory singleValuePropertyExtractor,
+            ISingleValuePropertyExtractorFactory singleValuePropertyExtractorFactory,
             IMultipleValuePropertyExtractorFactory multipleValuePropertyExtractorFactory)
+            : base(singleValuePropertyExtractorFactory, multipleValuePropertyExtractorFactory)
         {
             _logger = logger;
             _currencyService = currencyService;
             _productQueryService = productQueryService;
             _commerceApi = commerceApi;
-            _singleValuePropertyExtractorFactory = singleValuePropertyExtractor;
-            _multipleValuePropertyExtractorFactory = multipleValuePropertyExtractorFactory;
         }
+
+        [Obsolete("Will be removed in v17. Use GenerateXmlFeedAsync or GenerateJsonFeedAsync instead.")]
+        public override Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateFeedAsync(feedSetting);
 
         /// <summary>
         /// Generate the product feed following the inputted settings.
@@ -58,7 +64,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         /// <param name="feedSetting"></param>
         /// <returns></returns>
         /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
-        public async Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting)
+        public override async Task<XmlDocument> GenerateXmlFeedAsync(ProductFeedSettingReadModel feedSetting)
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
@@ -157,22 +163,24 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             // add custom properties
             foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
-                if (_singleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
+                if (SingleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
                     && singleValueExtractor != null)
                 {
                     string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
                     itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
                 }
-                else if (_multipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
+                else if (MultipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
                     && multipleValueExtractor != null)
                 {
                     var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
                     if (map.NodeName.Equals("g:image_link", StringComparison.OrdinalIgnoreCase))
                     {
+                        // image nodes are special, they can have multiple values, but Google Merchant Center treats them differently
                         AddImageNodes(itemNode, values);
                     }
                     else
                     {
+                        // handle general multiple value properties
                         foreach (string value in values)
                         {
                             itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);

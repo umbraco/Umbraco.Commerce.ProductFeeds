@@ -57,11 +57,11 @@ export class UcpfDetailsWorkspaceViewElement
 
         this.observe(this.#workspaceContext.model, (model) => {
             this._model = model;
-            this._feedTypes = this.#markSelectedOption(this._feedTypes, model!.feedType);
+            this._feedTypes = this.#markSelectedOption(this._feedTypes, model!.feedGeneratorId);
         });
 
         this.observe(this.#workspaceContext.feedTypeOptions, (feedTypes) => {
-            this._feedTypes = this.#markSelectedOption(feedTypes, this._model?.feedType);
+            this._feedTypes = this.#markSelectedOption(feedTypes, this._model?.feedGeneratorId);
         });
 
         this.observe(this.#workspaceContext.propertyValueExtractorOptions, (options) => {
@@ -188,7 +188,7 @@ export class UcpfDetailsWorkspaceViewElement
                             label=${this.localize.term('ucProductFeeds_propFeedTypeLabel')}
                             placeholder=${`-- ${this.localize.term('ucPlaceholders_selectAnItem')} --`}
                             slot='editor'
-                            name='feedType'
+                            name='feedGeneratorId'
                             .options=${this._feedTypes}
                             @change=${this.#onSelectElementChange}>
                         </uui-select>

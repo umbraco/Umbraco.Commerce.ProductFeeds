@@ -99,11 +99,15 @@ export class UcpfDetailsWorkspaceContext
 
     protected resetState(): void {
         super.resetState();
+
+        const availableFeedTypes = this.#feedTypes.getValue();
+
         this.#unique.setValue('');
         this.#model.setValue({
+            feedName: '',
             feedDescription: '',
             storeId: this.#store!.id,
-            feedName: '',
+            feedGeneratorId: availableFeedTypes.length > 0 ? availableFeedTypes[0] : '',
             feedRelativePath: '',
             productChildVariantTypeIds: [],
             productDocumentTypeIds: [],

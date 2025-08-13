@@ -52,13 +52,13 @@ export class UcpfListBulkDeleteAction extends UmbEntityBulkActionBase<MetaEntity
                 });
                 eventContext.dispatchEvent(event);
 
-                notificationContext.peek('positive', {
+                notificationContext?.peek('positive', {
                     data: {
                         message: localize.term('ucProductFeeds_messageDeleteSuccess') ?? 'Delete successfully',
                     },
                 });
             } else {
-                notificationContext.peek('danger', {
+                notificationContext?.peek('danger', {
                     data: {
                         headline: localize.term('ucProductFeeds_messageDeleteFailed') ?? 'Delete failed',
                         message: JSON.stringify(error),

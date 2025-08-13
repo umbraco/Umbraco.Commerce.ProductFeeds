@@ -3,7 +3,7 @@ using AutoMapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
-using Umbraco.Cms.Web.Common;
+using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
 
@@ -14,18 +14,18 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations
         private readonly IScopeProvider _scopeProvider;
         private readonly IMapper _mapper;
         private readonly ILogger<ProductFeedSettingsService> _logger;
-        private readonly UmbracoHelper _umbracoHelper;
+        private readonly FeedGeneratorCollection _feedGenerators;
 
         public ProductFeedSettingsService(
             IScopeProvider scopeProvider,
             IMapper mapper,
             ILogger<ProductFeedSettingsService> logger,
-            UmbracoHelper umbracoHelper)
+            FeedGeneratorCollection feedGenerators)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;
             _logger = logger;
-            _umbracoHelper = umbracoHelper;
+            _feedGenerators = feedGenerators;
         }
 
         /// <inheritdoc/>
@@ -33,57 +33,53 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations
         {
             ArgumentNullException.ThrowIfNull(findSettingParams);
 
-            using (IScope scope = _scopeProvider.CreateScope())
-            {
-                UmbracoCommerceProductFeedSetting? feedSetting = await scope
-                    .Database
-                    .SingleOrDefaultAsync<UmbracoCommerceProductFeedSetting>(
-                    @"
+            using IScope scope = _scopeProvider.CreateScope();
+            UmbracoCommerceProductFeedSetting? feedSetting = await scope
+                .Database
+                .SingleOrDefaultAsync<UmbracoCommerceProductFeedSetting>(
+                @"
 select *
 from umbracoCommerceProductFeedSetting
 where( @0 IS NULL OR feedRelativePath = @0)
 AND (@1 IS NULL OR id = @1)",
-                    findSettingParams.FeedRelativePath,
-                    findSettingParams.Id)
-                    .ConfigureAwait(false);
-                scope.Complete();
+                findSettingParams.FeedRelativePath,
+                findSettingParams.Id)
+                .ConfigureAwait(false);
+            scope.Complete();
 
-                if (feedSetting == null)
-                {
-                    return null;
-                }
-
-                if (!Enum.TryParse(feedSetting.FeedType, true, out ProductFeedType feedType))
-                {
-                    throw new InvalidOperationException($"Unknown feed type: '{feedSetting.FeedType}'.");
-                }
-
-                ProductFeedSettingReadModel readModel = _mapper.Map<ProductFeedSettingReadModel>(feedSetting);
-                return readModel;
+            if (feedSetting == null)
+            {
+                return null;
             }
+
+            if (!_feedGenerators.Any(p => p.Id == feedSetting.FeedGeneratorId))
+            {
+                throw new InvalidOperationException($"Unknown feed generator detected. Id: '{feedSetting.FeedGeneratorId}'.");
+            }
+
+            ProductFeedSettingReadModel readModel = _mapper.Map<ProductFeedSettingReadModel>(feedSetting);
+            return readModel;
         }
 
         public async Task<List<ProductFeedSettingReadModel>> GetListAsync(Guid storeId)
         {
-            using (IScope scope = _scopeProvider.CreateScope())
-            {
-                List<UmbracoCommerceProductFeedSetting> settings = await scope
-                    .Database
-                    .FetchAsync<UmbracoCommerceProductFeedSetting>(
-                    @"
+            using IScope scope = _scopeProvider.CreateScope();
+            List<UmbracoCommerceProductFeedSetting> settings = await scope
+                .Database
+                .FetchAsync<UmbracoCommerceProductFeedSetting>(
+                @"
 select *
 from umbracoCommerceProductFeedSetting
 where storeId = @0", storeId)
-                    .ConfigureAwait(false);
-                scope.Complete();
+                .ConfigureAwait(false);
+            scope.Complete();
 
-                if (settings == null)
-                {
-                    return [];
-                }
-
-                return _mapper.Map<List<ProductFeedSettingReadModel>>(settings);
+            if (settings == null)
+            {
+                return [];
             }
+
+            return _mapper.Map<List<ProductFeedSettingReadModel>>(settings);
         }
 
         /// <inheritdoc/>
@@ -93,27 +89,25 @@ where storeId = @0", storeId)
 
             try
             {
-                using (IScope scope = _scopeProvider.CreateScope())
+                using IScope scope = _scopeProvider.CreateScope();
+                if (input.Id == null)
                 {
-                    if (input.Id == null)
-                    {
-                        // add mode
-                        dbModel.Id = Guid.NewGuid();
-                        _ = await scope.Database.InsertAsync(dbModel).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        // edit mode
-                        int affectedRowCount = await scope.Database.UpdateAsync(dbModel).ConfigureAwait(false);
-                        if (affectedRowCount != 1)
-                        {
-                            return null;
-                        }
-                    }
-
-                    scope.Complete();
-                    return dbModel.Id;
+                    // add mode
+                    dbModel.Id = Guid.NewGuid();
+                    _ = await scope.Database.InsertAsync(dbModel).ConfigureAwait(false);
                 }
+                else
+                {
+                    // edit mode
+                    int affectedRowCount = await scope.Database.UpdateAsync(dbModel).ConfigureAwait(false);
+                    if (affectedRowCount != 1)
+                    {
+                        return null;
+                    }
+                }
+
+                scope.Complete();
+                return dbModel.Id;
             }
             catch (SqlException ex)
             {
@@ -127,16 +121,14 @@ where storeId = @0", storeId)
         {
             try
             {
-                using (IScope scope = _scopeProvider.CreateScope())
+                using IScope scope = _scopeProvider.CreateScope();
+                int affectedRowCount = await scope.Database.DeleteAsync(new UmbracoCommerceProductFeedSetting
                 {
-                    int affectedRowCount = await scope.Database.DeleteAsync(new UmbracoCommerceProductFeedSetting
-                    {
-                        Id = id,
-                    }).ConfigureAwait(false);
-                    scope.Complete();
+                    Id = id,
+                }).ConfigureAwait(false);
+                scope.Complete();
 
-                    return affectedRowCount == 1;
-                }
+                return affectedRowCount == 1;
             }
             catch (SqlException ex)
             {

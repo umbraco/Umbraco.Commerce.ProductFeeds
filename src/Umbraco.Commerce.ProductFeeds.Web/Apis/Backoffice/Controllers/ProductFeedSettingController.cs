@@ -21,6 +21,7 @@ using Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers.Models;
 
 namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Backoffice.Controllers
 {
+    [Obsolete("Will be removed in v17. Use single action controllers instead.")]
     [ApiVersion("1.0")]
     [MapToApi(RouteParams.ApiName)]
     [ProductFeedsVersionedApiBackofficeRoute("setting")]

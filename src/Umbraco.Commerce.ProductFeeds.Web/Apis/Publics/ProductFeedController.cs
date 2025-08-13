@@ -1,3 +1,5 @@
+using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Mvc;
@@ -19,21 +21,40 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
             _feedConfigService = feedConfigService;
         }
 
-        public async Task<IActionResult> Xml(string path)
+        public async Task<IActionResult> Generate(string path)
         {
             ProductFeedSettingReadModel? feedSettings = await _feedConfigService
                 .FindSettingAsync(new FindSettingParams { FeedRelativePath = path })
                 .ConfigureAwait(true);
             if (feedSettings == null)
             {
-                return NotFound("Unknown feed type.");
+                return NotFound("Feed not found. Please make sure that you've entered the correct URL.");
             }
 
-            IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedType);
-            XmlDocument feed = await feedGenerator.GenerateFeedAsync(feedSettings);
+            IProductFeedGeneratorService feedGenerator = _feedGeneratorFactory.GetGenerator(feedSettings.FeedGeneratorId);
 
-            var result = new XmlActionResult(feed) { Formatting = Formatting.Indented };
-            return result;
+            switch (feedGenerator.Format)
+            {
+                case FeedFormat.Xml:
+                    XmlDocument xmlFeed = await feedGenerator.GenerateXmlFeedAsync(feedSettings);
+                    var result = new XmlActionResult(xmlFeed) { Formatting = Formatting.Indented };
+                    return result;
+
+                case FeedFormat.Json:
+                    JsonDocument jsonFeed = await feedGenerator.GenerateJsonFeedAsync(feedSettings);
+                    var jsonResult = new JsonResult(jsonFeed.RootElement);
+                    return jsonResult;
+
+                case FeedFormat.Unknown:
+                default:
+                    return Problem("Unknown feed format.");
+            }
+        }
+
+        [Obsolete("Will be removed in v17. Use the Generate method instead.")]
+        public Task<IActionResult> Xml(string path)
+        {
+            return Generate(path);
         }
     }
 }

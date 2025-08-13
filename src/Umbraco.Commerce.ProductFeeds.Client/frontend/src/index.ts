@@ -21,7 +21,7 @@ export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
 
         const config = instance?.getOpenApiConfiguration();
         apiClient.setConfig({
-            baseURL: config?.base ?? "",
+            baseURL: config?.base ?? '',
         });
 
         apiClient.instance.interceptors.request.use(async (request) => {

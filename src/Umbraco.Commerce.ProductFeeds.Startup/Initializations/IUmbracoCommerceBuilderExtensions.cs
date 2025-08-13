@@ -42,6 +42,8 @@ namespace Umbraco.Commerce.Extensions
 
         public static MultipleValuePropertyExtractorCollectionBuilder MultipleValuePropertyExtractors(this IUmbracoCommerceBuilder builder) => builder.WithUmbracoBuilder().WithCollectionBuilder<MultipleValuePropertyExtractorCollectionBuilder>();
 
+        public static FeedGeneratorCollectionBuilder FeedGenerators(this IUmbracoCommerceBuilder builder) => builder.WithUmbracoBuilder().WithCollectionBuilder<FeedGeneratorCollectionBuilder>();
+
         private static IUmbracoCommerceBuilder AddDbMigrations(this IUmbracoCommerceBuilder builder)
         {
             builder.WithUmbracoBuilder().AddNotificationAsyncHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
@@ -57,11 +59,16 @@ namespace Umbraco.Commerce.Extensions
         private static void AddServices(this IUmbracoCommerceBuilder builder)
         {
             IServiceCollection services = builder.Services;
-            services.AddScoped<IProductFeedGeneratorFactory, ProductFeedGeneratorFactory>();
-            services.AddScoped<GoogleMerchantCenterFeedService>();
+            services.AddScoped<IProductFeedGeneratorFactory, ProductFeedGeneratorFactory>(sp =>
+            {
+                return new ProductFeedGeneratorFactory(sp.GetRequiredService<FeedGeneratorCollection>()); // TODO - v17: remove this explicit construction
+            });
 
             services.AddScoped<IProductFeedSettingsService, ProductFeedSettingsService>();
             services.AddScoped<IProductQueryService, ProductQueryService>();
+
+            builder.FeedGenerators()
+                .Append<GoogleMerchantCenterFeedService>();
 
             builder.SingleValuePropertyExtractors()
                 .Append<DefaultSingleValuePropertyExtractor>()
