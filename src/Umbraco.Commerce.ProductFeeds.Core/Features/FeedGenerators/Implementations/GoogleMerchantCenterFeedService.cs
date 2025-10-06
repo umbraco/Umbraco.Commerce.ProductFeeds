@@ -56,7 +56,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         }
 
         [Obsolete("Will be removed in v17. Use GenerateXmlFeedAsync or GenerateJsonFeedAsync instead.")]
-        public override Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateFeedAsync(feedSetting);
+        public override Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateXmlFeedAsync(feedSetting);
 
         /// <summary>
         /// Generate the product feed following the inputted settings.
@@ -68,6 +68,25 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
+            XmlDocument doc = CreateXmlDocument(feedSetting);
+            XmlElement channel = (doc.DocumentElement!.SelectSingleNode("channel") as XmlElement)!;
+            ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
+            {
+                ProductRootKey = feedSetting.ProductRootId,
+                ProductDocumentTypeIds = feedSetting.ProductDocumentTypeIds,
+            });
+
+            // render doc/channel/item nodes
+            foreach (IPublishedContent product in products)
+            {
+                await ProcessProductVariantsAsync(feedSetting, channel, product);
+            }
+
+            return doc;
+        }
+
+        private static XmlDocument CreateXmlDocument(ProductFeedSettingReadModel feedSetting)
+        {
             // <doc>
             XmlDocument doc = new();
             XmlElement root = doc.CreateElement("rss");
@@ -85,67 +104,103 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             channel.AddChild("description", feedSetting.FeedDescription);
             root.AppendChild(channel);
 
-            ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
+            return doc;
+        }
+
+        private async Task ProcessProductVariantsAsync(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product)
+        {
+            List<IPublishedContent> childVariants = GetChildVariants(product, feedSetting.ProductChildVariantTypeIds);
+            if (childVariants.Count > 0)
             {
-                ProductRootKey = feedSetting.ProductRootId,
-                ProductDocumentTypeIds = feedSetting.ProductDocumentTypeIds,
-            });
-
-            // render doc/channel/item nodes
-            foreach (IPublishedContent product in products)
+                await ProcessChildVariantsAsync(feedSetting, channel, product, childVariants);
+            }
+            else
             {
-                IEnumerable<IPublishedContent> childVariants = product.Children()
-                    .Where(x => feedSetting.ProductChildVariantTypeIds.Contains(x.ContentType.Key.ToString()))
-                    .ToList();
-                if (childVariants.Any())
+                List<ProductVariantItem> complexVariants = GetComplexVariants(product);
+                if (complexVariants.Count > 0)
                 {
-                    // handle products with child variants
-                    foreach (IPublishedContent childVariant in childVariants)
-                    {
-                        XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, childVariant, product);
-
-                        // add url to the main product
-                        AddUrlNode(itemNode, product);
-
-                        await AddPriceNodeAsync(itemNode, feedSetting, childVariant, null);
-
-                        // group variant into the same parent id
-                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
-                        AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
-
-                        channel.AppendChild(itemNode);
-                    }
-                }
-                else if (product.Properties.Any(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)))
-                {
-                    // handle products with complex variants
-                    IPublishedProperty complexVariantProp = product.Properties.First(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal));
-                    ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
-                    foreach (ProductVariantItem complexVariant in variantItems)
-                    {
-                        XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, complexVariant.Content, product);
-
-                        // add a url to the main product
-                        AddUrlNode(itemNode, product);
-
-                        await AddPriceNodeAsync(itemNode, feedSetting, product, complexVariant.Content);
-
-                        // group variant under the main product id
-                        PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
-                        AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
-
-                        channel.AppendChild(itemNode);
-                    }
+                    await ProcessComplexVariantsAsync(feedSetting, channel, product, complexVariants);
                 }
                 else
                 {
-                    // handle product with no variants
-                    XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, product, null);
-                    channel.AppendChild(itemNode);
+                    await ProcessSimpleProductAsync(feedSetting, channel, product);
                 }
             }
+        }
 
-            return doc;
+        private static List<IPublishedContent> GetChildVariants(IPublishedContent product, IEnumerable<string> childVariantTypeIds)
+        {
+            return product.Children()
+                    .Where(x => childVariantTypeIds.Contains(x.ContentType.Key.ToString()))
+                    .ToList();
+        }
+
+        private static List<ProductVariantItem> GetComplexVariants(IPublishedContent product)
+        {
+            if (product.Properties.Any(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)))
+            {
+                IPublishedProperty complexVariantProp = product.Properties.Where(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)).First();
+                ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
+                return variantItems.ToList();
+            }
+
+            return [];
+        }
+
+        private async Task ProcessChildVariantsAsync(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product, IEnumerable<IPublishedContent> childVariants)
+        {
+            foreach (IPublishedContent childVariant in childVariants)
+            {
+                XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, childVariant, product);
+
+                // add url to the main product
+                AddUrlNode(itemNode, product);
+
+                await AddPriceNodeAsync(itemNode, feedSetting, childVariant, null);
+
+                // group variant into the same parent id
+                PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
+
+                channel.AppendChild(itemNode);
+            }
+        }
+
+        /// <summary>
+        /// Add complex variants as multiple &lt;item&gt; nodes under the provided &lt;channel&gt; node.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <param name="channel"></param>
+        /// <param name="product"></param>
+        /// <param name="complexVariants"></param>
+        /// <returns></returns>
+        /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
+        private async Task ProcessComplexVariantsAsync(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product, IEnumerable<ProductVariantItem> complexVariants)
+        {
+            foreach (ProductVariantItem complexVariant in complexVariants)
+            {
+                XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, complexVariant.Content, product);
+
+                // add url to the main product
+                AddUrlNode(itemNode, product);
+
+                await AddPriceNodeAsync(itemNode, feedSetting, product, complexVariant.Content);
+
+                // group variant into the same parent id
+                PropertyAndNodeMapItem idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
+
+                channel.AppendChild(itemNode);
+            }
+        }
+
+        /// <summary>
+        /// Add a simple product as a single &lt;item&gt; node under the provided &lt;channel&gt; node.
+        /// </summary>
+        private async Task ProcessSimpleProductAsync(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product)
+        {
+            XmlElement itemNode = await NewItemNodeAsync(feedSetting, channel, product, null);
+            channel.AppendChild(itemNode);
         }
 
         /// <summary>
