@@ -14,7 +14,7 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
         {
         }
 
-        protected override Task MigrateAsync()
+        protected override async Task MigrateAsync()
         {
             const string tableName = "umbracoCommerceProductFeedSetting";
 
@@ -22,6 +22,17 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             if (base.DatabaseType == DatabaseType.SQLite)
             {
                 Logger.LogDebug("Running migration for SQLite db");
+
+                // Check if productRootId column already exists
+                var productRootIdExists = Database.ExecuteScalar<int>(
+                    "SELECT COUNT(*) FROM pragma_table_info('umbracoCommerceProductFeedSetting') WHERE name = 'productRootId'") > 0;
+
+                if (productRootIdExists)
+                {
+                    Logger.LogDebug("Table [{DbTable}] already has productRootId column, skipping migration.", tableName);
+                    return;
+                }
+
                 if (TableExists(tableName))
                 {
                     Logger.LogDebug("Drop existing table [{DbTable}].", tableName);
@@ -35,20 +46,60 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             {
                 Logger.LogDebug("Running migration for SQLServer db");
 
-                Execute
-                    .Sql("ALTER TABLE umbracoCommerceProductFeedSetting ADD productChildVariantTypeIds varchar(max) NULL, productDocumentTypeIds varchar(MAX) NULL")
-                    .Do();
+                // Add new columns only if they don't exist
+                var addProductChildVariantTypeIdsQuery = @"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                   WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting' 
+                                   AND COLUMN_NAME = 'productChildVariantTypeIds')
+                    BEGIN
+                        ALTER TABLE umbracoCommerceProductFeedSetting ADD productChildVariantTypeIds varchar(max) NULL
+                    END";
 
                 Execute
-                   .Sql("ALTER TABLE umbracoCommerceProductFeedSetting ALTER COLUMN productDocumentTypeAliases varchar(max) NULL")
+                    .Sql(addProductChildVariantTypeIdsQuery)
+                    .Do();
+
+                var addProductDocumentTypeIdsQuery = @"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                   WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting' 
+                                   AND COLUMN_NAME = 'productDocumentTypeIds')
+                    BEGIN
+                        ALTER TABLE umbracoCommerceProductFeedSetting ADD productDocumentTypeIds varchar(max) NULL
+                    END";
+
+                Execute
+                    .Sql(addProductDocumentTypeIdsQuery)
+                    .Do();
+
+                // Alter column only if it exists and is not already nullable varchar(max)
+                var alterProductDocumentTypeAliasesQuery = @"
+                    IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                               WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting' 
+                               AND COLUMN_NAME = 'productDocumentTypeAliases')
+                    BEGIN
+                        ALTER TABLE umbracoCommerceProductFeedSetting ALTER COLUMN productDocumentTypeAliases varchar(max) NULL
+                    END";
+
+                Execute
+                   .Sql(alterProductDocumentTypeAliasesQuery)
                    .Do();
 
+                // Rename column only if old column exists and new column doesn't exist
+                var renameProductRootKeyQuery = @"
+                    IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                               WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting' 
+                               AND COLUMN_NAME = 'productRootKey')
+                    AND NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                    WHERE TABLE_NAME = 'umbracoCommerceProductFeedSetting' 
+                                    AND COLUMN_NAME = 'productRootId')
+                    BEGIN
+                        EXEC sp_rename 'umbracoCommerceProductFeedSetting.productRootKey', 'productRootId', 'COLUMN'
+                    END";
+
                 Execute
-                    .Sql("EXEC sp_rename 'umbracoCommerceProductFeedSetting.productRootKey', 'productRootId', 'COLUMN';")
+                    .Sql(renameProductRootKeyQuery)
                     .Do();
             }
-
-            return Task.CompletedTask;
         }
 
         [TableName("umbracoCommerceProductFeedSetting")]

@@ -51,7 +51,10 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
                 .To<UpdateSchemaForV14>("1.0.5")
                 .To<DummyMigrationStep_13_1_0>("13.1.0")
                 .To<AddIncludeTaxInPrice_14_1_0>("14.1.0")
-                .To<Add_FeedType_FeedGeneratorId_16_1_0>("16.1.0");
+                .To<Add_FeedType_FeedGeneratorId_16_1_0>("16.1.0")
+
+                // Run again because 1.0.5 was put at the wrong order;
+                .To<UpdateSchemaForV14>("Migrate from aliases to ids");
 
             // Go and upgrade our site (Will check if it needs to do the work or not)
             // Based on the current/latest step
