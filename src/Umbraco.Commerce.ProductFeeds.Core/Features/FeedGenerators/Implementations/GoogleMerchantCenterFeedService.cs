@@ -62,6 +62,25 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
         {
             ArgumentNullException.ThrowIfNull(feedSetting, nameof(feedSetting));
 
+            XmlDocument doc = CreateXmlDocument(feedSetting);
+            XmlElement channel = (doc.DocumentElement!.SelectSingleNode("channel") as XmlElement)!;
+            ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
+            {
+                ProductRootKey = feedSetting.ProductRootKey,
+                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
+            });
+
+            // render doc/channel/item nodes
+            foreach (IPublishedContent product in products)
+            {
+                ProcessProductVariants(feedSetting, channel, product);
+            }
+
+            return doc;
+        }
+
+        private static XmlDocument CreateXmlDocument(ProductFeedSettingReadModel feedSetting)
+        {
             // <doc>
             XmlDocument doc = new();
             XmlElement root = doc.CreateElement("rss");
@@ -78,66 +97,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
             // doc/channel/description
             channel.AddChild("description", feedSetting.FeedDescription);
             root.AppendChild(channel);
-
-            ICollection<IPublishedContent> products = _productQueryService.GetPublishedProducts(new GetPublishedProductsParams
-            {
-                ProductRootKey = feedSetting.ProductRootKey,
-                ProductDocumentTypeAliases = feedSetting.ProductDocumentTypeAliases,
-            });
-
-            // render doc/channel/item nodes
-            foreach (IPublishedContent product in products)
-            {
-                IEnumerable<IPublishedContent> childVariants = product.Children
-                    .Where(x => x.ContentType.Alias == feedSetting.ProductChildVariantTypeAlias)
-                    .ToList();
-                if (childVariants.Any())
-                {
-                    // handle products with child variants
-                    foreach (IPublishedContent childVariant in childVariants)
-                    {
-                        XmlElement itemNode = NewItemNode(feedSetting, channel, childVariant, product);
-
-                        // add url to the main product
-                        AddUrlNode(itemNode, product);
-
-                        AddPriceNode(itemNode, feedSetting, childVariant, null);
-
-                        // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
-                        AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
-
-                        channel.AppendChild(itemNode);
-                    }
-                }
-                else if (product.Properties.Any(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)))
-                {
-                    // handle products with complex variants
-                    IPublishedProperty complexVariantProp = product.Properties.Where(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)).First();
-                    ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
-                    foreach (ProductVariantItem complexVariant in variantItems)
-                    {
-                        XmlElement itemNode = NewItemNode(feedSetting, channel, complexVariant.Content, product);
-
-                        // add url to the main product
-                        AddUrlNode(itemNode, product);
-
-                        AddPriceNode(itemNode, feedSetting, product, complexVariant.Content);
-
-                        // group variant into the same parent id
-                        PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
-                        AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
-
-                        channel.AppendChild(itemNode);
-                    }
-                }
-                else
-                {
-                    // handle product with no variants
-                    XmlElement itemNode = NewItemNode(feedSetting, channel, product, null);
-                    channel.AppendChild(itemNode);
-                }
-            }
 
             return doc;
         }
@@ -255,6 +214,104 @@ namespace Umbraco.Commerce.ProductFeeds.Core.FeedGenerators.Implementations
                     itemNode.AddChild("g:additional_image_link", imageUrls[i], GoogleXmlNamespaceUri);
                 }
             }
+        }
+
+        private void ProcessProductVariants(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product)
+        {
+            List<IPublishedContent> childVariants = GetChildVariants(product, feedSetting.ProductChildVariantTypeAlias);
+            if (childVariants.Count > 0)
+            {
+                ProcessChildVariants(feedSetting, channel, product, childVariants);
+            }
+            else
+            {
+                List<ProductVariantItem> complexVariants = GetComplexVariants(product);
+                if (complexVariants.Count > 0)
+                {
+                    ProcessComplexVariants(feedSetting, channel, product, complexVariants);
+                }
+                else
+                {
+                    ProcessSimpleProduct(feedSetting, channel, product);
+                }
+            }
+        }
+
+        private static List<IPublishedContent> GetChildVariants(IPublishedContent product, string? childVariantTypeAlias)
+        {
+            return product.Children
+                .Where(x => x.ContentType.Alias == childVariantTypeAlias)
+                .ToList();
+        }
+
+        private static List<ProductVariantItem> GetComplexVariants(IPublishedContent product)
+        {
+            if (product.Properties.Any(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)))
+            {
+                IPublishedProperty complexVariantProp = product.Properties.Where(prop => prop.PropertyType.EditorAlias.Equals(Cms.Constants.PropertyEditors.Aliases.VariantsEditor, StringComparison.Ordinal)).First();
+                ProductVariantCollection variantItems = product.Value<ProductVariantCollection>(complexVariantProp.Alias)!;
+                return variantItems.ToList();
+            }
+
+            return [];
+        }
+
+        private void ProcessChildVariants(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product, IEnumerable<IPublishedContent> childVariants)
+        {
+            foreach (IPublishedContent childVariant in childVariants)
+            {
+                XmlElement itemNode = NewItemNode(feedSetting, channel, childVariant, product);
+
+                // add url to the main product
+                AddUrlNode(itemNode, product);
+
+                AddPriceNode(itemNode, feedSetting, childVariant, null);
+
+                // group variant into the same parent id
+                PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
+
+                channel.AppendChild(itemNode);
+            }
+        }
+
+        /// <summary>
+        /// Add complex variants as multiple &lt;item&gt; nodes under the provided &lt;channel&gt; node.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <param name="channel"></param>
+        /// <param name="product"></param>
+        /// <param name="complexVariants"></param>
+        /// <exception cref="IdPropertyNodeMappingNotFoundException"></exception>
+        private void ProcessComplexVariants(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product, IEnumerable<ProductVariantItem> complexVariants)
+        {
+            foreach (ProductVariantItem complexVariant in complexVariants)
+            {
+                XmlElement itemNode = NewItemNode(feedSetting, channel, complexVariant.Content, product);
+
+                // add url to the main product
+                AddUrlNode(itemNode, product);
+
+                AddPriceNode(itemNode, feedSetting, product, complexVariant.Content);
+
+                // group variant into the same parent id
+                PropertyValueMapping idPropMap = feedSetting.PropertyNameMappings.FirstOrDefault(x => x.NodeName.Equals("g:id", StringComparison.OrdinalIgnoreCase)) ?? throw new IdPropertyNodeMappingNotFoundException();
+                AddItemGroupNode(itemNode, product.GetPropertyValue<object?>(idPropMap.PropertyAlias, product)?.ToString() ?? string.Empty);
+
+                channel.AppendChild(itemNode);
+            }
+        }
+
+        /// <summary>
+        /// Add a simple product as a single &lt;item&gt; node under the provided &lt;channel&gt; node.
+        /// </summary>
+        /// <param name="feedSetting"></param>
+        /// <param name="channel"></param>
+        /// <param name="product"></param>
+        private void ProcessSimpleProduct(ProductFeedSettingReadModel feedSetting, XmlElement channel, IPublishedContent product)
+        {
+            XmlElement itemNode = NewItemNode(feedSetting, channel, product, null);
+            channel.AppendChild(itemNode);
         }
     }
 }
