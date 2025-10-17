@@ -71,11 +71,11 @@ export class UcpfPropNodeMapper extends UmbLitElement {
         return html`
         <div class="ucpf-prop-mapping-row" style="font-weight: 600;">
             <div class="ucpf-prop-mapping-col"
-                style="max-width: 200px;">
+                style="max-width: 120px;">
                 <div class="umb-property-editor">Node name in feed</div>
             </div>
             <div class="ucpf-prop-mapping-col"
-                style="max-width: 200px;">
+                style="max-width: 120px;">
                 <div class="umb-property-editor">Property alias</div>
             </div>
             <div class="ucpf-prop-mapping-col">
@@ -89,7 +89,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                 ng-repeat="item in vm.propertyAndNodeMappingVm track by item.uiId"
                 ng-model="item.valueExtractorId">
                 <div class="ucpf-prop-mapping-col"
-                    style="max-width: 200px;">
+                    style="max-width: 120px;">
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
@@ -102,7 +102,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
                 </div>
                 
                 <div class="ucpf-prop-mapping-col"
-                    style="max-width: 200px;">
+                    style="max-width: 120px;">
                     <uui-input
                         class="ucpf-prop-mapping-control"
                         type="text"
@@ -173,6 +173,10 @@ label = ${this.localize.term('general_add')}>
 
         .ucpf-add-map-item-btn {
             width: 100%;
+        }
+
+        uui-select {
+            flex: 1;
         }
     `;
 }
