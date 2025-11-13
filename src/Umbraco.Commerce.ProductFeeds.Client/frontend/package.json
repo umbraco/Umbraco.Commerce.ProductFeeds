@@ -31,8 +31,8 @@
     "license": "ISC",
     "dependencies": {
         "@hey-api/client-axios": "^0.9.1",
-        "@umbraco-cms/backoffice": "^17.0.0-rc.1",
-        "@umbraco-commerce/backoffice": "17.0.0-rc1",
+        "@umbraco-cms/backoffice": "^17.0.0-rc2",
+        "@umbraco-commerce/backoffice": "17.0.0-rc2",
         "nanoid": "^5.1.6"
     }
 }
