@@ -33,7 +33,9 @@ stages:
       NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
     jobs:
       - job: Build
-        pool: 
+        variables:
+        - group: "dependency-track"
+        pool:
           vmImage: ubuntu-latest
         steps:
           # Checkout source (avoid shallow clone to calculate version height)
@@ -104,3 +106,70 @@ stages:
             inputs:
               targetPath: $(Build.SourcesDirectory)/src
               artifactName: build_output
+
+          # Generate/upload SBOM with cdxgen
+          - script: |
+              cd $(Build.SourcesDirectory)
+              npm install --global @cyclonedx/cdxgen
+            displayName: 'Install cdxgen'
+
+          - task: PowerShell@2
+            displayName: 'Generate & upload SBOM with cdxgen (pwsh)'
+            inputs:
+              targetType: 'inline'
+              pwsh: true
+              script: |
+                mkdir -Force "$(Build.ArtifactStagingDirectory)/bom"
+                Set-Location "$(Build.SourcesDirectory)"
+
+                # version
+                $VERSION = 'vUNKNOWN'
+                if (Test-Path 'version.json') {
+                  try {
+                    $rawVersion = (Get-Content 'version.json' -Raw | ConvertFrom-Json).version
+                  } catch {
+                    if ((Get-Content 'version.json' -Raw) -match '"version"\s*:\s*"([^"]+)"') {
+                      $rawVersion = $matches[1]
+                    }
+                  }
+
+                  if ($rawVersion) {
+                    # Extract major part (e.g. "1" from "1.2.3") and add "v" prefix
+                    if ($rawVersion -match '^(\d+)\.') {
+                      $VERSION = "v$($matches[1])"
+                    } elseif ($rawVersion -match '^\d+$') {
+                      $VERSION = "v$rawVersion"
+                    } else {
+                      $VERSION = "vUNKNOWN"
+                    }
+                  }
+                }
+
+                Write-Host "Project version: $VERSION"
+
+                # derive project name
+                $PROJECT_NAME = [System.IO.Path]::GetFileNameWithoutExtension("$(solution)")
+                Write-Host "Project name: $PROJECT_NAME"
+
+                # short debug (last 5 chars)
+                foreach ($name in 'DT_BASE_URL','DT_API_KEY') {
+                  $v = (Get-Item "Env:$name").Value
+                  if ($v) {
+                    $last = if ($v.Length -gt 5) { $v.Substring($v.Length-5) } else { $v }
+                    Write-Host "$name (last5): ...$last"
+                  } else {
+                    Write-Host "$name is empty"
+                  }
+                }
+
+                Write-Host 'Running cdxgen ...'
+                & cdxgen '--recurse' '--output' "$(Build.ArtifactStagingDirectory)/bom/bom.json" '--json-pretty' '--project-group' 'DXP' '--project-name' $PROJECT_NAME '--project-version' $VERSION '--server-url' $env:DT_BASE_URL '--api-key' $env:DT_API_KEY
+            env:
+              DT_API_KEY: $(DT_API_KEY)
+              DT_BASE_URL: $(DT_BASE_URL)
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish SBOM Artifact'
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/bom
+              artifactName: SBOM
