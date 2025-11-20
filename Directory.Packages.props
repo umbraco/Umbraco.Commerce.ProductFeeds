@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
@@ -16,10 +16,10 @@
     <PackageVersion Include="FluentValidation" Version="11.9.0" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0, 7.0)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageVersion Include="Umbraco.Cms" Version="[16.0.0, 16.999.999)" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[16.0.0, 16.999.999)" />
-    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[16.0.0, 16.999.999)" />
-    <PackageVersion Include="Umbraco.Commerce" Version="[16.0.0, 16.999.999)" />
+    <PackageVersion Include="Umbraco.Cms" Version="[17.0.0-rc1, 17.999.999)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[17.0.0-rc1, 17.999.999)" />
+    <PackageVersion Include="Umbraco.Cms.Web.BackOffice" Version="[17.0.0-rc1, 17.999.999)" />
+    <PackageVersion Include="Umbraco.Commerce" Version="[17.0.0-rc1, 17.999.999)" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="xunit" Version="2.6.6" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />

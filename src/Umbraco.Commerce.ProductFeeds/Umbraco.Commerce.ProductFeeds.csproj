@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Title>Umbraco Commerce Product Feeds</Title>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Description>Expand your product reach and show your products to a larger audience with the help of product feeds.</Description>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

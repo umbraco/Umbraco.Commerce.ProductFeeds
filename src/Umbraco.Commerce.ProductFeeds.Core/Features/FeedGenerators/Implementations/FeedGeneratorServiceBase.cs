@@ -23,9 +23,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         protected ISingleValuePropertyExtractorFactory SingleValuePropertyExtractorFactory { get; }
         protected IMultipleValuePropertyExtractorFactory MultipleValuePropertyExtractorFactory { get; }
 
-        [Obsolete("Will be removed in v17. Use GenerateXmlFeedAsync or GenerateJsonFeedAsync instead.")]
-        public virtual Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateXmlFeedAsync(feedSetting);
-
         public virtual Task<XmlDocument> GenerateXmlFeedAsync(ProductFeedSettingReadModel feedSetting) => throw new NotImplementedException("XML feed generation is not implemented.");
 
         public virtual Task<JsonDocument> GenerateJsonFeedAsync(ProductFeedSettingReadModel feedSetting) => throw new NotImplementedException("JSON feed generation is not implemented.");

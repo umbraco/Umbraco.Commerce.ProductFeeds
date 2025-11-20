@@ -42,8 +42,7 @@ select *
 from umbracoCommerceProductFeedSetting
 where( @0 IS NULL OR feedRelativePath = @0)
 AND (@1 IS NULL OR id = @1)",
-                findSettingParams.FeedRelativePath,
-                findSettingParams.Id)
+                [findSettingParams.FeedRelativePath, findSettingParams.Id])
                 .ConfigureAwait(false);
             scope.Complete();
 
@@ -70,7 +69,7 @@ AND (@1 IS NULL OR id = @1)",
                 @"
 select *
 from umbracoCommerceProductFeedSetting
-where storeId = @0", storeId)
+where storeId = @0", [storeId])
                 .ConfigureAwait(false);
             scope.Complete();
 

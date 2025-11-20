@@ -10,9 +10,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application
 
         public required string FeedName { get; set; }
 
-        [Obsolete("Will be removed in v17. Migrate to Feed Generator Id.")]
-        public ProductFeedType? FeedType { get; set; }
-
         public required string FeedDescription { get; set; }
 
         public required Guid StoreId { get; set; }

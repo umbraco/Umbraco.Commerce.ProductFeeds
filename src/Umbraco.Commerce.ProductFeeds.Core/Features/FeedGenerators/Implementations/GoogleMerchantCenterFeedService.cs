@@ -20,7 +20,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
     /// <summary>
     /// This is the feed generator that follows Google Merchant Center's standard.
     /// </summary>
-    public class GoogleMerchantCenterFeedService : FeedGeneratorServiceBase // TODO - v17: Make internal
+    internal class GoogleMerchantCenterFeedService : FeedGeneratorServiceBase
     {
         private const string GoogleXmlNamespaceUri = "http://base.google.com/ns/1.0";
 
@@ -54,9 +54,6 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             _productQueryService = productQueryService;
             _commerceApi = commerceApi;
         }
-
-        [Obsolete("Will be removed in v17. Use GenerateXmlFeedAsync or GenerateJsonFeedAsync instead.")]
-        public override Task<XmlDocument> GenerateFeedAsync(ProductFeedSettingReadModel feedSetting) => GenerateXmlFeedAsync(feedSetting);
 
         /// <summary>
         /// Generate the product feed following the inputted settings.
