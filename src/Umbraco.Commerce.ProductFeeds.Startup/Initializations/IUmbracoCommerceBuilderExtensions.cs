@@ -11,7 +11,6 @@ using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.PropertyValueExtractors.Implementations;
-using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations;
 using Umbraco.Commerce.ProductFeeds.Startup.Initializations;
@@ -34,7 +33,6 @@ namespace Umbraco.Commerce.Extensions
             ucBuilder.AddSwagger();
             ucBuilder.AddServices();
             ucBuilder.AddDbMigrations();
-            ucBuilder.AddAutoMapper();
             return ucBuilder;
         }
 
@@ -47,12 +45,6 @@ namespace Umbraco.Commerce.Extensions
         private static IUmbracoCommerceBuilder AddDbMigrations(this IUmbracoCommerceBuilder builder)
         {
             builder.WithUmbracoBuilder().AddNotificationAsyncHandler<UmbracoApplicationStartingNotification, RunDbMigrations>();
-            return builder;
-        }
-
-        private static IUmbracoCommerceBuilder AddAutoMapper(this IUmbracoCommerceBuilder builder)
-        {
-            builder.Services.AddAutoMapper(typeof(InfrastructureMappingProfile));
             return builder;
         }
 
