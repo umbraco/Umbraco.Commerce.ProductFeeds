@@ -50,11 +50,5 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
                     return Problem("Unknown feed format.");
             }
         }
-
-        [Obsolete("Will be removed in v17. Use the Generate method instead.")]
-        public Task<IActionResult> Xml(string path)
-        {
-            return Generate(path);
-        }
     }
 }

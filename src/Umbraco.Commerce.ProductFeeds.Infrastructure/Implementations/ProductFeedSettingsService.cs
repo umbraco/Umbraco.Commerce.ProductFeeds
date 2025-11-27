@@ -1,29 +1,26 @@
 using System.Text.Json;
-using AutoMapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementations;
 using Umbraco.Commerce.ProductFeeds.Core.Features.FeedSettings.Application;
 using Umbraco.Commerce.ProductFeeds.Infrastructure.DbModels;
+using Umbraco.Commerce.ProductFeeds.Infrastructure.DtoMappings;
 
 namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Implementations
 {
     internal class ProductFeedSettingsService : IProductFeedSettingsService
     {
         private readonly IScopeProvider _scopeProvider;
-        private readonly IMapper _mapper;
         private readonly ILogger<ProductFeedSettingsService> _logger;
         private readonly FeedGeneratorCollection _feedGenerators;
 
         public ProductFeedSettingsService(
             IScopeProvider scopeProvider,
-            IMapper mapper,
             ILogger<ProductFeedSettingsService> logger,
             FeedGeneratorCollection feedGenerators)
         {
             _scopeProvider = scopeProvider;
-            _mapper = mapper;
             _logger = logger;
             _feedGenerators = feedGenerators;
         }
@@ -42,8 +39,7 @@ select *
 from umbracoCommerceProductFeedSetting
 where( @0 IS NULL OR feedRelativePath = @0)
 AND (@1 IS NULL OR id = @1)",
-                findSettingParams.FeedRelativePath,
-                findSettingParams.Id)
+                [findSettingParams.FeedRelativePath, findSettingParams.Id])
                 .ConfigureAwait(false);
             scope.Complete();
 
@@ -57,7 +53,7 @@ AND (@1 IS NULL OR id = @1)",
                 throw new InvalidOperationException($"Unknown feed generator detected. Id: '{feedSetting.FeedGeneratorId}'.");
             }
 
-            ProductFeedSettingReadModel readModel = _mapper.Map<ProductFeedSettingReadModel>(feedSetting);
+            ProductFeedSettingReadModel readModel = ProductFeedSettingMapper.MapToReadModel(feedSetting);
             return readModel;
         }
 
@@ -70,7 +66,7 @@ AND (@1 IS NULL OR id = @1)",
                 @"
 select *
 from umbracoCommerceProductFeedSetting
-where storeId = @0", storeId)
+where storeId = @0", [storeId])
                 .ConfigureAwait(false);
             scope.Complete();
 
@@ -79,39 +75,48 @@ where storeId = @0", storeId)
                 return [];
             }
 
-            return _mapper.Map<List<ProductFeedSettingReadModel>>(settings);
+            return settings.Select(setting => ProductFeedSettingMapper.MapToReadModel(setting)).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<Guid?> SaveSettingAsync(ProductFeedSettingWriteModel input)
         {
-            UmbracoCommerceProductFeedSetting dbModel = _mapper.Map<UmbracoCommerceProductFeedSetting>(input);
-
             try
             {
                 using IScope scope = _scopeProvider.CreateScope();
+
+                // Create the database model directly from input data
+                UmbracoCommerceProductFeedSetting dbModel = ProductFeedSettingMapper.MapToDbModel(input);
+
                 if (input.Id == null)
                 {
-                    // add mode
+                    // Add mode - generate new ID and insert
                     dbModel.Id = Guid.NewGuid();
                     _ = await scope.Database.InsertAsync(dbModel).ConfigureAwait(false);
+                    scope.Complete();
+                    return dbModel.Id;
                 }
                 else
                 {
-                    // edit mode
+                    // Edit mode - update directly without retrieving existing entity
                     int affectedRowCount = await scope.Database.UpdateAsync(dbModel).ConfigureAwait(false);
                     if (affectedRowCount != 1)
                     {
+                        scope.Complete();
                         return null;
                     }
-                }
 
-                scope.Complete();
-                return dbModel.Id;
+                    scope.Complete();
+                    return dbModel.Id;
+                }
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Unable to add a new record. Data: {Data}", JsonSerializer.Serialize(input));
+                if (_logger.IsEnabled(LogLevel.Error))
+                {
+                    _logger.LogError(ex, "Unable to save record. Data: {Data}", JsonSerializer.Serialize(input));
+                }
+
                 return null;
             }
         }
@@ -132,7 +137,11 @@ where storeId = @0", storeId)
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Unable to delete the record with id = {Id}", id);
+                if (_logger.IsEnabled(LogLevel.Error))
+                {
+                    _logger.LogError(ex, "Unable to delete the record with id = {Id}", id);
+                }
+
                 return false;
             }
         }

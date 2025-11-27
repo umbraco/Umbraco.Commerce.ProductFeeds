@@ -479,3 +479,5 @@ src/**/packages.lock.json
 tests/**/packages.lock.json
 **/appsettings-schema.**
 **/umbraco-package-schema.json
+nul
+.idea
