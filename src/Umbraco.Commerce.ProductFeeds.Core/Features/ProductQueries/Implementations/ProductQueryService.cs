@@ -64,7 +64,12 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
                 IPublishedContent? content = _umbracoHelper.Content(id);
                 if (content != null)
                 {
-                    result.Add(content);
+                    // Exclude nodes without a routable URL (e.g. Commerce complex variant element types)
+                    string url = content.Url(mode: UrlMode.Absolute);
+                    if (!string.IsNullOrEmpty(url) && url != "#")
+                    {
+                        result.Add(content);
+                    }
                 }
             }
 

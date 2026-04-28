@@ -266,7 +266,11 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
         /// <param name="product"></param>
         private static void AddUrlNode(XmlElement itemNode, IPublishedContent product)
         {
-            itemNode.AddChild("g:link", product.Url(mode: UrlMode.Absolute), GoogleXmlNamespaceUri);
+            string url = product.Url(mode: UrlMode.Absolute);
+            if (!string.IsNullOrEmpty(url) && url != "#")
+            {
+                itemNode.AddChild("g:link", url, GoogleXmlNamespaceUri);
+            }
         }
 
         /// <summary>
