@@ -32,7 +32,7 @@
 
   <!-- Package validation -->
   <PropertyGroup>
-    <EnablePackageValidation>false</EnablePackageValidation>
+    <EnablePackageValidation>true</EnablePackageValidation>
     <PackageValidationBaselineVersion>17.0.0</PackageValidationBaselineVersion>
     <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
     <EnableStrictModeForCompatibleTfms>true</EnableStrictModeForCompatibleTfms>
