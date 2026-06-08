@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Api.Common.OpenApi;
+using Umbraco.Cms.Api.Management.OpenApi;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Commerce.Core;
@@ -92,7 +95,21 @@ namespace Umbraco.Commerce.Extensions
 
         private static IUmbracoCommerceBuilder AddSwagger(this IUmbracoCommerceBuilder ucBuilder)
         {
-            ucBuilder.WithUmbracoBuilder().Services.ConfigureOptions<ProductFeedsConfigureSwaggerGenOptions>();
+            ucBuilder.WithUmbracoBuilder().AddBackOfficeOpenApiDocument(
+                RouteParams.ApiName,
+                document => document
+                    .WithTitle(RouteParams.ApiTitle)
+                    .WithBackOfficeAuthentication()
+                    .ConfigureOpenApiOptions(options =>
+                    {
+                        options.AddDocumentTransformer((doc, _, _) =>
+                        {
+                            doc.Info.Version = "Latest";
+                            doc.Info.Description = "Describes Umbraco Commerce Product Feeds package management APIs";
+                            return Task.CompletedTask;
+                        });
+                        options.AddOperationTransformer<AddApiVersionToOperationIdTransformer>();
+                    }));
             return ucBuilder;
         }
     }
