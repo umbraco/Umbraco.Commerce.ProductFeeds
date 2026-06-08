@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34316.72
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11811.120 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Umbraco.Commerce.ProductFeeds.Infrastructure", "src\Umbraco.Commerce.ProductFeeds.Infrastructure\Umbraco.Commerce.ProductFeeds.Infrastructure.csproj", "{B87B889C-37A7-4883-BBFD-2FE2F8E34698}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds", "src\Umbraco.Commerce.ProductFeeds\Umbraco.Commerce.ProductFeeds.csproj", "{3AD792B3-34E1-4ADF-9037-D1FC9A149611}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds.Client", "src\Umbraco.Commerce.ProductFeeds.Client\Umbraco.Commerce.ProductFeeds.Client.csproj", "{1BE67FB6-841C-4B64-8945-95FB18A8B607}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.DemoStore.Web", "..\..\Umbraco.Commerce.DemoStore\src\Umbraco.Commerce.DemoStore.Web\Umbraco.Commerce.DemoStore.Web.csproj", "{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BE67FB6-841C-4B64-8945-95FB18A8B607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
