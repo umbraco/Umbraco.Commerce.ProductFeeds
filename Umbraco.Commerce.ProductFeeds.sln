@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.ProductFeeds.Client", "src\Umbraco.Commerce.ProductFeeds.Client\Umbraco.Commerce.ProductFeeds.Client.csproj", "{1BE67FB6-841C-4B64-8945-95FB18A8B607}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.DemoStore.Web", "..\..\Umbraco.Commerce.DemoStore\src\Umbraco.Commerce.DemoStore.Web\Umbraco.Commerce.DemoStore.Web.csproj", "{96A4E86E-DB85-4FCF-85A1-C0AA8356AAD4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
