@@ -2,7 +2,7 @@ import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbPagedModel, UmbRepositoryResponse } from '@umbraco-cms/backoffice/repository';
 import { FeProductFeedSettingWriteModel } from './details/types';
-import { deleteV2, getByStoreV2, getDetailsV2, getFeedGeneratorsV2, getPropertyValueExtractorsV2, LookupReadModel, ProductFeedSettingReadModelReadable, ProductFeedSettingWriteModel, saveV2 } from '../generated/apis';
+import { deleteV2, getByStoreV2, getDetailsV2, getFeedGeneratorsV2, getPropertyValueExtractorsV2, LookupReadModel, ProductFeedSettingReadModel, ProductFeedSettingWriteModel, saveV2 } from '../generated/apis';
 
 export class UcpfListDataSource {
     #host: UmbControllerHost;
@@ -11,7 +11,7 @@ export class UcpfListDataSource {
         this.#host = host;
     }
 
-    async fetchListAsync(storeId: string): Promise<UmbRepositoryResponse<UmbPagedModel<ProductFeedSettingReadModelReadable>>> {
+    async fetchListAsync(storeId: string): Promise<UmbRepositoryResponse<UmbPagedModel<ProductFeedSettingReadModel>>> {
         const { data, error } = await tryExecute(this.#host, getByStoreV2({
             query: {
                 storeId,
@@ -37,7 +37,7 @@ export class UcpfListDataSource {
         });
 
         if (data) {
-            return { data: data as ProductFeedSettingReadModelReadable };
+            return { data: data as ProductFeedSettingReadModel };
         }
 
         return {

@@ -108,7 +108,9 @@ namespace Umbraco.Commerce.Extensions
                             doc.Info.Description = "Describes Umbraco Commerce Product Feeds package management APIs";
                             return Task.CompletedTask;
                         });
-                        options.AddOperationTransformer<AddApiVersionToOperationIdTransformer>();
+                        // Override the default .NET OpenAPI operation ids (verb+route based) with the
+                        // v17 action-name scheme so the generated client keeps the same method names.
+                        options.AddOperationTransformer<ProductFeedsOperationIdTransformer>();
                     }));
             return ucBuilder;
         }
