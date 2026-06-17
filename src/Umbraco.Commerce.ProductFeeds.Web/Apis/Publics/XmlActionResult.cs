@@ -31,23 +31,25 @@ namespace Umbraco.Commerce.ProductFeeds.Web.Apis.Publics
 
             try
             {
-                // Create a StreamWriter over the response body with async encoding support
-                await using var streamWriter = new StreamWriter(context.HttpContext.Response.Body, Encoding.UTF8, leaveOpen: true);
+                // XmlDocument.WriteContentTo has no async variant and flushes synchronously.
+                // Writing to a MemoryStream avoids the AllowSynchronousIO restriction on the
+                // response body; we then copy to the response body asynchronously.
+                using var memoryStream = new MemoryStream();
 
-                // Use XmlWriter with async settings
                 var settings = new XmlWriterSettings
                 {
-                    Async = true,
                     Indent = Formatting == Formatting.Indented,
+                    Encoding = Encoding.UTF8,
                 };
 
-                await using var xmlWriter = XmlWriter.Create(streamWriter, settings);
+                using (var xmlWriter = XmlWriter.Create(memoryStream, settings))
+                {
+                    _document.WriteContentTo(xmlWriter);
+                }
 
-                // Write the document content
-                _document.WriteContentTo(xmlWriter);
-
-                // Async flush
-                await xmlWriter.FlushAsync();
+                context.HttpContext.Response.ContentLength = memoryStream.Length;
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                await memoryStream.CopyToAsync(context.HttpContext.Response.Body);
             }
             catch (UmbracoCommerceProductFeedsGeneralException ex)
             {
