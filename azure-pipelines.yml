@@ -19,7 +19,7 @@ parameters:
     default: false
 
 variables:
-  nodeVersion: 22.x
+  nodeVersion: 24.x
   solution: Umbraco.Commerce.ProductFeeds.sln
   buildConfiguration: Release
   DOTNET_NOLOGO: true
@@ -163,7 +163,7 @@ stages:
                 }
 
                 Write-Host 'Running cdxgen ...'
-                & cdxgen '--recurse' '--spec-version' '1.6' '--output' "$(Build.ArtifactStagingDirectory)/bom/bom.json" '--json-pretty' '--project-group' 'DXP' '--project-name' $PROJECT_NAME '--project-version' $VERSION '--server-url' $env:DT_BASE_URL '--api-key' $env:DT_API_KEY
+                & cdxgen '--recurse' '--output' "$(Build.ArtifactStagingDirectory)/bom/bom.json" '--json-pretty' '--project-group' 'DXP' '--project-name' $PROJECT_NAME '--project-version' $VERSION '--server-url' $env:DT_BASE_URL '--api-key' $env:DT_API_KEY '--spec-version' 1.6
             env:
               DT_API_KEY: $(DT_API_KEY)
               DT_BASE_URL: $(DT_BASE_URL)
