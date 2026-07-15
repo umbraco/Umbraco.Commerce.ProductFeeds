@@ -29,6 +29,11 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             0,
             "Unable to find any product with these parameters: storeId = '{StoreId}', product key= '{ProductKey}', variant key = '{VariantKey}'.");
 
+        private static readonly Action<ILogger, string, string, Exception?> _propertyExtractionFailedLogMessage = LoggerMessage.Define<string, string>(
+            LogLevel.Error,
+            0,
+            "Failed to extract a value for feed node '{NodeName}' from property '{PropertyAlias}'. The node has been skipped for this item so the rest of the feed can still be generated.");
+
         private readonly ILogger<GoogleMerchantCenterFeedService> _logger;
         private readonly ICurrencyService _currencyService;
         private readonly IProductQueryService _productQueryService;
@@ -215,33 +220,44 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.FeedGenerators.Implementat
             // add custom properties
             foreach (PropertyAndNodeMapItem map in feedSetting.PropertyNameMappings)
             {
-                if (SingleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
-                    && singleValueExtractor != null)
+                // Extracting a single property must never take down the whole feed. A value
+                // extractor can throw for reasons outside our control (e.g. an Umbraco property
+                // value converter throwing while resolving the value). If that happens, log it
+                // and skip just this node so the rest of the feed is still produced.
+                try
                 {
-                    string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
-                    itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
-                }
-                else if (MultipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
-                    && multipleValueExtractor != null)
-                {
-                    var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
-                    if (map.NodeName.Equals("g:image_link", StringComparison.OrdinalIgnoreCase))
+                    if (SingleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId, out ISingleValuePropertyExtractor? singleValueExtractor)
+                        && singleValueExtractor != null)
                     {
-                        // image nodes are special, they can have multiple values, but Google Merchant Center treats them differently
-                        AddImageNodes(itemNode, values);
+                        string propValue = singleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct);
+                        itemNode.AddChild(map.NodeName, propValue, GoogleXmlNamespaceUri);
+                    }
+                    else if (MultipleValuePropertyExtractorFactory.TryGetExtractor(map.ValueExtractorId!, out IMultipleValuePropertyExtractor? multipleValueExtractor)
+                        && multipleValueExtractor != null)
+                    {
+                        var values = multipleValueExtractor.Extract(variant, map.PropertyAlias, mainProduct).ToList();
+                        if (map.NodeName.Equals("g:image_link", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // image nodes are special, they can have multiple values, but Google Merchant Center treats them differently
+                            AddImageNodes(itemNode, values);
+                        }
+                        else
+                        {
+                            // handle general multiple value properties
+                            foreach (string value in values)
+                            {
+                                itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);
+                            }
+                        }
                     }
                     else
                     {
-                        // handle general multiple value properties
-                        foreach (string value in values)
-                        {
-                            itemNode.AddChild(map.NodeName, value, GoogleXmlNamespaceUri);
-                        }
+                        throw new InvalidOperationException($"Unable to locate property value extractor with id = '{map.ValueExtractorId}'");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw new InvalidOperationException($"Unable to locate property value extractor with id = '{map.ValueExtractorId}'");
+                    _propertyExtractionFailedLogMessage(_logger, map.NodeName, map.PropertyAlias, ex);
                 }
             }
 
