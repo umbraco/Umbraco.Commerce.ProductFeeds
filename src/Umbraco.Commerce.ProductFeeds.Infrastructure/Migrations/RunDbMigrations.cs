@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NPoco;
 using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Migrations;
 using Umbraco.Cms.Core.Notifications;
@@ -55,6 +57,32 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.Migrations
             _connectionStringConfig = connectionStringConfig;
             _configuration = configuration;
             _logger = logger;
+        }
+
+        /// <summary>
+        /// Preserved for backwards compatibility with the v17.0.0 public constructor. The
+        /// additional services introduced for GitHub issue #812 are resolved from the static
+        /// service provider. Umbraco's DI selects the greediest resolvable constructor (the one
+        /// above), so this overload is only used if the type is constructed manually.
+        /// </summary>
+        [Obsolete("Use the constructor that also accepts the persistence, configuration and logging services. Will be removed in v19.0.0")]
+        public RunDbMigrations(
+            IMigrationPlanExecutor migrationPlanExecutor,
+            CoreScoping.ICoreScopeProvider coreScopeProvider,
+            IKeyValueService keyValueService,
+            IRuntimeState runtimeState)
+            : this(
+                migrationPlanExecutor,
+                coreScopeProvider,
+                keyValueService,
+                runtimeState,
+                StaticServiceProvider.Instance.GetRequiredService<IScopeProvider>(),
+                StaticServiceProvider.Instance.GetRequiredService<IUnitOfWorkProvider>(),
+                StaticServiceProvider.Instance.GetRequiredService<INPocoDatabaseProvider>(),
+                StaticServiceProvider.Instance.GetRequiredService<IOptionsMonitor<ConnectionStringConfig>>(),
+                StaticServiceProvider.Instance.GetRequiredService<IConfiguration>(),
+                StaticServiceProvider.Instance.GetRequiredService<ILogger<RunDbMigrations>>())
+        {
         }
 
         public async Task HandleAsync(UmbracoApplicationStartingNotification notification, CancellationToken cancellationToken)
