@@ -84,8 +84,8 @@ export const manifests = [
     {
         type: 'entityAction',
         kind: 'default',
-        alias: 'Forms.EntityAction.Form.Delete',
-        name: 'Delete Form Entity Action',
+        alias: 'ucpf:entity-action:delete',
+        name: 'Delete Product Feed Details Entity Action',
         weight: 50,
         api: ProductFeedEntityActionDelete,
         forEntityTypes: [detailsWorkspaceManifest.meta.entityType],
