@@ -1,0 +1,9 @@
+{
+  "name": "umbraco-commerce-productfeeds",
+  "private": true,
+  "description": "Runs the client app build from the repo root (used by the shared Umbraco.Build pipeline)",
+  "scripts": {
+    "ci:install-client": "cd ./src/Umbraco.Commerce.ProductFeeds.Client/frontend && npm ci --no-fund --no-audit --prefer-offline",
+    "ci:build-client": "cd ./src/Umbraco.Commerce.ProductFeeds.Client/frontend && npm run build"
+  }
+}
