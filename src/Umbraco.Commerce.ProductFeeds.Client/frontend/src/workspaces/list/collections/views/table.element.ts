@@ -8,6 +8,7 @@ import { ProductFeedSettingReadModel } from '../../../../generated/apis/types.ge
 import { editRoute, viewFeedRoute } from '../../../routes';
 import { UcpfListCollectionConfiguration } from '../../../../types';
 import { ProductFeedsCollectionModel } from '../../types';
+import { UcpfListDataSource } from '../../../datasource';
 
 const elementName = 'uc-product-feeds-collection-view-table';
 @customElement(elementName)
@@ -48,6 +49,8 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
 
     #collectionContext?: UmbDefaultCollectionContext<ProductFeedsCollectionModel, UmbCollectionFilterModel>;
     #collectionConfig?: UcpfListCollectionConfiguration;
+    #items: Array<ProductFeedSettingReadModel> = [];
+    #feedTypeNames = new Map<string, string>();
 
     constructor() {
         super();
@@ -58,6 +61,17 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
             this._storeId = this.#collectionConfig?.storeId;
             this.#observeCollectionItems();
         });
+
+        this.#loadFeedTypeNames();
+    }
+
+    // The read model only carries the generator id, so resolve its display name from the feed types lookup.
+    async #loadFeedTypeNames() {
+        const { data } = await new UcpfListDataSource(this).fetchFeedTypesAsync();
+        if (!data) return;
+
+        this.#feedTypeNames = new Map(data.map((x) => [x.value, x.label]));
+        this.#createTableItems(this.#items);
     }
 
     async #observeCollectionItems() {
@@ -81,6 +95,7 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
     }
 
     #createTableItems(items: Array<ProductFeedSettingReadModel>) {
+        this.#items = items;
         this._tableItems = items.map((item) => {
             return {
                 id: item.id,
@@ -94,7 +109,7 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
                     },
                     {
                         columnAlias: 'feedTypeName',
-                        value: item.feedTypeName,
+                        value: this.#feedTypeNames.get(item.feedGeneratorId) ?? item.feedGeneratorId,
                     },
                     {
                         columnAlias: 'feedRelativePath',

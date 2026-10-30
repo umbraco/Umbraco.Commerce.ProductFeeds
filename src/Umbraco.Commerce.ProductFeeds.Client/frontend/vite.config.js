@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 const outputDir = '../../Umbraco.Commerce.ProductFeeds.Web/wwwroot';
-export default defineConfig(({command, mode}) => {
+export default defineConfig(({mode}) => {
     return {
         build: {
             minify: false,

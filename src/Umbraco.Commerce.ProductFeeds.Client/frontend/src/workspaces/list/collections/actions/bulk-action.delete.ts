@@ -48,7 +48,7 @@ export class UcpfListBulkDeleteAction extends UmbEntityBulkActionBase<MetaEntity
 
                 const event = new UmbRequestReloadChildrenOfEntityEvent({
                     entityType: entityContext.getEntityType()!,
-                    unique: entityContext.getUnique(),
+                    unique: entityContext.getUnique() ?? null,
                 });
                 eventContext.dispatchEvent(event);
 
