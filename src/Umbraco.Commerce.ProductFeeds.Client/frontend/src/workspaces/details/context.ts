@@ -1,3 +1,4 @@
+import type { UUISelectOption } from '@umbraco-cms/backoffice/external/uui';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbRoutableWorkspaceContext, UmbSubmittableWorkspaceContext, UmbSubmittableWorkspaceContextBase, UmbWorkspaceIsNewRedirectController, UmbWorkspaceRouteManager } from '@umbraco-cms/backoffice/workspace';
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -30,10 +31,10 @@ export class UcpfDetailsWorkspaceContext
     readonly model = this.#model.asObservable();
     readonly routes = new UmbWorkspaceRouteManager(this);
 
-    #feedTypes = new UmbObjectState<Option[]>([]);
+    #feedTypes = new UmbObjectState<UUISelectOption[]>([]);
     readonly feedTypeOptions = this.#feedTypes.asObservable();
 
-    #propertyValueExtractorOptions = new UmbObjectState<Option[]>([]);
+    #propertyValueExtractorOptions = new UmbObjectState<UUISelectOption[]>([]);
     readonly propertyValueExtractorOptions = this.#propertyValueExtractorOptions.asObservable();
 
     #notificationContext?: UmbNotificationContext;

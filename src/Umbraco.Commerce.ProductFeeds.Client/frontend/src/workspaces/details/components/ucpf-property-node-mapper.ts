@@ -1,7 +1,7 @@
 import { css, customElement, html, property, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { FePropertyAndNodeMapDetails } from '../types';
-import { UUIEvent } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIEvent, UUISelectOption } from '@umbraco-cms/backoffice/external/uui';
 import { nanoid } from 'nanoid';
 
 export interface UcpfPropNodeMapItemChangeEventData { itemId: string, value: string }
@@ -14,7 +14,7 @@ export class UcpfPropNodeMapper extends UmbLitElement {
     mapItems: FePropertyAndNodeMapDetails[] = [];
 
     @property({ type: Array })
-    propertyValueExtractorOptions: Option[] = [];
+    propertyValueExtractorOptions: UUISelectOption[] = [];
 
     /**
      *

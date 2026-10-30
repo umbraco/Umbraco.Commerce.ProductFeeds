@@ -4,7 +4,11 @@ export default defineConfig({
     input: 'http://localhost:44321/umbraco/openapi/ucproductfeeds.json',
     output: {
         path: 'src/generated/apis',
-        lint: 'eslint',
     },
-    plugins: ['@hey-api/client-axios'],
+    plugins: [
+        {
+            name: '@hey-api/client-fetch',
+            exportFromIndex: true,
+        },
+    ],
 });

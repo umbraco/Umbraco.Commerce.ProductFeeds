@@ -16,24 +16,12 @@ const allManifests = [
 
 export const onInit: UmbEntryPointOnInit = (host, extensionRegistry) => {
     extensionRegistry.registerMany(allManifests);
-    host.consumeContext(UMB_AUTH_CONTEXT, async (instance) => {
-        if (!instance) return;
-
-        const config = instance?.getOpenApiConfiguration();
-        apiClient.setConfig({
-            baseURL: config?.base ?? '',
-        });
-
-        apiClient.instance.interceptors.request.use(async (request) => {
-            const token = await instance.getLatestToken();
-            request.withCredentials = true;
-            request.headers.set('Authorization', 'Bearer ' + token);
-            return request;
-        });
+    host.consumeContext(UMB_AUTH_CONTEXT, (authContext) => {
+        authContext?.configureClient(apiClient);
     });
 
     host.consumeContext(UMB_NOTIFICATION_CONTEXT, notificationContext => {
-        apiClient.instance.interceptors.response.use(response => {
+        apiClient.interceptors.response.use(response => {
             switch (response.status) {
                 case 500:
                     notificationContext?.peek('danger', {

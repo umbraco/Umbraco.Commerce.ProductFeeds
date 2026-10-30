@@ -1,5 +1,5 @@
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
-import type { UUIBooleanInputElement, UUIEvent, UUIInputElement, UUISelectElement } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIBooleanInputElement, UUIEvent, UUIInputElement, UUISelectElement, UUISelectOption } from '@umbraco-cms/backoffice/external/uui';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import {
     customElement,
@@ -31,10 +31,10 @@ export class UcpfDetailsWorkspaceViewElement
     private _model?: FeProductFeedSettingWriteModel;
 
     @state()
-    private _feedTypes: Option[] = [];
+    private _feedTypes: UUISelectOption[] = [];
 
     @state()
-    private _propertyValueExtractorOptions: Option[] = [];
+    private _propertyValueExtractorOptions: UUISelectOption[] = [];
 
     constructor() {
         super();
@@ -69,7 +69,7 @@ export class UcpfDetailsWorkspaceViewElement
         });
     }
 
-    #markSelectedOption(options: Option[], value?: string) {
+    #markSelectedOption(options: UUISelectOption[], value?: string) {
         return options.map(x => {
             return {
                 ...x,

@@ -60,7 +60,8 @@ namespace Umbraco.Commerce.Extensions
             });
 
             services.AddScoped<IProductFeedSettingsService, ProductFeedSettingsService>();
-            services.AddScoped<IProductQueryService, ProductQueryService>();
+            // Factory so ActivatorUtilities honours [ActivatorUtilitiesConstructor]; the container can't choose between the two constructors
+            services.AddScoped<IProductQueryService>(sp => ActivatorUtilities.CreateInstance<ProductQueryService>(sp));
 
             builder.FeedGenerators()
                 .Append<GoogleMerchantCenterFeedService>();
