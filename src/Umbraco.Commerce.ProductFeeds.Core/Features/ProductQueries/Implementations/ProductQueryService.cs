@@ -8,6 +8,8 @@ using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Services.Navigation;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Extensions;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
 
@@ -15,9 +17,13 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
 {
     public class ProductQueryService : IProductQueryService
     {
+        private const int LoadBatchSize = 500;
+
         private readonly IPublishedContentCache _publishedContentCache;
         private readonly IDocumentNavigationQueryService _navigationQueryService;
-        private readonly IPublishedContentStatusFilteringService _statusFilteringService;
+        private readonly IDocumentPublishStatusQueryService _publishStatusQueryService;
+        private readonly IDocumentCacheService _documentCacheService;
+        private readonly IVariationContextAccessor _variationContextAccessor;
         private readonly IPublicAccessService _publicAccessService;
         private readonly IPublishedUrlProvider _publishedUrlProvider;
         private readonly ILogger<ProductQueryService> _logger;
@@ -27,7 +33,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
         public ProductQueryService(
             IPublishedContentCache publishedContentCache,
             IDocumentNavigationQueryService navigationQueryService,
-            IPublishedContentStatusFilteringService statusFilteringService,
+            IDocumentPublishStatusQueryService publishStatusQueryService,
+            IDocumentCacheService documentCacheService,
+            IVariationContextAccessor variationContextAccessor,
             IPublicAccessService publicAccessService,
             IPublishedUrlProvider publishedUrlProvider,
             ILogger<ProductQueryService> logger,
@@ -35,7 +43,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
         {
             _publishedContentCache = publishedContentCache;
             _navigationQueryService = navigationQueryService;
-            _statusFilteringService = statusFilteringService;
+            _publishStatusQueryService = publishStatusQueryService;
+            _documentCacheService = documentCacheService;
+            _variationContextAccessor = variationContextAccessor;
             _publicAccessService = publicAccessService;
             _publishedUrlProvider = publishedUrlProvider;
             _logger = logger;
@@ -51,7 +61,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
             : this(
                 StaticServiceProvider.Instance.GetRequiredService<IPublishedContentCache>(),
                 StaticServiceProvider.Instance.GetRequiredService<IDocumentNavigationQueryService>(),
-                StaticServiceProvider.Instance.GetRequiredService<IPublishedContentStatusFilteringService>(),
+                StaticServiceProvider.Instance.GetRequiredService<IDocumentPublishStatusQueryService>(),
+                StaticServiceProvider.Instance.GetRequiredService<IDocumentCacheService>(),
+                StaticServiceProvider.Instance.GetRequiredService<IVariationContextAccessor>(),
                 StaticServiceProvider.Instance.GetRequiredService<IPublicAccessService>(),
                 StaticServiceProvider.Instance.GetRequiredService<IPublishedUrlProvider>(),
                 logger,
@@ -64,7 +76,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
         {
             ArgumentNullException.ThrowIfNull(parameters);
 
-            IPublishedContent productRoot = _publishedContentCache.GetById(parameters.ProductRootKey)
+            IPublishedContent productRoot = _publishedContentCache.GetById(false, parameters.ProductRootKey)
                 ?? throw new ContentNotFoundException(string.Format(null, "Unable to find product root with key = '{0}'", parameters.ProductRootKey));
 
             string[] productTypeAliases = [.. _contentTypeService
@@ -102,8 +114,7 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
 
             List<IPublishedContent> result = [];
 
-            // Published in the current culture context (one result per node), with a published ancestor path.
-            foreach (IPublishedContent content in _statusFilteringService.FilterAvailable([.. candidateKeys.Distinct()], null))
+            foreach (IPublishedContent content in LoadAvailable([.. candidateKeys.Distinct()]))
             {
                 if (IsProtected(content, protectedNodeIds))
                 {
@@ -119,6 +130,33 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
             }
 
             return result;
+        }
+
+        // Only published, never draft: a preview session on the request must not leak drafts into the feed
+        // (IPublishedContentStatusFilteringService skips the publish check while previewing).
+        private IEnumerable<IPublishedContent> LoadAvailable(Guid[] candidateKeys)
+        {
+            string culture = _variationContextAccessor.VariationContext?.Culture ?? string.Empty;
+
+            Guid[] publishedKeys = [.. candidateKeys.Where(key =>
+                _publishStatusQueryService.IsPublished(key, culture)
+                && _publishStatusQueryService.HasPublishedAncestorPath(key, culture))];
+
+            foreach (Guid[] batch in publishedKeys.Chunk(LoadBatchSize))
+            {
+                // Batched so a cold cache costs one round trip per batch rather than one per node.
+                // The product query contract is synchronous.
+                IReadOnlyList<IPublishedContent> contents = _documentCacheService.GetByKeysAsync(batch, false).GetAwaiter().GetResult();
+                foreach (IPublishedContent content in contents)
+                {
+                    if (culture.Length == 0
+                        || !content.ContentType.VariesByCulture()
+                        || content.Cultures.ContainsKey(culture))
+                    {
+                        yield return content;
+                    }
+                }
+            }
         }
 
         // Protection is inherited, so a node is protected when any node in its path is.

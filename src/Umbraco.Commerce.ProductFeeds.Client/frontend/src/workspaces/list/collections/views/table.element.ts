@@ -67,11 +67,15 @@ export class UcpfListCollectionViewTableElement extends UmbLitElement {
 
     // The read model only carries the generator id, so resolve its display name from the feed types lookup.
     async #loadFeedTypeNames() {
-        const { data } = await new UcpfListDataSource(this).fetchFeedTypesAsync();
-        if (!data) return;
+        try {
+            const { data } = await new UcpfListDataSource(this).fetchFeedTypesAsync();
+            if (!data) return;
 
-        this.#feedTypeNames = new Map(data.map((x) => [x.value, x.label]));
-        this.#createTableItems(this.#items);
+            this.#feedTypeNames = new Map(data.map((x) => [x.value, x.label]));
+            this.#createTableItems(this.#items);
+        } catch {
+            // Lookup failed (e.g. network): keep showing the generator id
+        }
     }
 
     async #observeCollectionItems() {

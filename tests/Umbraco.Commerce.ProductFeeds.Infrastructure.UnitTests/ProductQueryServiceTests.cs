@@ -6,6 +6,7 @@ using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Services.Navigation;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Application;
 using Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementations;
 
@@ -18,7 +19,6 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
         private const int RootId = 1000;
         private static readonly Guid RootKey = new("00000000-0000-0000-0000-000000001000");
         private static readonly Guid ProductTypeKey = new("aaaaaaaa-0000-0000-0000-000000000001");
-        private static readonly Guid CategoryTypeKey = new("aaaaaaaa-0000-0000-0000-000000000002");
 
         private readonly Dictionary<Guid, IPublishedContent> _nodes = [];
         private readonly HashSet<Guid> _published = [];
@@ -28,7 +28,11 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
 
         private readonly Mock<IPublishedContentCache> _cache = new();
         private readonly Mock<IDocumentNavigationQueryService> _navigation = new();
-        private readonly Mock<IPublishedContentStatusFilteringService> _statusFiltering = new();
+        private readonly Mock<IDocumentPublishStatusQueryService> _publishStatus = new();
+        private readonly Mock<IDocumentCacheService> _documentCache = new();
+        private readonly Mock<IVariationContextAccessor> _variationContext = new();
+        private readonly HashSet<Guid> _noPublishedAncestorPath = [];
+        private string _currentCulture = string.Empty;
         private readonly Mock<IPublicAccessService> _publicAccess = new();
         private readonly Mock<IPublishedUrlProvider> _urlProvider = new();
         private readonly Mock<IContentTypeService> _contentTypeService = new();
@@ -95,6 +99,43 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
         }
 
         [Fact]
+        public void GetPublishedProducts_Should_Exclude_Content_Without_Published_Ancestor_Path()
+        {
+            Guid ok = AddDescendant(1, "product", "-1,1000");
+            Guid orphan = AddDescendant(2, "product", "-1,1000");
+            _ = _noPublishedAncestorPath.Add(orphan);
+
+            ICollection<IPublishedContent> result = CreateSut().GetPublishedProducts(Params(ProductTypeKey));
+
+            Assert.Equal([ok], result.Select(x => x.Key));
+        }
+
+        [Fact]
+        public void GetPublishedProducts_Should_Only_Load_Published_Content_Without_Preview()
+        {
+            _ = AddDescendant(1, "product", "-1,1000");
+            _ = AddDescendant(2, "product", "-1,1000", published: false);
+
+            _ = CreateSut().GetPublishedProducts(Params(ProductTypeKey));
+
+            _documentCache.Verify(x => x.GetByKeysAsync(It.Is<IReadOnlyCollection<Guid>>(k => k.Count == 1), false), Times.Once);
+            _documentCache.Verify(x => x.GetByKeysAsync(It.IsAny<IReadOnlyCollection<Guid>>(), It.Is<bool?>(p => p != false)), Times.Never);
+        }
+
+        [Fact]
+        public void GetPublishedProducts_Should_Exclude_Variant_Content_Not_Available_In_Current_Culture()
+        {
+            _currentCulture = "da-DK";
+            Guid invariant = AddDescendant(1, "product", "-1,1000");
+            Guid availableVariant = AddDescendant(2, "product", "-1,1000", variesByCulture: true);
+            _ = AddDescendant(3, "product", "-1,1000", variesByCulture: true, availableInCulture: false);
+
+            ICollection<IPublishedContent> result = CreateSut().GetPublishedProducts(Params(ProductTypeKey));
+
+            Assert.Equal(new[] { invariant, availableVariant }.Order(), result.Select(x => x.Key).Order());
+        }
+
+        [Fact]
         public void GetPublishedProducts_Should_Exclude_Protected_Content_And_Its_Descendants()
         {
             Guid open = AddDescendant(1, "product", "-1,1000");
@@ -123,14 +164,14 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
         public void GetPublishedProducts_Should_Throw_When_Root_Not_Found()
         {
             ProductQueryService sut = CreateSut();
-            _ = _cache.Setup(x => x.GetById(RootKey)).Returns((IPublishedContent?)null);
+            _ = _cache.Setup(x => x.GetById(false, RootKey)).Returns((IPublishedContent?)null);
 
             _ = Assert.Throws<ContentNotFoundException>(() => sut.GetPublishedProducts(Params()));
         }
 
         private ProductQueryService CreateSut()
         {
-            _ = _cache.Setup(x => x.GetById(It.IsAny<Guid>())).Returns((Guid key) => _nodes.GetValueOrDefault(key));
+            _ = _cache.Setup(x => x.GetById(false, It.IsAny<Guid>())).Returns((bool _, Guid key) => _nodes.GetValueOrDefault(key));
 
             _ = _navigation
                 .Setup(x => x.TryGetDescendantsKeys(RootKey, out It.Ref<IEnumerable<Guid>>.IsAny))
@@ -147,9 +188,18 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
                     return true;
                 }).Invoke);
 
-            _ = _statusFiltering
-                .Setup(x => x.FilterAvailable(It.IsAny<IEnumerable<Guid>>(), null))
-                .Returns((IEnumerable<Guid> keys, string? _) => keys.Where(_published.Contains).Select(k => _nodes[k]).ToList());
+            _ = _variationContext.SetupGet(x => x.VariationContext).Returns(() => new VariationContext(_currentCulture));
+
+            _ = _publishStatus
+                .Setup(x => x.IsPublished(It.IsAny<Guid>(), It.IsAny<string>()))
+                .Returns((Guid key, string _) => _published.Contains(key));
+            _ = _publishStatus
+                .Setup(x => x.HasPublishedAncestorPath(It.IsAny<Guid>(), It.IsAny<string>()))
+                .Returns((Guid key, string _) => !_noPublishedAncestorPath.Contains(key));
+
+            _ = _documentCache
+                .Setup(x => x.GetByKeysAsync(It.IsAny<IReadOnlyCollection<Guid>>(), false))
+                .ReturnsAsync((IReadOnlyCollection<Guid> keys, bool? _) => (IReadOnlyList<IPublishedContent>)[.. keys.Select(k => _nodes[k])]);
 
             _ = _publicAccess.Setup(x => x.GetAll()).Returns(_publicAccessEntries);
 
@@ -160,7 +210,9 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
             return new ProductQueryService(
                 _cache.Object,
                 _navigation.Object,
-                _statusFiltering.Object,
+                _publishStatus.Object,
+                _documentCache.Object,
+                _variationContext.Object,
                 _publicAccess.Object,
                 _urlProvider.Object,
                 NullLogger<ProductQueryService>.Instance,
@@ -185,10 +237,10 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
             return type.Object;
         }
 
-        private Guid AddDescendant(int id, string alias, string parentPath, bool published = true)
+        private Guid AddDescendant(int id, string alias, string parentPath, bool published = true, bool variesByCulture = false, bool availableInCulture = true)
         {
             var key = new Guid(id, 0, 0, [0, 0, 0, 0, 0, 0, 0, 1]);
-            AddNode(key, id, alias, $"{parentPath},{id}", published);
+            AddNode(key, id, alias, $"{parentPath},{id}", published, variesByCulture, availableInCulture);
             if (!_descendantsOfRoot.TryGetValue(alias, out List<Guid>? list))
             {
                 list = [];
@@ -199,16 +251,20 @@ namespace Umbraco.Commerce.ProductFeeds.Infrastructure.UnitTests
             return key;
         }
 
-        private void AddNode(Guid key, int id, string alias, string path, bool published)
+        private void AddNode(Guid key, int id, string alias, string path, bool published, bool variesByCulture = false, bool availableInCulture = true)
         {
             var contentType = new Mock<IPublishedContentType>();
             _ = contentType.SetupGet(x => x.Alias).Returns(alias);
+            _ = contentType.SetupGet(x => x.Variations).Returns(variesByCulture ? ContentVariation.Culture : ContentVariation.Nothing);
 
             var content = new Mock<IPublishedContent>();
             _ = content.SetupGet(x => x.Key).Returns(key);
             _ = content.SetupGet(x => x.Id).Returns(id);
             _ = content.SetupGet(x => x.Path).Returns(path);
             _ = content.SetupGet(x => x.ContentType).Returns(contentType.Object);
+            _ = content.SetupGet(x => x.Cultures).Returns(availableInCulture
+                ? new Dictionary<string, PublishedCultureInfo> { [_currentCulture] = new(_currentCulture, "n", "/", DateTime.UtcNow) }
+                : new Dictionary<string, PublishedCultureInfo>());
 
             _nodes[key] = content.Object;
             if (published)
