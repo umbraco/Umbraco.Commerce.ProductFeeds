@@ -149,7 +149,9 @@ namespace Umbraco.Commerce.ProductFeeds.Core.Features.ProductQueries.Implementat
                 IReadOnlyList<IPublishedContent> contents = _documentCacheService.GetByKeysAsync(batch, false).GetAwaiter().GetResult();
                 foreach (IPublishedContent content in contents)
                 {
+                    // Same rule as the CMS's FilterAvailable, plus no culture at all (outside a request) keeps the node.
                     if (culture.Length == 0
+                        || culture == global::Umbraco.Cms.Core.Constants.System.InvariantCulture
                         || !content.ContentType.VariesByCulture()
                         || content.Cultures.ContainsKey(culture))
                     {
