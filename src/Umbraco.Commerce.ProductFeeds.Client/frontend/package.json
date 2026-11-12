@@ -1,6 +1,6 @@
 {
     "name": "umbraco-commerce-product-feeds",
-    "version": "19.0.0-beta.1",
+    "version": "19.0.0-rc.1",
     "description": "A product feeds generator for Umbraco Commerce",
     "main": "./src/index.ts",
     "type": "module",
@@ -29,8 +29,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@umbraco-cms/backoffice": "19.0.0-beta1",
-        "@umbraco-commerce/backoffice": "19.0.0-beta.1",
+        "@umbraco-cms/backoffice": "19.0.0-rc1",
+        "@umbraco-commerce/backoffice": "19.0.0-rc.1",
         "nanoid": "^5.1.16"
     }
 }

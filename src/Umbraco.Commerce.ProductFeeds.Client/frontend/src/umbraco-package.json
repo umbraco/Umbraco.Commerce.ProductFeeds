@@ -8,5 +8,5 @@
             "js": "/App_Plugins/umbracocommerceproductfeeds/ucproductfeeds.backoffice.js"
         }
     ],
-    "version": "19.0.0-beta.1"
+    "version": "19.0.0-rc.1"
 }

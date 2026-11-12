@@ -3,7 +3,7 @@ import { UcpfDetailsWorkspaceContext } from './context.js';
 import UcpfDetailsWorkspaceViewElement from './views/details.element.js';
 import { ProductFeedEntityActionDelete } from './actions/entity-action.delete.js';
 import { UcpfWorkspaceActionOpenFeed } from './actions/workspace-action.open-feed.js';
-import { ManifestEntityAction } from '@umbraco-cms/backoffice/entity-action';
+import { ManifestEntityAction, UMB_ENTITY_ACTION_GROUP_STRUCTURE } from '@umbraco-cms/backoffice/entity-action';
 
 export const detailsWorkspaceManifest: ManifestWorkspace = {
     type: 'workspace',
@@ -87,6 +87,7 @@ export const manifests = [
         alias: 'ucpf:entity-action:delete',
         name: 'Delete Product Feed Details Entity Action',
         weight: 50,
+        group: UMB_ENTITY_ACTION_GROUP_STRUCTURE,
         api: ProductFeedEntityActionDelete,
         forEntityTypes: [detailsWorkspaceManifest.meta.entityType],
         meta: {
