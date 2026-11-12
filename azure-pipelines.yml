@@ -31,7 +31,7 @@ parameters:
     type: string
     default: auto
     values:
-      - auto # Only release to NuGet on public, stable releases, otherwise skip
+      - auto # Release to NuGet on stable release-* tags and new-major prerelease tags (X.0.0-*), otherwise skip
       - public # Release to NuGet, regardless of release type
       - skip # Skip releasing to NuGet, regardless of release type
   - name: sbom_generate
@@ -44,8 +44,12 @@ extends:
   parameters:
     product_name: Umbraco.Commerce.ProductFeeds
     prerelease: ${{ parameters.prerelease }}
-    # Prerelease tags (e.g. release-18.1.0-rc.1) only go to MyGet, never NuGet.org
-    ${{ if and(eq(parameters.release, 'auto'), startsWith(variables['Build.SourceBranch'], 'refs/tags/release-'), contains(replace(variables['Build.SourceBranch'], 'refs/tags/release-', ''), '-')) }}:
+    # Prerelease tags for a new major (e.g. release-19.0.0-rc.1) go to NuGet.org, like past major RCs.
+    # The template's own auto skips every prerelease, so these pass public.
+    ${{ if and(eq(parameters.release, 'auto'), startsWith(variables['Build.SourceBranch'], 'refs/tags/release-'), contains(replace(variables['Build.SourceBranch'], 'refs/tags/release-', ''), '.0.0-')) }}:
+      release: public
+    # Other prerelease tags (e.g. release-18.1.0-rc.1) only go to MyGet, never NuGet.org
+    ${{ elseif and(eq(parameters.release, 'auto'), startsWith(variables['Build.SourceBranch'], 'refs/tags/release-'), contains(replace(variables['Build.SourceBranch'], 'refs/tags/release-', ''), '-')) }}:
       release: skip
     ${{ else }}:
       release: ${{ parameters.release }}
